@@ -12,7 +12,7 @@ import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad (forever, void, when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
-import Data.Foldable (foldl', for_, maximumBy)
+import Data.Foldable (for_, maximumBy)
 import Data.Function (on)
 import qualified Data.Map as M
 import qualified Data.Set as S
@@ -272,16 +272,8 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
 
           -- Calculate the score
           score = sum $ map (calculateScore . snd) cards
-          -- This is the tricky part
-          -- Whenever teams are revealed, you need to add the score to not just the winner,
-          -- but the entire team
-          newPlayerSet
-            | winner `elem` biddingTeam state
-              = foldl' (flip (addScore score)) (players $ gameData state) (biddingTeam state)
-            | winner `elem` antiTeam state
-              = foldl' (flip (addScore score)) (players $ gameData state) (antiTeam state)
-            | otherwise =
-              addScore score winner (players $ gameData state)
+          -- Add score to the player
+          newPlayerSet = addScore score winner (players $ gameData state)
 
         for_ connectionList $ \conn ->
           sendTextData conn $ encode newPlayerSet
