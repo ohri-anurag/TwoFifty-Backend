@@ -19,6 +19,7 @@ library
   other-modules:       Bid
                      , Card
                      , Game
+                     , PlayedCard
                      , Player
                      , SelectionData
                      , State
@@ -26,6 +27,7 @@ library
                      , aeson
                      , bytestring
                      , containers
+                     , random
                      , servant-server
                      , servant-websockets
                      , text

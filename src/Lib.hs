@@ -6,12 +6,14 @@ module Lib
     , app
     ) where
 
+import Control.Concurrent (forkIO, threadDelay)
 import Control.Concurrent.MVar (MVar, newMVar, readMVar)
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import Control.Monad (forever, when)
+import Control.Monad (forever, void, when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
-import Data.Foldable (for_)
+import Data.Foldable (foldl', for_, maximumBy)
+import Data.Function (on)
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Network.Wai
@@ -23,6 +25,7 @@ import Servant.API.WebSocket
 
 import Bid
 import Card
+import qualified PlayedCard as PC
 import qualified Player as P
 import Game --(GameData(..), PlayerIndex(..), PlayerSet, addPlayerAndConnection, initGameData, intToPlayerIndex, listConnections, newPlayer)
 import qualified SelectionData as SD
@@ -65,8 +68,13 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
               Right receiveSelectionData ->
                 sendTrump receiveSelectionData
 
-              Left err ->
-                putStrLn err
+              Left _ ->
+                case eitherDecode' bytes of
+                  Right playedCard ->
+                    sendCard playedCard
+
+                  Left err ->
+                    putStrLn err
 
   -- Creates a new game, and handles addition of players to that game
   createNewGame :: P.IntroData -> Connection -> IO ()
@@ -102,8 +110,11 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
           $ State
             { gameData = newGameData
             , bidData = (P.Player1, 150)
-            , biddingPlayers = S.fromList [P.Player1 .. P.Player6]
+            , biddingPlayers = S.fromList P.playerIndices
             , selectionData = SD.initSelectionData
+            , hand = emptyHand
+            , biddingTeam = []
+            , antiTeam = []
             }
 
   handleBidding :: ReceiveBiddingData -> IO ()
@@ -129,8 +140,13 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
             updateState stateMapMVar gName newState
 
             -- Tell all players that bidding has been completed if bidding player set is empty
-            when (isBiddingCompleted newState) $
-              closeBidding oldHighestBidder oldBid $ gameData state
+            when (isBiddingCompleted newState) $ do
+              -- Add the highest bidder to the bidding team
+              let newerState = newState { biddingTeam = [oldHighestBidder] }
+              updateState stateMapMVar gName newerState
+
+              closeBidding oldHighestBidder oldBid $ gameData newerState
+
           else if newBid == 250
             then
               closeBidding newPlayerIndex newBid $ gameData state
@@ -167,6 +183,40 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
       Nothing ->
         pure ()
 
+  sendCard :: PC.ReceivePlayedCard -> IO ()
+  sendCard (PC.RPC gName card) = do
+    stateMap <- readMVar stateMapMVar
+
+    case M.lookup gName stateMap of
+      Just state -> do
+        -- Send the player and played card to each player
+        let
+          connectionList = listConnections $ gameData state
+          playerTurn = turn $ gameData state
+          newHand = updateHand card playerTurn $ hand state
+          newTurn = P.nextTurn playerTurn
+
+        -- Update the state with the updated hand, and newTurn
+        updateState stateMapMVar gName
+          $ state
+            { hand = newHand
+            , gameData = (gameData state)
+                { turn = newTurn }
+            }
+
+        for_ connectionList $ \conn ->
+          sendTextData conn $ encode $ PC.SPC newTurn card
+
+        -- When next turn comes back to the first bidder, then calculate the score and
+        -- send it after an interval of 5 seconds
+        when (newTurn == firstBidder (gameData state)) $
+          void $ forkIO $ do
+            threadDelay $ 5 * 1000 * 1000
+            sendRoundScore state newHand
+
+      Nothing ->
+        pure ()
+
 
   initiateGame :: String -> GameData -> IO ()
   initiateGame gName gData = do
@@ -198,3 +248,43 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
 
     for_ connectionList $ \conn ->
       sendTextData conn $ encode $ FBD winner maxBid
+  
+  sendRoundScore :: State -> Hand -> IO ()
+  sendRoundScore state fullHand =
+    -- First, get the suit of the card played by the first bidder
+
+    case getCardFromHand (firstBidder $ gameData state) fullHand of
+      Just (Card _ baseSuit) -> do
+        let
+          connectionList = listConnections $ gameData state
+          cards = getCardsFromHand fullHand
+          trump = SD.selectedTrump $ selectionData state
+
+          -- Normally the person with the highest card of `suit` should win
+          -- However, if someone used a trump, then the highest trump will win
+          wasTrumpUsed = any ( (==) trump . suit . snd) cards
+          winner =
+            if wasTrumpUsed
+              then
+                fst $ maximumBy (compare `on` snd) $ filter ((==) trump . suit . snd) cards
+              else
+                fst $ maximumBy (compare `on` snd) $ filter ((==) baseSuit . suit . snd) cards
+
+          -- Calculate the score
+          score = sum $ map (calculateScore . snd) cards
+          -- This is the tricky part
+          -- Whenever teams are revealed, you need to add the score to not just the winner,
+          -- but the entire team
+          newPlayerSet
+            | winner `elem` biddingTeam state
+              = foldl' (flip (addScore score)) (players $ gameData state) (biddingTeam state)
+            | winner `elem` antiTeam state
+              = foldl' (flip (addScore score)) (players $ gameData state) (antiTeam state)
+            | otherwise =
+              addScore score winner (players $ gameData state)
+
+        for_ connectionList $ \conn ->
+          sendTextData conn $ encode newPlayerSet
+
+      Nothing ->
+        pure ()

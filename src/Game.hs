@@ -3,7 +3,7 @@ module Game where
 import Data.Maybe (mapMaybe)
 import Network.WebSockets.Connection (Connection)
 
-import Player (Player, PlayerIndex(..), PlayerSet(..), initPlayerSet)
+import Player (Player(gameScore), PlayerIndex(..), PlayerSet(..), initPlayerSet)
 
 data ConnectionSet = CS
   { connection1 :: Maybe Connection
@@ -19,7 +19,18 @@ data GameData = GD
   , connections :: ConnectionSet
   , nextPlayerIndex :: Maybe PlayerIndex  -- Used to fill up a game, when this becomes Just Player6, this means game is full.
   , firstBidder :: PlayerIndex
+  , turn :: PlayerIndex
   }
+
+getPlayer :: PlayerIndex -> PlayerSet -> Player
+getPlayer playerIndex playerSet =
+  case playerIndex of
+    Player1 -> player1 playerSet
+    Player2 -> player2 playerSet
+    Player3 -> player3 playerSet
+    Player4 -> player4 playerSet
+    Player5 -> player5 playerSet
+    Player6 -> player6 playerSet
 
 -- Update functions
 updatePlayer :: PlayerIndex -> Player -> PlayerSet -> PlayerSet
@@ -51,6 +62,14 @@ addPlayerAndConnection player connection gameData = gameData
   where
     nextIndex = maybe Player1 succ $ nextPlayerIndex gameData
 
+addScore :: Int -> PlayerIndex -> PlayerSet -> PlayerSet
+addScore num playerIndex playerSet =
+  updatePlayer playerIndex newPlayer playerSet
+    where
+      oldPlayer = getPlayer playerIndex playerSet
+      newPlayer = oldPlayer
+        { gameScore = gameScore oldPlayer + num }
+
 -- Initial Data
 initConnectionSet :: ConnectionSet
 initConnectionSet = CS
@@ -68,6 +87,7 @@ initGameData = GD
   , connections = initConnectionSet
   , nextPlayerIndex = Nothing
   , firstBidder = Player1
+  , turn = Player1
   }
 
 -- Helpers

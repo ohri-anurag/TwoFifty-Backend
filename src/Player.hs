@@ -71,6 +71,10 @@ initPlayerSet = PS
   }
 
 -- Helpers
+nextTurn :: PlayerIndex -> PlayerIndex
+nextTurn Player6 = Player1
+nextTurn p = succ p
+
 getCards :: PlayerIndex -> CardDistribution -> [Card]
 getCards index cd =
   case index of
@@ -82,14 +86,17 @@ getCards index cd =
     Player6 -> cardSet6 cd
 
 shuffledCards :: IO CardDistribution
-shuffledCards = pure $ CD
-  { cardSet1 = take 8 allCards
-  , cardSet2 = take 8 $ drop 8 allCards
-  , cardSet3 = take 8 $ drop 16 allCards
-  , cardSet4 = take 8 $ drop 24 allCards
-  , cardSet5 = take 8 $ drop 32 allCards
-  , cardSet6 = take 8 $ drop 40 allCards
-  }
+shuffledCards = do
+  randomizedCards <- fisherYatesShuffle allCards
+  
+  pure $ CD
+    { cardSet1 = take 8 randomizedCards
+    , cardSet2 = take 8 $ drop 8 randomizedCards
+    , cardSet3 = take 8 $ drop 16 randomizedCards
+    , cardSet4 = take 8 $ drop 24 randomizedCards
+    , cardSet5 = take 8 $ drop 32 randomizedCards
+    , cardSet6 = take 8 $ drop 40 randomizedCards
+    }
 
 playerIndices :: [PlayerIndex]
 playerIndices = [Player1 .. Player6]
