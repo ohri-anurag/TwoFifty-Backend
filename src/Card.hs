@@ -42,6 +42,7 @@ values = [Ace .. King]
 allCards :: [Card]
 allCards = [Card v s | s <- suits, v <- values, v /= Two]
 
+-- JSON derivations
 $(deriveJSON defaultOptions ''Suit)
 $(deriveJSON defaultOptions ''CardValue)
 $(deriveJSON defaultOptions ''Card)

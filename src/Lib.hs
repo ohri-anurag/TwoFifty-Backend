@@ -6,7 +6,7 @@ module Lib
     , app
     ) where
 
-import Control.Concurrent.MVar (MVar, newMVar, putMVar, readMVar, takeMVar)
+import Control.Concurrent.MVar (MVar, newMVar, readMVar)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad (forever, when)
 import Data.Aeson
@@ -25,51 +25,13 @@ import Bid
 import Card
 import qualified Player as P
 import Game --(GameData(..), PlayerIndex(..), PlayerSet, addPlayerAndConnection, initGameData, intToPlayerIndex, listConnections, newPlayer)
+import qualified SelectionData as SD
+import State
 
 
 type API = "cards" :> Get '[JSON] [Card]
         :<|> "game" :> WebSocket
         :<|> Raw
-
-data State = State
-  { gameData :: GameData
-  , bidData :: (P.PlayerIndex, Int)
-  , biddingPlayers :: S.Set P.PlayerIndex
-  }
-
-type StateMap = M.Map String State
-
--- addNewPlayer :: String -> Player -> GameData -> MVar StateMap -> IO ()
--- addNewPlayer gameName player defaultGameData stateMapMVar = do
---   stateMap <- readMVar stateMapMVar
---   case M.lookup gameName stateMap of
---     Just state ->
-    
---     Nothing ->
-
-updateState :: MVar StateMap -> String -> State -> IO ()
-updateState stateMapMVar gName state  = do
-  stateMap <- takeMVar stateMapMVar
-  putMVar stateMapMVar
-    $ M.insert gName state stateMap
-
--- updateGameData :: M.Map String GameData -> MVar State -> IO ()
--- updateGameData newGameData stateMVar = do
---   state <- takeMVar stateMVar
---   putMVar stateMVar $ state { gameDataMap = newGameData }
-
--- updateBidData :: M.Map String (P.PlayerIndex, Int) -> MVar State -> IO ()
--- updateBidData newBidData stateMVar = do
---   state <- takeMVar stateMVar
---   putMVar stateMVar $ state { bidDataMap = newBidData }
-
-removePlayerFromBiddingSet :: P.PlayerIndex -> State -> State
-removePlayerFromBiddingSet index state = state
-  { biddingPlayers = S.delete index $ biddingPlayers state }
-
-isBiddingCompleted :: State -> Bool
-isBiddingCompleted state =
-  S.null $ biddingPlayers state
 
 startApp :: IO ()
 startApp = do
@@ -89,17 +51,22 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
   streamData conn = liftIO $ withPingThread conn 10 (pure ()) $ forever $ do
     bytes <- receiveData conn :: IO B.ByteString
 
-    case decode' bytes of
-      Just introData -> 
+    case eitherDecode' bytes of
+      Right introData -> 
         createNewGame introData conn
 
-      Nothing ->
+      Left _ ->
         case eitherDecode' bytes of
           Right biddingData ->
             handleBidding biddingData
 
-          Left err ->
-            putStrLn err
+          Left _ ->
+            case eitherDecode' bytes of
+              Right receiveSelectionData ->
+                sendTrump receiveSelectionData
+
+              Left err ->
+                putStrLn err
 
   -- Creates a new game, and handles addition of players to that game
   createNewGame :: P.IntroData -> Connection -> IO ()
@@ -136,6 +103,7 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
             { gameData = newGameData
             , bidData = (P.Player1, 150)
             , biddingPlayers = S.fromList [P.Player1 .. P.Player6]
+            , selectionData = SD.initSelectionData
             }
 
   handleBidding :: ReceiveBiddingData -> IO ()
@@ -163,14 +131,38 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
             -- Tell all players that bidding has been completed if bidding player set is empty
             when (isBiddingCompleted newState) $
               closeBidding oldHighestBidder oldBid $ gameData state
-          else
-            when (newBid > oldBid) $ do
-              -- Update the state with the new highest bid
-              updateState stateMapMVar gName
-                $ state { bidData = (newPlayerIndex, newBid) }
+          else if newBid == 250
+            then
+              closeBidding newPlayerIndex newBid $ gameData state
+            else
+              when (newBid > oldBid) $ do
+                -- Update the state with the new highest bid
+                updateState stateMapMVar gName
+                  $ state { bidData = (newPlayerIndex, newBid) }
 
-              -- Also inform the players that the max bid has been updated
-              updateMaximumBid newPlayerIndex newBid $ gameData state
+                -- Also inform the players that the max bid has been updated
+                updateMaximumBid newPlayerIndex newBid $ gameData state
+
+      Nothing ->
+        pure ()
+
+  sendTrump :: SD.ReceiveSelectionData -> IO ()
+  sendTrump receiveSelectionData = do
+    stateMap <- readMVar stateMapMVar
+
+    let gName = SD.gameName receiveSelectionData
+    case M.lookup gName stateMap of
+      Just state -> do
+        let
+          connectionList = listConnections $ gameData state
+          sendSelectionData = SD.value receiveSelectionData
+
+        -- Update the state with the received selection data
+        updateState stateMapMVar gName
+          $ state { selectionData = sendSelectionData }
+
+        for_ connectionList $ \conn ->
+          sendTextData conn $ encode sendSelectionData
 
       Nothing ->
         pure ()
