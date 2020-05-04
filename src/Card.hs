@@ -14,7 +14,7 @@ data Suit
   | Heart
   | Diamond
   | Spade
-  deriving (Eq, Ord, Enum)
+  deriving (Eq, Ord, Show, Enum)
 
 data CardValue
   = Two
@@ -30,13 +30,16 @@ data CardValue
   | Queen
   | King
   | Ace
-  deriving (Eq, Ord, Enum)
+  deriving (Eq, Ord, Show, Enum)
 
 data Card = Card
   { value :: CardValue
   , suit :: Suit
   }
   deriving (Eq, Ord)
+
+instance Show Card where
+  show (Card v s) = show v ++ " of " ++ show s
 
 calculateScore :: Card -> Int
 calculateScore (Card Three Spade) = 30

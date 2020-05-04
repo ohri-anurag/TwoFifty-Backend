@@ -173,6 +173,10 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
           connectionList = listConnections $ gameData state
           sendSelectionData = SD.value receiveSelectionData
 
+        putStrLn $ "Trump Selected: " ++ show (SD.selectedTrump sendSelectionData)
+        putStrLn $ "Helper 1: " ++ show (SD.helper1 sendSelectionData)
+        putStrLn $ "Helper 2: " ++ show (SD.helper2 sendSelectionData)
+
         -- Update the state with the received selection data
         updateState stateMapMVar gName
           $ state { selectionData = sendSelectionData }
@@ -195,14 +199,17 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
           playerTurn = turn $ gameData state
           newHand = updateHand card playerTurn $ hand state
           newTurn = P.nextTurn playerTurn
-
-        -- Update the state with the updated hand, and newTurn
-        updateState stateMapMVar gName
-          $ state
+          newState = state
             { hand = newHand
             , gameData = (gameData state)
                 { turn = newTurn }
             }
+
+        putStrLn $ "Player: " ++ P.name (getPlayer playerTurn $ players $ gameData state) ++ " has played card "
+                  ++ show card
+
+        -- Update the state with the updated hand, and newTurn
+        updateState stateMapMVar gName newState
 
         for_ connectionList $ \conn ->
           sendTextData conn $ encode $ PC.SPC newTurn card
@@ -212,7 +219,7 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
         when (newTurn == firstBidder (gameData state)) $
           void $ forkIO $ do
             threadDelay $ 5 * 1000 * 1000
-            sendRoundScore state newHand
+            sendRoundScore gName newState newHand
 
       Nothing ->
         pure ()
@@ -249,10 +256,9 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
     for_ connectionList $ \conn ->
       sendTextData conn $ encode $ FBD winner maxBid
   
-  sendRoundScore :: State -> Hand -> IO ()
-  sendRoundScore state fullHand =
+  sendRoundScore :: String -> State -> Hand -> IO ()
+  sendRoundScore gName state fullHand =
     -- First, get the suit of the card played by the first bidder
-
     case getCardFromHand (firstBidder $ gameData state) fullHand of
       Just (Card _ baseSuit) -> do
         let
@@ -274,6 +280,16 @@ server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServe
           score = sum $ map (calculateScore . snd) cards
           -- Add score to the player
           newPlayerSet = addScore score winner (players $ gameData state)
+
+        putStrLn $ "Player: " ++ P.name (getPlayer winner $ players $ gameData state) ++ " has won round with score: "
+                  ++ show score
+
+        -- Update the state with new scores
+        updateState stateMapMVar gName
+          $ state
+            { gameData = (gameData state)
+              { players = newPlayerSet }
+            }
 
         for_ connectionList $ \conn ->
           sendTextData conn $ encode newPlayerSet
