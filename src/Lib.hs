@@ -39,8 +39,26 @@ type API = "game" :> WebSocket
 startApp :: IO ()
 startApp = do
   port <- read <$> getEnv "PORT"
+  -- let port = 1234
+
+  -- Read test.html and change the port(8080) inside it
+  str <- readFile "public/test.html"
+
+  writeFile "public/index.html" $ replace str "8080" $ show port
+
   stateMap <- newMVar M.empty
   run port $ app stateMap
+  where
+    replace contents search str =
+      take i contents ++ str ++ drop (i + length str) contents
+      where
+        i = indexOf 0 search contents
+    
+    indexOf i search contents
+      | take len contents == search = i
+      | otherwise = indexOf (i+1) search $ tail contents
+      where
+        len = length search
 
 app :: MVar StateMap -> Application
 app stateMap = serve api $ server stateMap
