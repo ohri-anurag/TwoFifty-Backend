@@ -21,6 +21,7 @@ import Network.Wai.Handler.Warp
 import Network.WebSockets.Connection
 import Servant
 import Servant.API.WebSocket
+import System.Environment (getEnv)
 
 
 import Bid
@@ -37,8 +38,9 @@ type API = "game" :> WebSocket
 
 startApp :: IO ()
 startApp = do
+  port <- read <$> getEnv "PORT"
   stateMap <- newMVar M.empty
-  run 8080 $ app stateMap
+  run port $ app stateMap
 
 app :: MVar StateMap -> Application
 app stateMap = serve api $ server stateMap
