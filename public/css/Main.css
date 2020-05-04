@@ -1,0 +1,340 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "lucida console";
+  /*background-color: black;*/
+}
+
+.gameName {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 28px;
+  word-wrap: break-word;
+  width: 10%;
+  text-align: left;
+}
+
+.playersContainer {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+}
+
+.players {
+  display: flex;
+  margin: 0 auto;
+}
+
+.player {
+  margin: 0 100px;
+  width: 131px;
+  height: 200px;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 8px;
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.player span {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.p0 {
+  border-color: darkturquoise;
+  color: darkturquoise;
+}
+
+.p1 {
+  border-color: lightcoral;
+  color: lightcoral;
+}
+
+.p2 {
+  border-color: darkseagreen;
+  color: darkseagreen;
+}
+
+.p3 {
+  border-color: rosybrown;
+  color: rosybrown;
+}
+
+.p4 {
+  border-color: cornflowerblue;
+  color: cornflowerblue;
+}
+
+.playerName {
+  margin-top: 20%;
+  margin-bottom: 20%;
+}
+
+.playerScore {
+  margin-top: 10%;
+}
+
+/*.playerScoreLabel {
+  margin-bottom: 10%;
+}*/
+
+.biddingZone {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 40%;
+  left: 20px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.bidValueLabel {
+  margin-top: 20%;
+}
+
+.bidButtonContainer {
+  margin-top: 20%;
+}
+
+.bidButton {
+  margin: 10px;
+  padding: 10px;
+  font-size: 15px;
+}
+
+.quitBiddingButton {
+  padding: 10px;
+  font-size: 15px;
+}
+
+.myCardsContainer {
+  position: absolute;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.myName {
+  margin: 0 auto;
+  font-size: 24px;
+}
+
+.myCards {
+  margin: 0 auto;
+  border-top: 1px solid black;
+}
+
+.myCards img {
+  padding: 10px;
+  height: 200px;
+  width: 131px;
+}
+
+.myCards img:hover {
+  cursor: pointer;
+}
+
+.myScores {
+  display: flex;
+  width: 60%;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+
+.myScores div {
+  margin: 0 auto;
+  font-size: 18px;
+}
+
+.trumpContainer {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.trumpBox {
+  width: 100%;
+  height: 80%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.trumpBoxHeader {
+  margin: 20px auto;
+  font-size: 24px;
+}
+
+.trumps {
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;
+}
+
+.trumpWithLabel {
+  display: flex;
+  flex-direction: column;
+}
+
+.trumpWithLabel img {
+  width: 88px;
+  height: 133px;
+  margin: 0 40px;
+}
+
+.trumpLabel {
+  margin: 10px auto;
+}
+
+.trump {
+  border: 2px solid lavender;
+  border-radius: 10px;
+}
+
+.selectedTrump {
+  border: 2px solid violet;
+  border-radius: 10px;
+}
+
+.selectedLabel {
+  font-weight: bold;
+}
+
+.helperContainer{
+  text-align: center;
+}
+
+.helperContainer img {
+  width: 65px;
+  height: 100px;
+  margin: 10px;
+}
+
+.helperHeader {
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.trumpWithLabel img:hover, .helperContainer img:hover, .proceedButton:hover, .bidButton:hover, .quitBiddingButton:hover {
+  cursor: pointer;
+}
+
+.helper {
+  border: 2px solid lavender;
+  border-radius: 6px;
+}
+
+.selectedHelper {
+  border: 2px solid violet;
+  border-radius: 6px;
+}
+
+.proceedButton {
+  margin: 20px auto;
+  padding: 10px 0;
+  width: 7%;
+  font-size: 18px;
+}
+
+.biddingInfo {
+  display: flex;
+  flex-direction: column;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.biddingInfo span {
+  margin: 0 auto;
+}
+
+.miniTrumpAndHelper {
+  position: fixed;
+  top: 35%;
+  left: 20px;
+}
+
+.miniTrump, .miniHelper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.miniTrump span, .miniHelper span {
+  text-align: center;
+  font-size: 18px;
+}
+
+.miniTrump img , .miniHelper img {
+  width: 65px;
+  height: 100px;
+  margin: 5px auto;
+}
+
+.miniHelper img {
+  margin: 5px;
+}
+
+.turn, .round {
+  position: fixed;
+  left: 20px;
+  display: flex;
+}
+
+.turn {
+  top: 90%;
+}
+
+.round {
+  top: 85%;
+}
+
+.round span, .turn span {
+  margin: 0 auto;
+  font-size: 32px;
+}
+
+.playArea {
+  width: 60%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.playerCards {
+  display: flex;
+  margin: 80px auto;
+}
+
+.yetToPlay, .playerCard {
+  width: 88px;
+  height: 133px;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 6px;
+  margin: 0 60px;
+}
+
+.yetToPlay span {
+  margin: auto;
+  text-align: center;
+}
+
+.yetToPlay {
+  display: flex;
+}
+
+.p5 {
+  border-color: black;
+  margin: 0 auto;
+}
+
+.blurCard {
+  opacity: 0.3;
+}

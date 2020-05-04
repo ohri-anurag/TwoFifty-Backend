@@ -32,8 +32,7 @@ import qualified SelectionData as SD
 import State
 
 
-type API = "cards" :> Get '[JSON] [Card]
-        :<|> "game" :> WebSocket
+type API = "game" :> WebSocket
         :<|> Raw
 
 startApp :: IO ()
@@ -48,7 +47,7 @@ api :: Proxy API
 api = Proxy
 
 server :: MVar StateMap -> Server API
-server stateMapMVar = pure allCards :<|> streamData :<|> serveDirectoryFileServer "public/"
+server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
   where
   streamData :: (MonadIO m) => Connection -> m ()
   streamData conn = liftIO $ withPingThread conn 10 (pure ()) $ forever $ do
