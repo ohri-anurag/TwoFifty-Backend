@@ -12,7 +12,7 @@ import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad (forever, void, when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
-import Data.Foldable (for_, maximumBy)
+import Data.Foldable (foldl', for_, maximumBy)
 import Data.Function (on)
 import qualified Data.Map as M
 import qualified Data.Set as S
@@ -119,6 +119,8 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
             , hand = emptyHand
             , biddingTeam = []
             , antiTeam = []
+            , roundIndex = Round1
+            , helpersRevealed = 0
             }
 
   handleBidding :: ReceiveBiddingData -> IO ()
@@ -203,10 +205,27 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
           playerTurn = turn $ gameData state
           newHand = updateHand card playerTurn $ hand state
           newTurn = P.nextTurn playerTurn
+
+          -- If the newly played card is a helper, add it to the bidding team
+          -- and update the helpers revealed count
+          (newBiddingTeam, newHelpersRevealed) =
+            if SD.isHelper card (selectionData state)
+              then (playerTurn : biddingTeam state, 1 + helpersRevealed state)
+              else (biddingTeam state, helpersRevealed state)
+
+          -- If all helper cards have been revealed, add remaining players to anti-team
+          newAntiTeam =
+            if newHelpersRevealed == SD.maxHelpers (selectionData state)
+              then filter ( `notElem` newBiddingTeam) P.playerIndices
+              else antiTeam state
+
           newState = state
             { hand = newHand
             , gameData = (gameData state)
                 { turn = newTurn }
+            , biddingTeam = newBiddingTeam
+            , helpersRevealed = newHelpersRevealed
+            , antiTeam = newAntiTeam
             }
 
         putStrLn $ "Player: " ++ P.name (getPlayer playerTurn $ players $ gameData state) ++ " has played card "
@@ -218,8 +237,8 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         for_ connectionList $ \conn ->
           sendTextData conn $ encode $ PC.SPC newTurn card
 
-        -- When next turn comes back to the first player, then calculate the score and
-        -- send it after an interval of 2 seconds
+        -- When next turn comes back to the first player (ie the round finishes),
+        -- then calculate the score and send it after an interval of 2 seconds
         when (newTurn == firstPlayer state) $
           void $ forkIO $ do
             threadDelay $ 2 * 1000 * 1000
@@ -262,8 +281,8 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
   
   sendRoundScore :: String -> State -> Hand -> IO ()
   sendRoundScore gName state fullHand =
-    -- First, get the suit of the card played by the first bidder
-    case getCardFromHand (firstBidder $ gameData state) fullHand of
+    -- First, get the suit of the card played by the first player
+    case getCardFromHand (firstPlayer state) fullHand of
       Just (Card _ baseSuit) -> do
         let
           connectionList = listConnections $ gameData state
@@ -284,23 +303,85 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
           score = sum $ map (calculateScore . snd) cards
           -- Add score to the player
           newPlayerSet = addScore score winner (players $ gameData state)
+          -- Increment the round
+          newRound = nextRound $ roundIndex state
 
-        putStrLn $ "Player: " ++ P.name (getPlayer winner $ players $ gameData state) ++ " has won round with score: "
-                  ++ show score
-
-        -- Update the state with new scores, and the new first turn
-        updateState stateMapMVar gName
-          $ state
+          newState = state
             { gameData = (gameData state)
               { players = newPlayerSet
               , turn = winner
               }
               , firstPlayer = winner
               , hand = emptyHand
+              , roundIndex = newRound
             }
+
+        putStrLn $ "Player: " ++ P.name (getPlayer winner $ players $ gameData state) ++ " has won round with score: "
+                  ++ show score
+
+        -- Update the state with new scores, and the new first turn
+        updateState stateMapMVar gName newState
+
+        -- When the 8th round finishes, decide which team won
+        -- And then update their scores
+        when (newRound == Round1) $ finalizeGame gName newState
 
         for_ connectionList $ \conn ->
           sendTextData conn $ encode $ PC.NRD winner newPlayerSet
 
       Nothing ->
         pure ()
+
+  finalizeGame :: String -> State -> IO ()
+  finalizeGame gName state = do
+    let
+      bidAmount = snd $ bidData state
+      biddingTeamPlayers = map ( `getPlayer` (players $ gameData state)) $ biddingTeam state
+      biddingTeamTotal = sum $ map P.gameScore biddingTeamPlayers
+
+      antiTeamPlayers = map ( `getPlayer` (players $ gameData state)) $ antiTeam state
+      antiTeamTotal = sum $ map P.gameScore antiTeamPlayers
+
+      -- Anti team won, with a score of 100+, they each get the bidAmount as score
+      (score, winningTeam)
+        | biddingTeamTotal >= bidAmount =
+          (bidAmount, biddingTeam state)
+        | antiTeamTotal >= 100 =
+          (bidAmount, antiTeam state)
+        | otherwise =
+          (antiTeamTotal, antiTeam state)
+
+      newPlayers = foldl' (\ps i ->
+          let
+            player = getPlayer i ps
+            newPlayer = player
+              { P.gameScore = 0
+              , P.totalScore = if i `elem` winningTeam then score else 0
+              }
+          in
+          updatePlayer i newPlayer ps
+        ) (players $ gameData state) P.playerIndices
+
+      newFirstBidder = P.nextTurn $ firstBidder $ gameData state
+
+      newState = state
+        { gameData = (gameData state)
+          { players = newPlayers
+          , firstBidder = newFirstBidder
+          , turn = newFirstBidder
+          }
+        , bidData = (newFirstBidder, 150)
+        , biddingPlayers = S.fromList P.playerIndices
+        , selectionData = SD.initSelectionData
+        , hand = emptyHand
+        , firstPlayer = newFirstBidder
+        , biddingTeam = []
+        , antiTeam = []
+        , roundIndex = Round1
+        , helpersRevealed = 0
+        }
+
+    updateState stateMapMVar gName newState
+
+    -- Initiate a new game
+    initiateGame gName $ gameData newState

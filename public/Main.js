@@ -5510,6 +5510,9 @@ var $author$project$Subscriptions$getPlayersStatus = F5(
 var $author$project$Model$Undecided = {$: 'Undecided'};
 var $author$project$Model$initPlayerStatusSet = {status1: $author$project$Model$Undecided, status2: $author$project$Model$Undecided, status3: $author$project$Model$Undecided, status4: $author$project$Model$Undecided, status5: $author$project$Model$Undecided, status6: $author$project$Model$Undecided};
 var $author$project$Subscriptions$messageReceiver = _Platform_incomingPort('messageReceiver', $elm$json$Json$Decode$string);
+var $author$project$Model$GameFinishData = function (a) {
+	return {$: 'GameFinishData', a: a};
+};
 var $author$project$Model$PlayedCardData = function (a) {
 	return {$: 'PlayedCardData', a: a};
 };
@@ -5538,7 +5541,8 @@ var $author$project$SharedData$roundDataDecoder = $elm$json$Json$Decode$oneOf(
 	_List_fromArray(
 		[
 			A2($elm$json$Json$Decode$map, $author$project$Model$PlayedCardData, $author$project$SharedData$playedCardDecoder),
-			A2($elm$json$Json$Decode$map, $author$project$Model$RoundFinishData, $author$project$SharedData$nextRoundDataDecoder)
+			A2($elm$json$Json$Decode$map, $author$project$Model$RoundFinishData, $author$project$SharedData$nextRoundDataDecoder),
+			A2($elm$json$Json$Decode$map, $author$project$Model$GameFinishData, $author$project$SharedData$gameStateDecoder)
 		]));
 var $author$project$Model$SelectionData = F3(
 	function (selectedTrump, helper1, helper2) {
@@ -5644,12 +5648,16 @@ var $author$project$Subscriptions$subscriptions = function (model) {
 					var _v8 = A2($elm$json$Json$Decode$decodeString, $author$project$SharedData$roundDataDecoder, str);
 					if (_v8.$ === 'Ok') {
 						var roundData = _v8.a;
-						if (roundData.$ === 'PlayedCardData') {
-							var playedCard = roundData.a;
-							return A2($author$project$Model$PlayCard, playedCard.playedCard, playedCard.turn);
-						} else {
-							var nextRoundData = roundData.a;
-							return A2($author$project$Model$NextRound, nextRoundData.firstPlayer, nextRoundData.playerSet);
+						switch (roundData.$) {
+							case 'PlayedCardData':
+								var playedCard = roundData.a;
+								return A2($author$project$Model$PlayCard, playedCard.playedCard, playedCard.turn);
+							case 'RoundFinishData':
+								var nextRoundData = roundData.a;
+								return A2($author$project$Model$NextRound, nextRoundData.firstPlayer, nextRoundData.playerSet);
+							default:
+								var nextGameData = roundData.a;
+								return $author$project$Model$BeginGame(nextGameData);
 						}
 					} else {
 						return $author$project$Model$NoOp;

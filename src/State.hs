@@ -19,6 +19,17 @@ data Hand = Hand
   , card6 :: Maybe Card
   }
 
+data Round
+  = Round1
+  | Round2
+  | Round3
+  | Round4
+  | Round5
+  | Round6
+  | Round7
+  | Round8
+  deriving Eq
+
 data State = State
   { gameData :: GameData
   , bidData :: (P.PlayerIndex, Int)
@@ -28,6 +39,8 @@ data State = State
   , firstPlayer :: P.PlayerIndex
   , biddingTeam :: [P.PlayerIndex]
   , antiTeam :: [P.PlayerIndex]
+  , roundIndex :: Round
+  , helpersRevealed :: Int
   }
 
 type StateMap = M.Map String State
@@ -102,3 +115,13 @@ removePlayerFromBiddingSet index state = state
 isBiddingCompleted :: State -> Bool
 isBiddingCompleted state =
   S.null $ biddingPlayers state
+
+nextRound :: Round -> Round
+nextRound Round1 = Round2
+nextRound Round2 = Round3
+nextRound Round3 = Round4
+nextRound Round4 = Round5
+nextRound Round5 = Round6
+nextRound Round6 = Round7
+nextRound Round7 = Round8
+nextRound Round8 = Round1
