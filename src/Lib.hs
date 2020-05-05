@@ -115,6 +115,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
             , bidData = (P.Player1, 150)
             , biddingPlayers = S.fromList P.playerIndices
             , selectionData = SD.initSelectionData
+            , firstPlayer = firstBidder newGameData
             , hand = emptyHand
             , biddingTeam = []
             , antiTeam = []
@@ -217,9 +218,9 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         for_ connectionList $ \conn ->
           sendTextData conn $ encode $ PC.SPC newTurn card
 
-        -- When next turn comes back to the first bidder, then calculate the score and
+        -- When next turn comes back to the first player, then calculate the score and
         -- send it after an interval of 2 seconds
-        when (newTurn == firstBidder (gameData state)) $
+        when (newTurn == firstPlayer state) $
           void $ forkIO $ do
             threadDelay $ 2 * 1000 * 1000
             sendRoundScore gName newState newHand
@@ -287,11 +288,15 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         putStrLn $ "Player: " ++ P.name (getPlayer winner $ players $ gameData state) ++ " has won round with score: "
                   ++ show score
 
-        -- Update the state with new scores
+        -- Update the state with new scores, and the new first turn
         updateState stateMapMVar gName
           $ state
             { gameData = (gameData state)
-              { players = newPlayerSet }
+              { players = newPlayerSet
+              , turn = winner
+              }
+              , firstPlayer = winner
+              , hand = emptyHand
             }
 
         for_ connectionList $ \conn ->

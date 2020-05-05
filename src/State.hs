@@ -25,6 +25,7 @@ data State = State
   , biddingPlayers :: S.Set P.PlayerIndex
   , selectionData :: SelectionData
   , hand :: Hand
+  , firstPlayer :: P.PlayerIndex
   , biddingTeam :: [P.PlayerIndex]
   , antiTeam :: [P.PlayerIndex]
   }

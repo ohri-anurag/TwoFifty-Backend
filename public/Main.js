@@ -7356,7 +7356,7 @@ var $author$project$View$view = function (model) {
 						return isActive && _Utils_eq(t, playState.gameState.myIndex);
 					},
 					playState.turn));
-			var baseCard = _Utils_eq(playState.gameState.firstBidder, playState.gameState.myIndex) ? $elm$core$Maybe$Nothing : (isActiveTurn ? A2($author$project$Model$getCardFromHand, playState.gameState.firstBidder, playState.hand) : $elm$core$Maybe$Nothing);
+			var baseCard = _Utils_eq(playState.firstPlayer, playState.gameState.myIndex) ? $elm$core$Maybe$Nothing : (isActiveTurn ? A2($author$project$Model$getCardFromHand, playState.firstPlayer, playState.hand) : $elm$core$Maybe$Nothing);
 			var attrList = function (card) {
 				return isActiveTurn ? _List_fromArray(
 					[
