@@ -6219,18 +6219,27 @@ var $author$project$Update$update = F2(
 							});
 					};
 					var newHelpersRevealed = A2($author$project$Model$isPlayerHelper, card, playState.selectionData) ? (playState.helpersRevealed + 1) : playState.helpersRevealed;
+					var newHand = A2(
+						$elm$core$Maybe$withDefault,
+						playState.hand,
+						A2(
+							$elm$core$Maybe$map,
+							function (t) {
+								return A3($author$project$Model$setCardInHand, t, card, playState.hand);
+							},
+							playState.turn));
+					var hasTeamBeenRevealed = _Utils_eq(
+						newHelpersRevealed,
+						$author$project$Model$maxHelpers(playState.selectionData));
 					var updatePlayerStatus = function (oldStatus) {
 						var _v14 = playState.turn;
 						if (_v14.$ === 'Just') {
 							var turn = _v14.a;
-							if (_Utils_eq(turn, playState.gameState.myIndex)) {
+							if (_Utils_eq(turn, playState.gameState.myIndex) || hasTeamBeenRevealed) {
 								return oldStatus;
 							} else {
 								if (A2($author$project$Model$isPlayerHelper, card, playState.selectionData)) {
 									var newStatus = A3($author$project$Model$setPlayerStatus, turn, $author$project$Model$BiddingTeam, oldStatus);
-									var hasTeamBeenRevealed = _Utils_eq(
-										newHelpersRevealed,
-										$author$project$Model$maxHelpers(playState.selectionData));
 									return hasTeamBeenRevealed ? A3(
 										$elm$core$List$foldl,
 										F2(
@@ -6256,15 +6265,6 @@ var $author$project$Update$update = F2(
 							return oldStatus;
 						}
 					};
-					var newHand = A2(
-						$elm$core$Maybe$withDefault,
-						playState.hand,
-						A2(
-							$elm$core$Maybe$map,
-							function (t) {
-								return A3($author$project$Model$setCardInHand, t, card, playState.hand);
-							},
-							playState.turn));
 					return _Utils_Tuple2(
 						A3(
 							$author$project$Model$PlayRound,
