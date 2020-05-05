@@ -39,6 +39,7 @@ type API = "game" :> WebSocket
 startApp :: IO ()
 startApp = do
   port <- read <$> getEnv "PORT"
+  -- let port = 8080
 
   stateMap <- newMVar M.empty
   run port $ app stateMap

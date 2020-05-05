@@ -10,10 +10,10 @@ import Data.Maybe (fromJust)
 import System.Random (getStdRandom, randomR)
 
 data Suit
-  = Club
+  = Spade
   | Heart
+  | Club
   | Diamond
-  | Spade
   deriving (Eq, Ord, Show, Enum)
 
 data CardValue
@@ -36,10 +36,18 @@ data Card = Card
   { value :: CardValue
   , suit :: Suit
   }
-  deriving (Eq, Ord)
+  deriving Eq
 
 instance Show Card where
   show (Card v s) = show v ++ " of " ++ show s
+
+instance Ord Card where
+  compare (Card v1 s1) (Card v2 s2)
+    | s1 == s2 =
+      compare v1 v2
+
+    | otherwise =
+      compare s1 s2
 
 calculateScore :: Card -> Int
 calculateScore (Card Three Spade) = 30
@@ -54,7 +62,7 @@ calculateScore (Card val _)
     0
 
 suits :: [Suit]
-suits = [Club .. Spade]
+suits = [Spade .. Diamond]
 
 values :: [CardValue]
 values = [Three .. Ace]

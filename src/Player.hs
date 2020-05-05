@@ -3,6 +3,7 @@
 module Player where
 
 import Data.Aeson.TH
+import Data.List (sort)
 
 import Card
 
@@ -90,12 +91,12 @@ shuffledCards = do
   randomizedCards <- fisherYatesShuffle allCards
   
   pure $ CD
-    { cardSet1 = take 8 randomizedCards
-    , cardSet2 = take 8 $ drop 8 randomizedCards
-    , cardSet3 = take 8 $ drop 16 randomizedCards
-    , cardSet4 = take 8 $ drop 24 randomizedCards
-    , cardSet5 = take 8 $ drop 32 randomizedCards
-    , cardSet6 = take 8 $ drop 40 randomizedCards
+    { cardSet1 = sort $ take 8 randomizedCards
+    , cardSet2 = sort $ take 8 $ drop 8 randomizedCards
+    , cardSet3 = sort $ take 8 $ drop 16 randomizedCards
+    , cardSet4 = sort $ take 8 $ drop 24 randomizedCards
+    , cardSet5 = sort $ take 8 $ drop 32 randomizedCards
+    , cardSet6 = sort $ take 8 $ drop 40 randomizedCards
     }
 
 playerIndices :: [PlayerIndex]
