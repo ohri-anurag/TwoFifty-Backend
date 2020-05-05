@@ -218,10 +218,10 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
           sendTextData conn $ encode $ PC.SPC newTurn card
 
         -- When next turn comes back to the first bidder, then calculate the score and
-        -- send it after an interval of 5 seconds
+        -- send it after an interval of 2 seconds
         when (newTurn == firstBidder (gameData state)) $
           void $ forkIO $ do
-            threadDelay $ 5 * 1000 * 1000
+            threadDelay $ 2 * 1000 * 1000
             sendRoundScore gName newState newHand
 
       Nothing ->
@@ -295,7 +295,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
             }
 
         for_ connectionList $ \conn ->
-          sendTextData conn $ encode newPlayerSet
+          sendTextData conn $ encode $ PC.NRD winner newPlayerSet
 
       Nothing ->
         pure ()

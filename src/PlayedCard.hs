@@ -17,11 +17,12 @@ data SendPlayedCard = SPC
   , playedCard :: Card
   }
 
--- data RoundFinished = RF
---   { winner :: PlayerIndex
---   , playerSet :: PlayerSet
---   }
+data NextRoundData = NRD
+  { firstPlayer :: PlayerIndex
+  , playerSet :: PlayerSet
+  }
 
 -- JSON derivations
 $(deriveJSON defaultOptions ''ReceivePlayedCard)
 $(deriveJSON defaultOptions ''SendPlayedCard)
+$(deriveJSON defaultOptions ''NextRoundData)

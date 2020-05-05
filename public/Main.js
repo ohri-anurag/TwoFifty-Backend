@@ -5166,9 +5166,10 @@ var $author$project$Model$NewHighestBid = F2(
 	function (a, b) {
 		return {$: 'NewHighestBid', a: a, b: b};
 	});
-var $author$project$Model$NextRound = function (a) {
-	return {$: 'NextRound', a: a};
-};
+var $author$project$Model$NextRound = F2(
+	function (a, b) {
+		return {$: 'NextRound', a: a, b: b};
+	});
 var $author$project$Model$NoOp = {$: 'NoOp'};
 var $author$project$Model$PlayCard = F2(
 	function (a, b) {
@@ -5425,22 +5426,6 @@ var $author$project$Model$amIHelper = F2(
 		};
 		return isHelper(selectionData.helper1) || isHelper(selectionData.helper2);
 	});
-var $elm$core$Basics$always = F2(
-	function (a, _v0) {
-		return a;
-	});
-var $author$project$Model$biddingTeamSize = function (selectionData) {
-	var isHelper = function (helper) {
-		return A2(
-			$elm$core$Maybe$withDefault,
-			0,
-			A2(
-				$elm$core$Maybe$map,
-				$elm$core$Basics$always(1),
-				helper));
-	};
-	return (1 + isHelper(selectionData.helper1)) + isHelper(selectionData.helper2);
-};
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -5452,6 +5437,22 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
+var $elm$core$Basics$always = F2(
+	function (a, _v0) {
+		return a;
+	});
+var $author$project$Model$maxHelpers = function (selectionData) {
+	var isHelper = function (helper) {
+		return A2(
+			$elm$core$Maybe$withDefault,
+			0,
+			A2(
+				$elm$core$Maybe$map,
+				$elm$core$Basics$always(1),
+				helper));
+	};
+	return isHelper(selectionData.helper1) + isHelper(selectionData.helper2);
+};
 var $elm$core$Basics$neq = _Utils_notEqual;
 var $author$project$Model$setPlayerStatus = F3(
 	function (playerIndex, playerStatus, playerStatusSet) {
@@ -5485,7 +5486,7 @@ var $author$project$Model$setPlayerStatus = F3(
 var $author$project$Subscriptions$getPlayersStatus = F5(
 	function (myIndex, winnerIndex, selectionData, myCards, playerStatusSet) {
 		var onlyBidderInBiddingTeam = function (statusSet) {
-			return ($author$project$Model$biddingTeamSize(selectionData) === 1) ? A3(
+			return (!$author$project$Model$maxHelpers(selectionData)) ? A3(
 				$elm$core$List$foldl,
 				F2(
 					function (p, pss) {
@@ -5498,7 +5499,13 @@ var $author$project$Subscriptions$getPlayersStatus = F5(
 					$author$project$Model$allPlayerIndices)) : statusSet;
 		};
 		var newStatusSet = A3($author$project$Model$setPlayerStatus, winnerIndex, $author$project$Model$BiddingTeam, playerStatusSet);
-		return _Utils_eq(myIndex, winnerIndex) ? onlyBidderInBiddingTeam(newStatusSet) : (A2($author$project$Model$amIHelper, myCards, selectionData) ? A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$BiddingTeam, newStatusSet) : A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$AntiTeam, newStatusSet));
+		return _Utils_eq(myIndex, winnerIndex) ? _Utils_Tuple2(
+			onlyBidderInBiddingTeam(newStatusSet),
+			0) : (A2($author$project$Model$amIHelper, myCards, selectionData) ? _Utils_Tuple2(
+			A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$BiddingTeam, newStatusSet),
+			1) : _Utils_Tuple2(
+			A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$AntiTeam, newStatusSet),
+			0));
 	});
 var $author$project$Model$Undecided = {$: 'Undecided'};
 var $author$project$Model$initPlayerStatusSet = {status1: $author$project$Model$Undecided, status2: $author$project$Model$Undecided, status3: $author$project$Model$Undecided, status4: $author$project$Model$Undecided, status5: $author$project$Model$Undecided, status6: $author$project$Model$Undecided};
@@ -5509,6 +5516,15 @@ var $author$project$Model$PlayedCardData = function (a) {
 var $author$project$Model$RoundFinishData = function (a) {
 	return {$: 'RoundFinishData', a: a};
 };
+var $author$project$Model$NextRoundData = F2(
+	function (firstPlayer, playerSet) {
+		return {firstPlayer: firstPlayer, playerSet: playerSet};
+	});
+var $author$project$SharedData$nextRoundDataDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$Model$NextRoundData,
+	A2($elm$json$Json$Decode$field, 'firstPlayer', $author$project$SharedData$playerIndexDecoder),
+	A2($elm$json$Json$Decode$field, 'playerSet', $author$project$SharedData$playerSetDecoder));
 var $author$project$Model$PlayedCard = F2(
 	function (turn, playedCard) {
 		return {playedCard: playedCard, turn: turn};
@@ -5522,7 +5538,7 @@ var $author$project$SharedData$roundDataDecoder = $elm$json$Json$Decode$oneOf(
 	_List_fromArray(
 		[
 			A2($elm$json$Json$Decode$map, $author$project$Model$PlayedCardData, $author$project$SharedData$playedCardDecoder),
-			A2($elm$json$Json$Decode$map, $author$project$Model$RoundFinishData, $author$project$SharedData$playerSetDecoder)
+			A2($elm$json$Json$Decode$map, $author$project$Model$RoundFinishData, $author$project$SharedData$nextRoundDataDecoder)
 		]));
 var $author$project$Model$SelectionData = F3(
 	function (selectedTrump, helper1, helper2) {
@@ -5582,14 +5598,19 @@ var $author$project$Subscriptions$subscriptions = function (model) {
 					var _v4 = A2($elm$json$Json$Decode$decodeString, $author$project$SharedData$selectionDataDecoder, str);
 					if (_v4.$ === 'Ok') {
 						var selectionData = _v4.a;
+						var _v5 = A5($author$project$Subscriptions$getPlayersStatus, gameState.myIndex, fBiddingData.biddingWinner, selectionData, gameState.myCards, $author$project$Model$initPlayerStatusSet);
+						var newStatusSet = _v5.a;
+						var newHelpersRevealed = _v5.b;
 						return $author$project$Model$StartGameplay(
 							{
 								biddingData: fBiddingData,
+								firstPlayer: gameState.firstBidder,
 								gameState: gameState,
 								hand: $author$project$Model$emptyHand,
-								playersStatus: A5($author$project$Subscriptions$getPlayersStatus, gameState.myIndex, fBiddingData.biddingWinner, selectionData, gameState.myCards, $author$project$Model$initPlayerStatusSet),
+								helpersRevealed: newHelpersRevealed,
+								playersStatus: newStatusSet,
 								selectionData: selectionData,
-								turn: gameState.firstBidder
+								turn: $elm$core$Maybe$Just(gameState.firstBidder)
 							});
 					} else {
 						return $author$project$Model$NoOp;
@@ -5597,17 +5618,22 @@ var $author$project$Subscriptions$subscriptions = function (model) {
 				case 'TrumpSelection':
 					var fBiddingData = model.b;
 					var gameState = model.c;
-					var _v5 = A2($elm$json$Json$Decode$decodeString, $author$project$SharedData$selectionDataDecoder, str);
-					if (_v5.$ === 'Ok') {
-						var selectionData = _v5.a;
+					var _v6 = A2($elm$json$Json$Decode$decodeString, $author$project$SharedData$selectionDataDecoder, str);
+					if (_v6.$ === 'Ok') {
+						var selectionData = _v6.a;
+						var _v7 = A5($author$project$Subscriptions$getPlayersStatus, gameState.myIndex, fBiddingData.biddingWinner, selectionData, gameState.myCards, $author$project$Model$initPlayerStatusSet);
+						var newStatusSet = _v7.a;
+						var newHelpersRevealed = _v7.b;
 						return $author$project$Model$StartGameplay(
 							{
 								biddingData: fBiddingData,
+								firstPlayer: gameState.firstBidder,
 								gameState: gameState,
 								hand: $author$project$Model$emptyHand,
-								playersStatus: A5($author$project$Subscriptions$getPlayersStatus, gameState.myIndex, fBiddingData.biddingWinner, selectionData, gameState.myCards, $author$project$Model$initPlayerStatusSet),
+								helpersRevealed: newHelpersRevealed,
+								playersStatus: newStatusSet,
 								selectionData: selectionData,
-								turn: gameState.firstBidder
+								turn: $elm$core$Maybe$Just(gameState.firstBidder)
 							});
 					} else {
 						return $author$project$Model$NoOp;
@@ -5615,15 +5641,15 @@ var $author$project$Subscriptions$subscriptions = function (model) {
 				case 'PlayRound':
 					var round = model.a;
 					var playState = model.b;
-					var _v6 = A2($elm$json$Json$Decode$decodeString, $author$project$SharedData$roundDataDecoder, str);
-					if (_v6.$ === 'Ok') {
-						var roundData = _v6.a;
+					var _v8 = A2($elm$json$Json$Decode$decodeString, $author$project$SharedData$roundDataDecoder, str);
+					if (_v8.$ === 'Ok') {
+						var roundData = _v8.a;
 						if (roundData.$ === 'PlayedCardData') {
 							var playedCard = roundData.a;
 							return A2($author$project$Model$PlayCard, playedCard.playedCard, playedCard.turn);
 						} else {
-							var playerSet = roundData.a;
-							return $author$project$Model$NextRound(playerSet);
+							var nextRoundData = roundData.a;
+							return A2($author$project$Model$NextRound, nextRoundData.firstPlayer, nextRoundData.playerSet);
 						}
 					} else {
 						return $author$project$Model$NoOp;
@@ -6171,40 +6197,6 @@ var $author$project$Update$update = F2(
 				if (model.$ === 'PlayRound') {
 					var round = model.a;
 					var playState = model.b;
-					var updatePlayerStatus = function (oldStatus) {
-						if (_Utils_eq(playState.turn, playState.gameState.myIndex)) {
-							return oldStatus;
-						} else {
-							var newStatus = A2($author$project$Model$isPlayerHelper, card, playState.selectionData) ? A3($author$project$Model$setPlayerStatus, playState.turn, $author$project$Model$BiddingTeam, oldStatus) : oldStatus;
-							var maxSize = $author$project$Model$biddingTeamSize(playState.selectionData);
-							var currentSize = $elm$core$List$length(
-								A2(
-									$elm$core$List$filter,
-									A2(
-										$elm$core$Basics$composeR,
-										$elm$core$Tuple$second,
-										$elm$core$Basics$eq($author$project$Model$BiddingTeam)),
-									$author$project$Model$getPlayerStatuses(newStatus)));
-							var hasTeamBeenRevealed = _Utils_eq(maxSize, currentSize);
-							return A3(
-								$elm$core$List$foldl,
-								F2(
-									function (p, pss) {
-										return A3($author$project$Model$setPlayerStatus, p, $author$project$Model$AntiTeam, pss);
-									}),
-								newStatus,
-								A2(
-									$elm$core$List$map,
-									$elm$core$Tuple$first,
-									A2(
-										$elm$core$List$filter,
-										A2(
-											$elm$core$Basics$composeR,
-											$elm$core$Tuple$second,
-											$elm$core$Basics$neq($author$project$Model$BiddingTeam)),
-										$author$project$Model$getPlayerStatuses(newStatus))));
-						}
-					};
 					var updateGameState = function (gameState) {
 						return _Utils_update(
 							gameState,
@@ -6218,6 +6210,53 @@ var $author$project$Update$update = F2(
 									gameState.myCards)
 							});
 					};
+					var newHelpersRevealed = A2($author$project$Model$isPlayerHelper, card, playState.selectionData) ? (playState.helpersRevealed + 1) : playState.helpersRevealed;
+					var updatePlayerStatus = function (oldStatus) {
+						var _v14 = playState.turn;
+						if (_v14.$ === 'Just') {
+							var turn = _v14.a;
+							if (_Utils_eq(turn, playState.gameState.myIndex)) {
+								return oldStatus;
+							} else {
+								if (A2($author$project$Model$isPlayerHelper, card, playState.selectionData)) {
+									var newStatus = A3($author$project$Model$setPlayerStatus, turn, $author$project$Model$BiddingTeam, oldStatus);
+									var hasTeamBeenRevealed = _Utils_eq(
+										newHelpersRevealed,
+										$author$project$Model$maxHelpers(playState.selectionData));
+									return hasTeamBeenRevealed ? A3(
+										$elm$core$List$foldl,
+										F2(
+											function (p, pss) {
+												return A3($author$project$Model$setPlayerStatus, p, $author$project$Model$AntiTeam, pss);
+											}),
+										newStatus,
+										A2(
+											$elm$core$List$map,
+											$elm$core$Tuple$first,
+											A2(
+												$elm$core$List$filter,
+												A2(
+													$elm$core$Basics$composeR,
+													$elm$core$Tuple$second,
+													$elm$core$Basics$neq($author$project$Model$BiddingTeam)),
+												$author$project$Model$getPlayerStatuses(newStatus)))) : newStatus;
+								} else {
+									return oldStatus;
+								}
+							}
+						} else {
+							return oldStatus;
+						}
+					};
+					var newHand = A2(
+						$elm$core$Maybe$withDefault,
+						playState.hand,
+						A2(
+							$elm$core$Maybe$map,
+							function (t) {
+								return A3($author$project$Model$setCardInHand, t, card, playState.hand);
+							},
+							playState.turn));
 					return _Utils_Tuple2(
 						A3(
 							$author$project$Model$PlayRound,
@@ -6226,17 +6265,19 @@ var $author$project$Update$update = F2(
 								playState,
 								{
 									gameState: updateGameState(playState.gameState),
-									hand: A3($author$project$Model$setCardInHand, playState.turn, card, playState.hand),
+									hand: newHand,
+									helpersRevealed: newHelpersRevealed,
 									playersStatus: updatePlayerStatus(playState.playersStatus),
-									turn: nextTurn
+									turn: (!_Utils_eq(nextTurn, playState.firstPlayer)) ? $elm$core$Maybe$Just(nextTurn) : $elm$core$Maybe$Nothing
 								}),
-							true),
+							!_Utils_eq(nextTurn, playState.firstPlayer)),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 'NextRound':
-				var playerSet = msg.a;
+				var firstPlayer = msg.a;
+				var playerSet = msg.b;
 				if (model.$ === 'PlayRound') {
 					var round = model.a;
 					var playState = model.b;
@@ -6252,8 +6293,10 @@ var $author$project$Update$update = F2(
 							_Utils_update(
 								playState,
 								{
+									firstPlayer: firstPlayer,
 									gameState: newGameState(playState.gameState),
-									hand: $author$project$Model$emptyHand
+									hand: $author$project$Model$emptyHand,
+									turn: $elm$core$Maybe$Just(firstPlayer)
 								}),
 							true),
 						$elm$core$Platform$Cmd$none);
@@ -6600,27 +6643,51 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
-var $author$project$Model$getPlayers = function (players) {
-	return _List_fromArray(
-		[players.player1, players.player2, players.player3, players.player4, players.player5, players.player6]);
-};
-var $author$project$Model$otherPlayers = function (gameState) {
-	var playerSet = gameState.playerSet;
-	var me = A2($author$project$Model$getPlayer, playerSet, gameState.myIndex);
-	var allPlayers = $author$project$Model$getPlayers(playerSet);
-	return A2(
-		$elm$core$List$filter,
-		function (p) {
-			return !_Utils_eq(p, me);
-		},
-		allPlayers);
-};
+var $author$project$Model$lookup = F2(
+	function (elem, list) {
+		lookup:
+		while (true) {
+			if (!list.b) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (_Utils_eq(x.a, elem)) {
+					return $elm$core$Maybe$Just(x.b);
+				} else {
+					var $temp$elem = elem,
+						$temp$list = xs;
+					elem = $temp$elem;
+					list = $temp$list;
+					continue lookup;
+				}
+			}
+		}
+	});
+var $elm$core$Tuple$mapBoth = F3(
+	function (funcA, funcB, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			funcA(x),
+			funcB(y));
+	});
 var $elm$core$List$singleton = function (value) {
 	return _List_fromArray(
 		[value]);
 };
 var $author$project$View$playerView = F2(
-	function (i, player) {
+	function (i, _v0) {
+		var player = _v0.a;
+		var maybeIsAllied = _v0.b;
+		var alliedClass = function () {
+			if (maybeIsAllied.$ === 'Just') {
+				var isAllied = maybeIsAllied.a;
+				return isAllied ? 'ally' : 'enemy';
+			} else {
+				return '';
+			}
+		}();
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -6628,7 +6695,7 @@ var $author$project$View$playerView = F2(
 					A2(
 					$elm$html$Html$Attributes$attribute,
 					'class',
-					'player p' + $elm$core$String$fromInt(i))
+					alliedClass + (' player p' + $elm$core$String$fromInt(i)))
 				]),
 			_List_fromArray(
 				[
@@ -6684,25 +6751,44 @@ var $author$project$View$playerView = F2(
 						]))
 				]));
 	});
-var $author$project$View$otherPlayersView = function (gameState) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$attribute, 'class', 'playersContainer')
-			]),
-		$elm$core$List$singleton(
+var $author$project$View$otherPlayersView = F2(
+	function (gameState, allStatuses) {
+		var myStatus = A2(
+			$elm$core$Maybe$withDefault,
+			$author$project$Model$Undecided,
+			A2($author$project$Model$lookup, gameState.myIndex, allStatuses));
+		var isAllied = function (playerStatus) {
+			return (_Utils_eq(myStatus, $author$project$Model$Undecided) || _Utils_eq(playerStatus, $author$project$Model$Undecided)) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
+				_Utils_eq(playerStatus, myStatus));
+		};
+		var otherPlayers = A2(
+			$elm$core$List$map,
 			A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$attribute, 'class', 'players')
-					]),
+				$elm$core$Tuple$mapBoth,
+				$author$project$Model$getPlayer(gameState.playerSet),
+				isAllied),
+			A2(
+				$elm$core$List$filter,
 				A2(
-					$elm$core$List$indexedMap,
-					$author$project$View$playerView,
-					$author$project$Model$otherPlayers(gameState)))));
-};
+					$elm$core$Basics$composeR,
+					$elm$core$Tuple$first,
+					$elm$core$Basics$neq(gameState.myIndex)),
+				allStatuses));
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$attribute, 'class', 'playersContainer')
+				]),
+			$elm$core$List$singleton(
+				A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$attribute, 'class', 'players')
+						]),
+					A2($elm$core$List$indexedMap, $author$project$View$playerView, otherPlayers))));
+	});
 var $author$project$View$playAreaView = F2(
 	function (hand, myIndex) {
 		var playerCardView = F2(
@@ -6795,7 +6881,15 @@ var $author$project$View$staticInfoView = F2(
 			}(
 				A2($author$project$Model$getPlayer, playState.gameState.playerSet, playerIndex).name);
 		};
-		var turnView = pronounify(playState.turn) + ' Turn';
+		var turnView = A2(
+			$elm$core$Maybe$withDefault,
+			'Waiting for round to finish..',
+			A2(
+				$elm$core$Maybe$map,
+				function (t) {
+					return pronounify(t) + ' Turn';
+				},
+				playState.turn));
 		var helper2View = A2(
 			$elm$core$Maybe$withDefault,
 			_List_Nil,
@@ -7218,7 +7312,15 @@ var $author$project$View$view = function (model) {
 				_List_fromArray(
 					[
 						$author$project$View$gameNameView(gameState.gameName),
-						$author$project$View$otherPlayersView(gameState),
+						A2(
+						$author$project$View$otherPlayersView,
+						gameState,
+						A2(
+							$elm$core$List$map,
+							function (i) {
+								return _Utils_Tuple2(i, $author$project$Model$Undecided);
+							},
+							$author$project$Model$allPlayerIndices)),
 						A3($author$project$View$biddingZoneView, highestBidderName, biddingData, isBidding),
 						A4(
 						$author$project$View$myCardsView,
@@ -7245,7 +7347,15 @@ var $author$project$View$view = function (model) {
 			var playState = model.b;
 			var isActive = model.c;
 			var me = A2($author$project$Model$getPlayer, playState.gameState.playerSet, playState.gameState.myIndex);
-			var isActiveTurn = isActive && _Utils_eq(playState.turn, playState.gameState.myIndex);
+			var isActiveTurn = A2(
+				$elm$core$Maybe$withDefault,
+				false,
+				A2(
+					$elm$core$Maybe$map,
+					function (t) {
+						return isActive && _Utils_eq(t, playState.gameState.myIndex);
+					},
+					playState.turn));
 			var baseCard = _Utils_eq(playState.gameState.firstBidder, playState.gameState.myIndex) ? $elm$core$Maybe$Nothing : (isActiveTurn ? A2($author$project$Model$getCardFromHand, playState.gameState.firstBidder, playState.hand) : $elm$core$Maybe$Nothing);
 			var attrList = function (card) {
 				return isActiveTurn ? _List_fromArray(
@@ -7260,7 +7370,10 @@ var $author$project$View$view = function (model) {
 				_List_fromArray(
 					[
 						$author$project$View$gameNameView(playState.gameState.gameName),
-						$author$project$View$otherPlayersView(playState.gameState),
+						A2(
+						$author$project$View$otherPlayersView,
+						playState.gameState,
+						$author$project$Model$getPlayerStatuses(playState.playersStatus)),
 						A2($author$project$View$staticInfoView, playState, round),
 						A2($author$project$View$playAreaView, playState.hand, playState.gameState.myIndex),
 						A4(
