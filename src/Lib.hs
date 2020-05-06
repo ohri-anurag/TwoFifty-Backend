@@ -154,8 +154,17 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
               closeBidding oldHighestBidder oldBid $ gameData newerState
 
           else if newBid == 250
-            then
-              closeBidding newPlayerIndex newBid $ gameData state
+            then do
+              -- Add the newest bidder to the bidding team, with a bid of 250
+              let
+                newState = state
+                  { biddingTeam = [newPlayerIndex]
+                  , bidData = (newPlayerIndex, newBid)
+                  }
+
+              updateState stateMapMVar gName newState
+
+              closeBidding newPlayerIndex newBid $ gameData newState
             else
               when (newBid > oldBid) $ do
                 -- Update the state with the new highest bid
@@ -356,7 +365,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
             player = getPlayer i ps
             newPlayer = player
               { P.gameScore = 0
-              , P.totalScore = if i `elem` winningTeam then score else 0
+              , P.totalScore = P.totalScore player + if i `elem` winningTeam then score else 0
               }
           in
           updatePlayer i newPlayer ps

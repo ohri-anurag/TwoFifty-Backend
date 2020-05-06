@@ -5411,31 +5411,21 @@ var $elm$core$Maybe$withDefault = F2(
 			return _default;
 		}
 	});
+var $author$project$Model$containsHelper = F2(
+	function (myCards, helper) {
+		return A2(
+			$elm$core$Maybe$withDefault,
+			false,
+			A2(
+				$elm$core$Maybe$map,
+				function (c) {
+					return A2($elm$core$List$member, c, myCards);
+				},
+				helper));
+	});
 var $author$project$Model$amIHelper = F2(
 	function (myCards, selectionData) {
-		var isHelper = function (helper) {
-			return A2(
-				$elm$core$Maybe$withDefault,
-				false,
-				A2(
-					$elm$core$Maybe$map,
-					function (c) {
-						return A2($elm$core$List$member, c, myCards);
-					},
-					helper));
-		};
-		return isHelper(selectionData.helper1) || isHelper(selectionData.helper2);
-	});
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
+		return A2($author$project$Model$containsHelper, myCards, selectionData.helper1) || A2($author$project$Model$containsHelper, myCards, selectionData.helper2);
 	});
 var $elm$core$Basics$always = F2(
 	function (a, _v0) {
@@ -5453,6 +5443,23 @@ var $author$project$Model$maxHelpers = function (selectionData) {
 	};
 	return isHelper(selectionData.helper1) + isHelper(selectionData.helper2);
 };
+var $author$project$Model$amITheOnlyHelper = F2(
+	function (myCards, selectionData) {
+		var amIHelper2 = A2($author$project$Model$containsHelper, myCards, selectionData.helper2);
+		var amIHelper1 = A2($author$project$Model$containsHelper, myCards, selectionData.helper1);
+		return (amIHelper1 && amIHelper2) || (($author$project$Model$maxHelpers(selectionData) === 1) && (amIHelper1 || amIHelper2));
+	});
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
 var $elm$core$Basics$neq = _Utils_notEqual;
 var $author$project$Model$setPlayerStatus = F3(
 	function (playerIndex, playerStatus, playerStatusSet) {
@@ -5485,27 +5492,25 @@ var $author$project$Model$setPlayerStatus = F3(
 	});
 var $author$project$Subscriptions$getPlayersStatus = F5(
 	function (myIndex, winnerIndex, selectionData, myCards, playerStatusSet) {
-		var onlyBidderInBiddingTeam = function (statusSet) {
-			return (!$author$project$Model$maxHelpers(selectionData)) ? A3(
-				$elm$core$List$foldl,
-				F2(
-					function (p, pss) {
-						return A3($author$project$Model$setPlayerStatus, p, $author$project$Model$AntiTeam, pss);
-					}),
-				statusSet,
-				A2(
-					$elm$core$List$filter,
-					$elm$core$Basics$neq(myIndex),
-					$author$project$Model$allPlayerIndices)) : statusSet;
-		};
 		var newStatusSet = A3($author$project$Model$setPlayerStatus, winnerIndex, $author$project$Model$BiddingTeam, playerStatusSet);
-		return _Utils_eq(myIndex, winnerIndex) ? _Utils_Tuple2(
-			onlyBidderInBiddingTeam(newStatusSet),
-			0) : (A2($author$project$Model$amIHelper, myCards, selectionData) ? _Utils_Tuple2(
+		var allAntiStatus = A3(
+			$elm$core$List$foldl,
+			F2(
+				function (p, pss) {
+					return A3($author$project$Model$setPlayerStatus, p, $author$project$Model$AntiTeam, pss);
+				}),
+			newStatusSet,
+			A2(
+				$elm$core$List$filter,
+				$elm$core$Basics$neq(winnerIndex),
+				$author$project$Model$allPlayerIndices));
+		return (!$author$project$Model$maxHelpers(selectionData)) ? _Utils_Tuple2(allAntiStatus, 0) : (_Utils_eq(myIndex, winnerIndex) ? _Utils_Tuple2(newStatusSet, 0) : (A2($author$project$Model$amITheOnlyHelper, myCards, selectionData) ? _Utils_Tuple2(
+			A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$BiddingTeam, allAntiStatus),
+			$author$project$Model$maxHelpers(selectionData)) : (A2($author$project$Model$amIHelper, myCards, selectionData) ? _Utils_Tuple2(
 			A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$BiddingTeam, newStatusSet),
 			1) : _Utils_Tuple2(
 			A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$AntiTeam, newStatusSet),
-			0));
+			0))));
 	});
 var $author$project$Model$Undecided = {$: 'Undecided'};
 var $author$project$Model$initPlayerStatusSet = {status1: $author$project$Model$Undecided, status2: $author$project$Model$Undecided, status3: $author$project$Model$Undecided, status4: $author$project$Model$Undecided, status5: $author$project$Model$Undecided, status6: $author$project$Model$Undecided};
@@ -5826,13 +5831,14 @@ var $author$project$SharedData$encodePlayedCard = F2(
 					$author$project$SharedData$encodeCard(card))
 				]));
 	});
+var $elm$json$Json$Encode$null = _Json_encodeNull;
 var $author$project$SharedData$encodeMaybe = F2(
 	function (encoder, maybe) {
 		if (maybe.$ === 'Just') {
 			var x = maybe.a;
 			return encoder(x);
 		} else {
-			return $elm$json$Json$Encode$string('null');
+			return $elm$json$Json$Encode$null;
 		}
 	});
 var $author$project$SharedData$encodeSelectionData = F2(
@@ -6218,7 +6224,6 @@ var $author$project$Update$update = F2(
 									gameState.myCards)
 							});
 					};
-					var newHelpersRevealed = A2($author$project$Model$isPlayerHelper, card, playState.selectionData) ? (playState.helpersRevealed + 1) : playState.helpersRevealed;
 					var newHand = A2(
 						$elm$core$Maybe$withDefault,
 						playState.hand,
@@ -6228,43 +6233,53 @@ var $author$project$Update$update = F2(
 								return A3($author$project$Model$setCardInHand, t, card, playState.hand);
 							},
 							playState.turn));
-					var hasTeamBeenRevealed = _Utils_eq(
-						newHelpersRevealed,
+					var hadTeamBeenRevealed = _Utils_eq(
+						playState.helpersRevealed,
 						$author$project$Model$maxHelpers(playState.selectionData));
 					var updatePlayerStatus = function (oldStatus) {
-						var _v14 = playState.turn;
-						if (_v14.$ === 'Just') {
-							var turn = _v14.a;
-							if (_Utils_eq(turn, playState.gameState.myIndex) || hasTeamBeenRevealed) {
-								return oldStatus;
+						var _v15 = playState.turn;
+						if (_v15.$ === 'Just') {
+							var turn = _v15.a;
+							if (_Utils_eq(turn, playState.gameState.myIndex) || hadTeamBeenRevealed) {
+								return _Utils_Tuple2(oldStatus, playState.helpersRevealed);
 							} else {
 								if (A2($author$project$Model$isPlayerHelper, card, playState.selectionData)) {
 									var newStatus = A3($author$project$Model$setPlayerStatus, turn, $author$project$Model$BiddingTeam, oldStatus);
-									return hasTeamBeenRevealed ? A3(
-										$elm$core$List$foldl,
-										F2(
-											function (p, pss) {
-												return A3($author$project$Model$setPlayerStatus, p, $author$project$Model$AntiTeam, pss);
-											}),
-										newStatus,
-										A2(
-											$elm$core$List$map,
-											$elm$core$Tuple$first,
+									var newHelpersRevealed = playState.helpersRevealed + 1;
+									var hasTeamBeenRevealed = _Utils_eq(
+										newHelpersRevealed,
+										$author$project$Model$maxHelpers(playState.selectionData));
+									return hasTeamBeenRevealed ? function (s) {
+										return A2($elm$core$Tuple$pair, s, newHelpersRevealed);
+									}(
+										A3(
+											$elm$core$List$foldl,
+											F2(
+												function (p, pss) {
+													return A3($author$project$Model$setPlayerStatus, p, $author$project$Model$AntiTeam, pss);
+												}),
+											newStatus,
 											A2(
-												$elm$core$List$filter,
+												$elm$core$List$map,
+												$elm$core$Tuple$first,
 												A2(
-													$elm$core$Basics$composeR,
-													$elm$core$Tuple$second,
-													$elm$core$Basics$neq($author$project$Model$BiddingTeam)),
-												$author$project$Model$getPlayerStatuses(newStatus)))) : newStatus;
+													$elm$core$List$filter,
+													A2(
+														$elm$core$Basics$composeR,
+														$elm$core$Tuple$second,
+														$elm$core$Basics$neq($author$project$Model$BiddingTeam)),
+													$author$project$Model$getPlayerStatuses(newStatus))))) : _Utils_Tuple2(newStatus, newHelpersRevealed);
 								} else {
-									return oldStatus;
+									return _Utils_Tuple2(oldStatus, playState.helpersRevealed);
 								}
 							}
 						} else {
-							return oldStatus;
+							return _Utils_Tuple2(oldStatus, playState.helpersRevealed);
 						}
 					};
+					var _v14 = updatePlayerStatus(playState.playersStatus);
+					var newerStatus = _v14.a;
+					var newerHelpersRevealed = _v14.b;
 					return _Utils_Tuple2(
 						A3(
 							$author$project$Model$PlayRound,
@@ -6274,8 +6289,8 @@ var $author$project$Update$update = F2(
 								{
 									gameState: updateGameState(playState.gameState),
 									hand: newHand,
-									helpersRevealed: newHelpersRevealed,
-									playersStatus: updatePlayerStatus(playState.playersStatus),
+									helpersRevealed: newerHelpersRevealed,
+									playersStatus: newerStatus,
 									turn: (!_Utils_eq(nextTurn, playState.firstPlayer)) ? $elm$core$Maybe$Just(nextTurn) : $elm$core$Maybe$Nothing
 								}),
 							!_Utils_eq(nextTurn, playState.firstPlayer)),
@@ -6761,6 +6776,19 @@ var $author$project$View$playerView = F2(
 	});
 var $author$project$View$otherPlayersView = F2(
 	function (gameState, allStatuses) {
+		var rotateOtherPlayers = function (allPlayers) {
+			if (allPlayers.b) {
+				var x = allPlayers.a;
+				var xs = allPlayers.b;
+				return _Utils_eq(x.a, gameState.myIndex) ? xs : rotateOtherPlayers(
+					_Utils_ap(
+						xs,
+						_List_fromArray(
+							[x])));
+			} else {
+				return _List_Nil;
+			}
+		};
 		var myStatus = A2(
 			$elm$core$Maybe$withDefault,
 			$author$project$Model$Undecided,
@@ -6775,13 +6803,7 @@ var $author$project$View$otherPlayersView = F2(
 				$elm$core$Tuple$mapBoth,
 				$author$project$Model$getPlayer(gameState.playerSet),
 				isAllied),
-			A2(
-				$elm$core$List$filter,
-				A2(
-					$elm$core$Basics$composeR,
-					$elm$core$Tuple$first,
-					$elm$core$Basics$neq(gameState.myIndex)),
-				allStatuses));
+			rotateOtherPlayers(allStatuses));
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
