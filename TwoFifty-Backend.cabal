@@ -22,6 +22,7 @@ library
                      , PlayedCard
                      , Player
                      , SelectionData
+                     , SharedData
                      , State
   build-depends:       base >= 4.7 && < 5
                      , aeson

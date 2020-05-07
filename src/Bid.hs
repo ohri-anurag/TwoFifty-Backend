@@ -6,12 +6,6 @@ import Data.Aeson.TH
 
 import Player
 
-data ReceiveBiddingData = RBD
-  { gameName :: String
-  , playerIndex :: PlayerIndex
-  , bid :: Int
-  }
-
 data SendBiddingData = SBD
   { highestBidder :: PlayerIndex
   , highestBid :: Int

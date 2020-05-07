@@ -7,11 +7,6 @@ import Data.List (sort)
 
 import Card
 
-data IntroData = ID
-  { playerName :: String
-  , gameName :: String
-  }
-
 data PlayerIndex
   = Player1
   | Player2
@@ -103,7 +98,7 @@ playerIndices :: [PlayerIndex]
 playerIndices = [Player1 .. Player6]
 
 -- JSON derivations
-$(deriveJSON defaultOptions ''IntroData)
+-- $(deriveJSON defaultOptions ''IntroData)
 $(deriveJSON defaultOptions ''PlayerIndex)
 $(deriveJSON defaultOptions ''Player)
 $(deriveJSON defaultOptions ''PlayerSet)
