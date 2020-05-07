@@ -6867,6 +6867,19 @@ var $author$project$View$otherPlayersView = F2(
 	});
 var $author$project$View$playAreaView = F2(
 	function (hand, myIndex) {
+		var rotateOtherPlayers = function (allPlayers) {
+			if (allPlayers.b) {
+				var x = allPlayers.a;
+				var xs = allPlayers.b;
+				return _Utils_eq(x, myIndex) ? xs : rotateOtherPlayers(
+					_Utils_ap(
+						xs,
+						_List_fromArray(
+							[x])));
+			} else {
+				return _List_Nil;
+			}
+		};
 		var playerCardView = F2(
 			function (i, playerIndex) {
 				var defaultView = A2(
@@ -6903,10 +6916,7 @@ var $author$project$View$playAreaView = F2(
 								])),
 						A2($author$project$Model$getCardFromHand, playerIndex, hand)));
 			});
-		var otherPlayers = A2(
-			$elm$core$List$filter,
-			$elm$core$Basics$neq(myIndex),
-			$author$project$Model$allPlayerIndices);
+		var otherPlayers = rotateOtherPlayers($author$project$Model$allPlayerIndices);
 		var playerCards = A2($elm$core$List$indexedMap, playerCardView, otherPlayers);
 		var myCard = A2(playerCardView, 5, myIndex);
 		return A2(
