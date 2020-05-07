@@ -145,6 +145,9 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
             -- Remove the player from bidding players and update the state
             updateState stateMapMVar gName newState
 
+            -- Inform the other players that someone has quit bidding
+            updateMaximumBid newPlayerIndex newBid $ gameData state
+
             -- Tell all players that bidding has been completed if bidding player set is empty
             when (isBiddingCompleted newState) $ do
               -- Add the highest bidder to the bidding team

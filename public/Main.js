@@ -5672,9 +5672,9 @@ var $author$project$Subscriptions$subscriptions = function (model) {
 			}
 		});
 };
-var $author$project$Model$BiddingRound = F3(
-	function (a, b, c) {
-		return {$: 'BiddingRound', a: a, b: b, c: c};
+var $author$project$Model$BiddingRound = F4(
+	function (a, b, c, d) {
+		return {$: 'BiddingRound', a: a, b: b, c: c, d: d};
 	});
 var $author$project$Model$PlayRound = F3(
 	function (a, b, c) {
@@ -5937,10 +5937,11 @@ var $author$project$Update$sendIncreasedBidMessage = F2(
 	function (model, delta) {
 		if (model.$ === 'BiddingRound') {
 			var gameState = model.a;
-			var biddingData = model.b;
+			var bidders = model.b;
+			var biddingData = model.c;
 			var newBid = biddingData.highestBid + delta;
 			return _Utils_Tuple2(
-				(newBid === 250) ? A3($author$project$Model$BiddingRound, gameState, biddingData, false) : model,
+				(newBid === 250) ? A4($author$project$Model$BiddingRound, gameState, bidders, biddingData, false) : model,
 				$author$project$Update$sendEncodedValue(
 					A3($author$project$SharedData$encodeBiddingData, gameState.gameName, gameState.myIndex, newBid)));
 		} else {
@@ -6026,7 +6027,7 @@ var $author$project$Update$update = F2(
 				var initGameState = msg.a;
 				return _Utils_Tuple2(
 					function (bd) {
-						return A3($author$project$Model$BiddingRound, initGameState, bd, true);
+						return A4($author$project$Model$BiddingRound, initGameState, $author$project$Model$allPlayerIndices, bd, true);
 					}(
 						$author$project$Model$initBiddingData(initGameState.firstBidder)),
 					$elm$core$Platform$Cmd$none);
@@ -6037,9 +6038,10 @@ var $author$project$Update$update = F2(
 			case 'QuitBidding':
 				if (model.$ === 'BiddingRound') {
 					var gameState = model.a;
-					var biddingData = model.b;
+					var bidders = model.b;
+					var biddingData = model.c;
 					return _Utils_Tuple2(
-						A3($author$project$Model$BiddingRound, gameState, biddingData, false),
+						A4($author$project$Model$BiddingRound, gameState, bidders, biddingData, false),
 						$author$project$Update$sendEncodedValue(
 							A3($author$project$SharedData$encodeBiddingData, gameState.gameName, gameState.myIndex, 0)));
 				} else {
@@ -6050,12 +6052,24 @@ var $author$project$Update$update = F2(
 				var newHighestBid = msg.b;
 				if (model.$ === 'BiddingRound') {
 					var gameState = model.a;
-					var biddingData = model.b;
-					var isBidding = model.c;
-					return _Utils_Tuple2(
-						A3(
+					var bidders = model.b;
+					var biddingData = model.c;
+					var isBidding = model.d;
+					return (!newHighestBid) ? _Utils_Tuple2(
+						A4(
 							$author$project$Model$BiddingRound,
 							gameState,
+							A2(
+								$elm$core$List$filter,
+								$elm$core$Basics$neq(newHighestBidder),
+								bidders),
+							biddingData,
+							isBidding),
+						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+						A4(
+							$author$project$Model$BiddingRound,
+							gameState,
+							bidders,
 							_Utils_update(
 								biddingData,
 								{highestBid: newHighestBid, highestBidder: newHighestBidder}),
@@ -6373,8 +6387,8 @@ var $elm$html$Html$Events$onClick = function (msg) {
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$View$biddingZoneView = F3(
-	function (highestBidderName, biddingData, isBidding) {
+var $author$project$View$biddingZoneView = F4(
+	function (highestBidderName, bidderNames, biddingData, isBidding) {
 		var biddingHtml = isBidding ? _List_fromArray(
 			[
 				A2(
@@ -6429,6 +6443,18 @@ var $author$project$View$biddingZoneView = F3(
 						$elm$html$Html$text('You can\'t bid anymore.')
 					]))
 			]);
+		var bidders = function () {
+			var bidder = function (name) {
+				return A2(
+					$elm$html$Html$span,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(name)
+						]));
+			};
+			return A2($elm$core$List$map, bidder, bidderNames);
+		}();
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -6467,7 +6493,27 @@ var $author$project$View$biddingZoneView = F3(
 								$elm$html$Html$text('(' + (highestBidderName + ')'))
 							]))
 					]),
-				biddingHtml));
+				_Utils_ap(
+					biddingHtml,
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'bidders')
+								]),
+							A2(
+								$elm$core$List$cons,
+								A2(
+									$elm$html$Html$span,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Current Bidders')
+										])),
+								bidders))
+						]))));
 	});
 var $author$project$View$gameNameView = function (name) {
 	return A2(
@@ -7332,10 +7378,20 @@ var $author$project$View$view = function (model) {
 					]));
 		case 'BiddingRound':
 			var gameState = model.a;
-			var biddingData = model.b;
-			var isBidding = model.c;
+			var bidders = model.b;
+			var biddingData = model.c;
+			var isBidding = model.d;
 			var me = A2($author$project$Model$getPlayer, gameState.playerSet, gameState.myIndex);
 			var highestBidderName = _Utils_eq(biddingData.highestBidder, gameState.myIndex) ? 'You' : A2($author$project$Model$getPlayer, gameState.playerSet, biddingData.highestBidder).name;
+			var bidderNames = A2(
+				$elm$core$List$map,
+				A2(
+					$elm$core$Basics$composeR,
+					$author$project$Model$getPlayer(gameState.playerSet),
+					function ($) {
+						return $.name;
+					}),
+				bidders);
 			return A2(
 				$elm$html$Html$div,
 				_List_Nil,
@@ -7351,7 +7407,7 @@ var $author$project$View$view = function (model) {
 								return _Utils_Tuple2(i, $author$project$Model$Undecided);
 							},
 							$author$project$Model$allPlayerIndices)),
-						A3($author$project$View$biddingZoneView, highestBidderName, biddingData, isBidding),
+						A4($author$project$View$biddingZoneView, highestBidderName, bidderNames, biddingData, isBidding),
 						A4(
 						$author$project$View$myCardsView,
 						$elm$core$Maybe$Nothing,
