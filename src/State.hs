@@ -10,6 +10,19 @@ import Game
 import qualified Player as P
 import SelectionData
 
+-- Now that we can distinguish between the types of data coming in,
+-- we can also keep different state types
+
+data State
+  = IntroState    -- When players are still connecting, we store player names, and game name
+      [String]    -- List of player names, MAX = 6
+      String      -- Game Name
+  | BiddingState
+      PlayerNameSet     -- Names of players assigned to indices
+      CardDistribution  -- The cards assigned to each player
+      PlayerIndex       -- Current maximum bidder
+      Int               -- Maximum bid amount
+
 data Hand = Hand
   { card1 :: Maybe Card
   , card2 :: Maybe Card
