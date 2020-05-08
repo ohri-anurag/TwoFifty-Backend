@@ -1,11 +1,11 @@
-{-# LANGUAGE TemplateHaskell #-}
+-- {-# LANGUAGE TemplateHaskell #-}
 
 module PlayedCard where
 
-import Data.Aeson.TH
+-- import Data.Aeson.TH
 
-import Card
-import Player
+-- import Card
+-- import Player
 
 -- data SendPlayedCard = SPC
 --   { turn :: PlayerIndex

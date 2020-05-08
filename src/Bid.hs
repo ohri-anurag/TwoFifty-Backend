@@ -1,10 +1,10 @@
-{-# LANGUAGE TemplateHaskell #-}
+-- {-# LANGUAGE TemplateHaskell #-}
 
 module Bid where
 
-import Data.Aeson.TH
+-- import Data.Aeson.TH
 
-import Player
+-- import Player
 
 -- data SendBiddingData = SBD
 --   { highestBidder :: PlayerIndex

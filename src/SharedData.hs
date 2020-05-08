@@ -29,15 +29,6 @@ data ReceivedDataValue
       Card          -- Which card was played
   deriving Show
 
-data PlayerNameSet = PlayerNameSet
-  { name1 :: Text
-  , name2 :: Text
-  , name3 :: Text
-  , name4 :: Text
-  , name5 :: Text
-  , name6 :: Text
-  }
-
 -- Need to have a string here, since I need to know which game are we talking about
 data ReceivedData = ReceivedData
   Text            -- Game Id
@@ -93,16 +84,6 @@ instance FromJSON ReceivedData where
   parseJSON x =
     prependFailure "Parsing ReceivedData failed, " $
       typeMismatch "Object" x
-
-instance ToJSON PlayerNameSet where
-  toJSON playerNames = object
-    [ "name1" .= name1 playerNames
-    , "name2" .= name2 playerNames
-    , "name3" .= name3 playerNames
-    , "name4" .= name4 playerNames
-    , "name5" .= name5 playerNames
-    , "name6" .= name6 playerNames
-    ]
 
 instance ToJSON SentData where
   toJSON (GameData playerNames firstBidder myIndex myCards) = object

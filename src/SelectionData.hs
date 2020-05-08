@@ -1,10 +1,10 @@
-{-# LANGUAGE TemplateHaskell #-}
+-- {-# LANGUAGE TemplateHaskell #-}
 
 module SelectionData where
 
-import Data.Aeson.TH
+-- import Data.Aeson.TH
 
-import Card
+-- import Card
 
 -- initSelectionData :: SelectionData
 -- initSelectionData = SD
