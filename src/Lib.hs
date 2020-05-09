@@ -66,6 +66,13 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         case receivedDataValue of
           IntroData playerName ->
             handleIntroPhase playerName gameName conn
+
+          IncreaseBid bidder bid ->
+            handleBidding gameName bidder bid
+
+          QuitBidding quitter ->
+            handleQuitting gameName quitter
+
           _ ->
             putStrLn "Oye hoye ni kudiyan sheher diyan"
       Left err ->
@@ -93,7 +100,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
               | length players == 5 -> do
                 -- Get the cards for each player
-                cardDistribution <- shuffledCards
+                distributedCards <- shuffledCards
 
                 let
                   -- Add the 6th player
@@ -104,15 +111,16 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                 for_ connections $ \(myIndex, connection) ->
                   sendTextData connection
                     $ encode
-                    $ GameData playerNames Player1 myIndex (getCards myIndex cardDistribution)
+                    $ GameData playerNames Player1 myIndex (getCards myIndex distributedCards)
 
                 -- Move the state to bidding state
-                pure $
-                  BiddingState
+                pure
+                  $ BiddingState Player1
+                  $ BiddingStateData
                     playerNames
-                    cardDistribution
+                    distributedCards
                     (M.fromList connections)
-                    Player1
+                    6
                     Player1
                     150
 
@@ -131,6 +139,55 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
           for_ otherPlayerConnections $ \connection ->
             sendTextData connection $ encode $ PlayerJoined playerName
 
+  handleBidding :: T.Text -> PlayerIndex -> Int -> IO ()
+  handleBidding gameName bidder bidAmount = do
+    stateMap <- readMVar stateMapMVar
+
+    case M.lookup gameName stateMap of
+      Just state ->
+        case state of
+          BiddingState firstBidder biddingStateData
+            | bidAmount > highestBid biddingStateData -> do
+                updateState stateMapMVar gameName
+                  $ BiddingState firstBidder
+                  $ biddingStateData
+                    { highestBid = bidAmount
+                    , highestBidder = bidder
+                    }
+                
+                -- Inform the players of the new highest bid
+                for_ (connectionMap biddingStateData) $ \conn ->
+                  sendTextData conn $ encode $ MaximumBid bidder bidAmount
+            | otherwise ->
+              pure ()
+
+          _ -> pure ()
+
+      Nothing ->
+        pure ()
+
+  handleQuitting :: T.Text -> PlayerIndex -> IO ()
+  handleQuitting gameName quitter = do
+    stateMap <- readMVar stateMapMVar
+
+    case M.lookup gameName stateMap of
+      Just state ->
+        case state of
+          BiddingState firstBidder biddingStateData -> do
+              updateState stateMapMVar gameName
+                $ BiddingState firstBidder
+                $ biddingStateData
+                  { numberOfBidders = numberOfBidders biddingStateData - 1 }
+
+              for_ (connectionMap biddingStateData) $ \conn ->
+                sendTextData conn $ encode $ HasQuitBidding quitter
+
+          _ ->
+            pure ()
+
+
+      Nothing ->
+        pure ()
     -- case eitherDecode' bytes of
     --   Right introData -> 
     --     createNewGame introData conn

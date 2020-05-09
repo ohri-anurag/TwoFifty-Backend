@@ -18,7 +18,7 @@ data ReceivedDataValue
       Text          -- Player Name
   | QuitBidding
       PlayerIndex   -- The player who quit bidding
-  | BiddingData
+  | IncreaseBid
       PlayerIndex   -- Bidding Player
       Int           -- Bid Amount
   | SelectionData
@@ -70,8 +70,8 @@ instance FromJSON ReceivedDataValue where
       String str ->
         case str of
           "IntroData" -> IntroData <$> o .: "playerName"
-          "QuitBidding" -> QuitBidding <$> o .: "playerIndex"
-          "BiddingData" -> BiddingData <$> o .: "playerIndex" <*> o .: "bidAmount"
+          "QuitBidding" -> QuitBidding <$> o .: "quitter"
+          "IncreaseBid" -> IncreaseBid <$> o .: "bidder" <*> o .: "bid"
           "SelectionData" -> SelectionData <$> o .: "trumpSuit" <*> o .: "helper1" <*> o .: "helper2"
           "PlayedCard" -> PlayedCard <$> o .: "playedCard"
           _ -> fail $ "Unexpected tag string received: " ++ unpack str
@@ -105,11 +105,14 @@ instance ToJSON SentData where
     , "myIndex" .= myIndex
     , "myCards" .= myCards
     ]
-  toJSON (HasQuitBidding playerIndex) = object
-    [ "hasQuitBidding" .= playerIndex ]
-  toJSON (MaximumBid playerIndex bidAmount) = object
-    [ "maximumBid" .= bidAmount
-    , "bidder" .= playerIndex
+  toJSON sentData@(HasQuitBidding playerIndex) = object
+    [ "tag" .= tagName sentData
+    , "hasQuitBidding" .= playerIndex
+    ]
+  toJSON sentData@(MaximumBid playerIndex bidAmount) = object
+    [ "tag" .= tagName sentData
+    , "highestBid" .= bidAmount
+    , "highestBidder" .= playerIndex
     ]
   toJSON (FinalBid playerIndex bidAmount) = object
     [ "finalBid" .= bidAmount

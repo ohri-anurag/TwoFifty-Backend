@@ -15,27 +15,34 @@ import Player
 -- Now that we can distinguish between the types of data coming in,
 -- we can also keep different state types
 
+data BiddingStateData = BiddingStateData
+  { playerNameSet :: PlayerNameSet          -- Names of players assigned to indices
+  , cardDistribution :: CardDistribution    -- The cards assigned to each player
+  , connectionMap ::                        -- Each player's connection, that will be used to send messages
+      M.Map PlayerIndex Connection
+  , numberOfBidders ::  Int             -- Number of bidders
+  , highestBidder :: PlayerIndex        -- Current maximum bidder
+  , highestBid :: Int                   -- Maximum bid amount
+  }
+
+data RoundStateData = RoundStateData
+  { round :: Round                   -- Which round?
+  , trumpSuit :: Suit                -- Selected trump
+  , biddingTeam :: [PlayerIndex]     -- Bidding Team
+  , currentTurn :: PlayerIndex       -- Current turn
+  , hand ::                          -- The cards being played
+      M.Map PlayerIndex Card
+  }
+
 data State
   = IntroState              -- When players are still connecting, we store player names, and game name
       [(Text, Connection)]  -- List of player names, MAX = 6
   | BiddingState
-      PlayerNameSet     -- Names of players assigned to indices
-      CardDistribution  -- The cards assigned to each player
-      (M.Map            -- Each player's connection, that will be used to send messages
-        PlayerIndex
-        Connection)
-      PlayerIndex       -- First bidder
-      PlayerIndex       -- Current maximum bidder
-      Int               -- Maximum bid amount
+      PlayerIndex           -- First Bidder
+      BiddingStateData
   | RoundState
-      Round             -- Which round?
-      Suit              -- Selected trump
-      PlayerIndex       -- First Bidder
-      [PlayerIndex]     -- Bidding Team
-      PlayerIndex       -- Current turn
-      (M.Map            -- The cards being played
-        PlayerIndex
-        Card)
+      PlayerIndex           -- First Bidder
+      RoundStateData
 
 -- data Hand = Hand
 --   { card1 :: Maybe Card
