@@ -35,7 +35,11 @@ data ReceivedData = ReceivedData
   ReceivedDataValue
 
 data SentData
-  = GameData
+  = PlayerJoined
+      Text          -- Newly Joined Player
+  | ExistingPlayers
+      [Text]        -- Already existing players in the game
+  | GameData
       PlayerNameSet -- Set of player names
       PlayerIndex   -- The first bidder in this game
       PlayerIndex   -- Your player index
@@ -86,8 +90,17 @@ instance FromJSON ReceivedData where
       typeMismatch "Object" x
 
 instance ToJSON SentData where
-  toJSON (GameData playerNames firstBidder myIndex myCards) = object
-    [ "playerNames" .= playerNames
+  toJSON sentData@(PlayerJoined playerName) = object
+    [ "tag" .= tagName sentData
+    , "newPlayer" .= playerName
+    ]
+  toJSON sentData@(ExistingPlayers playerNames) = object
+    [ "tag" .= tagName sentData
+    , "existingPlayers" .= playerNames
+    ]
+  toJSON sentData@(GameData playerNames firstBidder myIndex myCards) = object
+    [ "tag" .= tagName sentData
+    , "playerNames" .= playerNames
     , "firstBidder" .= firstBidder
     , "myIndex" .= myIndex
     , "myCards" .= myCards
@@ -113,6 +126,16 @@ instance ToJSON SentData where
     , "gameScore" .= gameScore
     ]
 
+tagName :: SentData -> Text
+tagName (PlayerJoined _) = "PlayerJoined"
+tagName (ExistingPlayers _) = "ExistingPlayers"
+tagName GameData {} = "GameData"
+tagName (HasQuitBidding _) = "HasQuitBidding"
+tagName (MaximumBid _ _) = "MaximumBid"
+tagName (FinalBid _ _) = "FinalBid"
+tagName (TurnData _) = "TurnData"
+tagName (RoundData _ _) = "RoundData"
+tagName (GameFinishedData _ _) = "GameFinishedData"
 
 
 -- $(deriveJSON defaultOptions ''ReceivedDataValue)

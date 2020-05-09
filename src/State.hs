@@ -1,9 +1,10 @@
 module State where
 
--- import Control.Concurrent.MVar (MVar, putMVar, takeMVar)
+import Control.Concurrent.MVar (MVar, putMVar, takeMVar)
 import qualified Data.Map as M
 -- import Data.Maybe (mapMaybe)
 -- import qualified Data.Set as S
+import Data.Text (Text)
 import Network.WebSockets.Connection (Connection)
 
 import Card
@@ -15,9 +16,8 @@ import Player
 -- we can also keep different state types
 
 data State
-  = IntroState          -- When players are still connecting, we store player names, and game name
-      [String]          -- List of player names, MAX = 6
-      String            -- Game Name
+  = IntroState              -- When players are still connecting, we store player names, and game name
+      [(Text, Connection)]  -- List of player names, MAX = 6
   | BiddingState
       PlayerNameSet     -- Names of players assigned to indices
       CardDistribution  -- The cards assigned to each player
@@ -70,7 +70,7 @@ data Round
 --   , helpersRevealed :: Int
 --   }
 
-type StateMap = M.Map String State
+type StateMap = M.Map Text State
 
 -- emptyHand :: Hand
 -- emptyHand = Hand
@@ -129,11 +129,11 @@ type StateMap = M.Map String State
 --     P.Player6 ->
 --       card6 oldHand
 
--- updateState :: MVar StateMap -> String -> State -> IO ()
--- updateState stateMapMVar gName state  = do
---   stateMap <- takeMVar stateMapMVar
---   putMVar stateMapMVar
---     $ M.insert gName state stateMap
+updateState :: MVar StateMap -> Text -> State -> IO ()
+updateState stateMapMVar gName state  = do
+  stateMap <- takeMVar stateMapMVar
+  putMVar stateMapMVar
+    $ M.insert gName state stateMap
 
 -- removePlayerFromBiddingSet :: P.PlayerIndex -> State -> State
 -- removePlayerFromBiddingSet index state = state

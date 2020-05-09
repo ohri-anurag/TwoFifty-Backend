@@ -5,7 +5,7 @@ module Player where
 
 import Data.Aeson ((.=), object, toJSON, ToJSON)
 import Data.Aeson.TH
-import Data.List (sort)
+import Data.List (foldl', sort)
 import qualified Data.Text as T
 
 import Card
@@ -59,6 +59,29 @@ data PlayerNameSet = PlayerNameSet
   , name5 :: T.Text
   , name6 :: T.Text
   }
+
+setPlayerName :: (PlayerIndex, T.Text) -> PlayerNameSet -> PlayerNameSet
+setPlayerName (playerIndex, name) playerNameSet =
+  case playerIndex of
+    Player1 -> playerNameSet { name1 = name }
+    Player2 -> playerNameSet { name2 = name }
+    Player3 -> playerNameSet { name3 = name }
+    Player4 -> playerNameSet { name4 = name }
+    Player5 -> playerNameSet { name5 = name }
+    Player6 -> playerNameSet { name6 = name }
+
+initialisePlayerNameSet :: [(PlayerIndex, T.Text)] -> PlayerNameSet
+initialisePlayerNameSet =
+  foldl' (flip setPlayerName) emptyNameSet
+  where
+    emptyNameSet = PlayerNameSet
+      { name1 = ""
+      , name2 = ""
+      , name3 = ""
+      , name4 = ""
+      , name5 = ""
+      , name6 = ""
+      }
 
 -- Initial Data
 -- newPlayer :: String -> Player

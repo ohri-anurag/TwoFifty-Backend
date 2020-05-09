@@ -7,16 +7,17 @@ module Lib
     ) where
 
 -- import Control.Concurrent (forkIO, threadDelay)
-import Control.Concurrent.MVar (MVar, newMVar) --, readMVar)
+import Control.Concurrent.MVar (MVar, newMVar, readMVar)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad (forever) --, void, when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
--- import Data.Foldable (foldl', for_, maximumBy)
+import Data.Foldable ({-foldl', -}for_) -- , maximumBy)
 -- import Data.Function (on)
 import qualified Data.Map as M
 -- import qualified Data.Set as S
 import qualified Data.Text as T
+-- import Data.Text.Encoding (encodeUtf8)
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Network.WebSockets.Connection
@@ -32,6 +33,7 @@ import Servant.API.WebSocket
 -- import Game --(GameData(..), PlayerIndex(..), PlayerSet, addPlayerAndConnection, initGameData, intToPlayerIndex, listConnections, newPlayer)
 -- import qualified SelectionData as SD
 import SharedData
+import Player
 import State
 
 
@@ -53,7 +55,7 @@ api :: Proxy API
 api = Proxy
 
 server :: MVar StateMap -> Server API
-server _ {-stateMapMVar-} = streamData :<|> serveDirectoryFileServer "public/"
+server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
   where
   streamData :: (MonadIO m) => Connection -> m ()
   streamData conn = liftIO $ withPingThread conn 10 (pure ()) $ forever $ do
@@ -63,11 +65,72 @@ server _ {-stateMapMVar-} = streamData :<|> serveDirectoryFileServer "public/"
       Right (ReceivedData gameName receivedDataValue) ->
         case receivedDataValue of
           IntroData playerName ->
-            putStrLn $ T.unpack playerName ++ " , " ++ T.unpack gameName
+            handleIntroPhase playerName gameName conn
           _ ->
             putStrLn "Oye hoye ni kudiyan sheher diyan"
       Left err ->
         putStrLn err
+  
+  handleIntroPhase :: T.Text -> T.Text -> Connection -> IO ()
+  handleIntroPhase playerName gameName conn = do
+    putStrLn $ T.unpack playerName ++ " , " ++ T.unpack gameName
+
+    stateMap <- readMVar stateMapMVar
+    newState <-
+      case M.lookup gameName stateMap of
+        Just state ->
+          case state of
+            IntroState players
+              | length players < 5 -> do
+                -- Inform the existing players that a new player has joined
+                newPlayerJoined $ map snd players
+
+                -- Inform the new player of the existing players
+                sendTextData conn $ encode $ ExistingPlayers $ map fst players
+
+                -- Append the new player to the existing players
+                pure $ IntroState $ players ++ [(playerName, conn)]
+
+              | length players == 5 -> do
+                -- Get the cards for each player
+                cardDistribution <- shuffledCards
+
+                let
+                  -- Add the 6th player
+                  newPlayers = players ++ [(playerName, conn)]
+                  connections = zip playerIndices $ map snd newPlayers
+                  playerNames = initialisePlayerNameSet $ zip playerIndices $ map fst newPlayers
+
+                for_ connections $ \(myIndex, connection) ->
+                  sendTextData connection
+                    $ encode
+                    $ GameData playerNames Player1 myIndex (getCards myIndex cardDistribution)
+
+                -- Move the state to bidding state
+                pure $
+                  BiddingState
+                    playerNames
+                    cardDistribution
+                    (M.fromList connections)
+                    Player1
+                    Player1
+                    150
+
+              | otherwise -> pure state
+
+            _ -> pure state
+
+
+        -- Game does not exist, create one
+        Nothing ->
+          pure $ IntroState [(playerName, conn)]
+
+    updateState stateMapMVar gameName newState
+      where
+        newPlayerJoined otherPlayerConnections =
+          for_ otherPlayerConnections $ \connection ->
+            sendTextData connection $ encode $ PlayerJoined playerName
+
     -- case eitherDecode' bytes of
     --   Right introData -> 
     --     createNewGame introData conn
