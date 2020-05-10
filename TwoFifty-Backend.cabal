@@ -16,12 +16,8 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Lib
-  other-modules:       Bid
-                     , Card
-                     , Game
-                     , PlayedCard
+  other-modules:       Card
                      , Player
-                     , SelectionData
                      , SharedData
                      , State
   build-depends:       base >= 4.7 && < 5

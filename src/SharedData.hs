@@ -1,17 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
--- {-# LANGUAGE TemplateHaskell #-}
 
 module SharedData where
 
-import Data.Aeson -- ((.=), (.:), FromJSON, object, Object, parseJSON, toJSON, ToJSON)
+import Data.Aeson
 import Data.Aeson.Types
--- import Data.Aeson.TH
 import Data.Text
 
 import Card
 import Player
 
-
+data SelectionData =
+  SelectionData
+    Suit          -- Trump Suit
+    [Card]        -- Helpers
+  deriving Show
 
 data ReceivedDataValue
   = IntroData
@@ -21,10 +23,8 @@ data ReceivedDataValue
   | IncreaseBid
       PlayerIndex   -- Bidding Player
       Int           -- Bid Amount
-  | SelectionData
-      Suit          -- Trump Suit
-      (Maybe Card)  -- Helper 1
-      (Maybe Card)  -- Helper 2
+  | ReceivedSelectionData
+      SelectionData
   | PlayedCard
       Card          -- Which card was played
   deriving Show
@@ -49,11 +49,9 @@ data SentData
   | MaximumBid
       PlayerIndex   -- The player who made the current maximum bid
       Int           -- Bid Amount
-  | FinalBid
-      PlayerIndex   -- The player who made the final bid
-      Int           -- Bid Amount
-  | TurnData
-      -- PlayerIndex   -- Who played the most recent turn
+  | SentSelectionData
+      SelectionData
+  | PlayCard
       Card          -- The card that was played
   | RoundData
       PlayerIndex   -- The player who won the latest round, and will have the next turn
@@ -61,6 +59,8 @@ data SentData
   | GameFinishedData
       [PlayerIndex] -- The winning team
       Int           -- Their score
+  | NewGame
+      [Card]        -- Cards for new game
 
 -- JSON derivations
 instance FromJSON ReceivedDataValue where
@@ -72,7 +72,7 @@ instance FromJSON ReceivedDataValue where
           "IntroData" -> IntroData <$> o .: "playerName"
           "QuitBidding" -> QuitBidding <$> o .: "quitter"
           "IncreaseBid" -> IncreaseBid <$> o .: "bidder" <*> o .: "bid"
-          "SelectionData" -> SelectionData <$> o .: "trumpSuit" <*> o .: "helper1" <*> o .: "helper2"
+          "SelectionData" -> ReceivedSelectionData <$> (SelectionData <$> o .: "trump" <*> o .: "helpers")
           "PlayedCard" -> PlayedCard <$> o .: "playedCard"
           _ -> fail $ "Unexpected tag string received: " ++ unpack str
       x ->
@@ -114,19 +114,28 @@ instance ToJSON SentData where
     , "highestBid" .= bidAmount
     , "highestBidder" .= playerIndex
     ]
-  toJSON (FinalBid playerIndex bidAmount) = object
-    [ "finalBid" .= bidAmount
-    , "bidder" .= playerIndex
+  toJSON sentData@(SentSelectionData (SelectionData trump helpers)) = object
+    [ "tag" .= tagName sentData
+    , "trump" .= trump
+    , "helpers" .= helpers
     ]
-  toJSON (TurnData playedCard) = object
-    [ "playedCard" .= playedCard ]
-  toJSON (RoundData roundWinner score) = object
-    [ "roundWinner" .= roundWinner
+  toJSON sentData@(PlayCard playedCard) = object
+    [ "tag" .= tagName sentData
+    , "card" .= playedCard
+    ]
+  toJSON sentData@(RoundData roundWinner score) = object
+    [ "tag" .= tagName sentData
+    , "roundWinner" .= roundWinner
     , "roundScore" .= score
     ]
-  toJSON (GameFinishedData winningTeam gameScore) = object
-    [ "winningTeam" .= winningTeam
+  toJSON sentData@(GameFinishedData winningTeam gameScore) = object
+    [ "tag" .= tagName sentData
+    , "winningTeam" .= winningTeam
     , "gameScore" .= gameScore
+    ]
+  toJSON sentData@(NewGame cards) = object
+    [ "tag" .= tagName sentData
+    , "cards" .= cards
     ]
 
 tagName :: SentData -> Text
@@ -135,11 +144,8 @@ tagName (ExistingPlayers _) = "ExistingPlayers"
 tagName GameData {} = "GameData"
 tagName (HasQuitBidding _) = "HasQuitBidding"
 tagName (MaximumBid _ _) = "MaximumBid"
-tagName (FinalBid _ _) = "FinalBid"
-tagName (TurnData _) = "TurnData"
+tagName (SentSelectionData _) = "SelectionData"
+tagName (PlayCard _) = "PlayCard"
 tagName (RoundData _ _) = "RoundData"
 tagName (GameFinishedData _ _) = "GameFinishedData"
-
-
--- $(deriveJSON defaultOptions ''ReceivedDataValue)
--- $(deriveJSON defaultOptions ''ReceivedData)
+tagName (NewGame _) = "NewGame"
