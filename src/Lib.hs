@@ -12,7 +12,7 @@ import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad (forever, void, when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
-import Data.Foldable ({-foldl', -}for_ , maximumBy)
+import Data.Foldable (for_ , maximumBy)
 import Data.Function (on)
 import qualified Data.Map as M
 import qualified Data.Text as T
