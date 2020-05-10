@@ -1,16 +1,14 @@
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 module Player where
 
+import Data.Aeson ((.=), object, toJSON, ToJSON)
 import Data.Aeson.TH
-import Data.List (sort)
+import Data.List (foldl', sort)
+import qualified Data.Text as T
 
 import Card
-
-data IntroData = ID
-  { playerName :: String
-  , gameName :: String
-  }
 
 data PlayerIndex
   = Player1
@@ -21,29 +19,6 @@ data PlayerIndex
   | Player6
   deriving (Eq, Ord, Show, Enum)
 
-data Player = P
-  { totalScore :: Int
-  , gameScore :: Int
-  , name :: String
-  }
-
-data PlayerSet = PS
-  { player1 :: Player
-  , player2 :: Player
-  , player3 :: Player
-  , player4 :: Player
-  , player5 :: Player
-  , player6 :: Player
-  }
-
-data GameState = GS
-  { playerSet :: PlayerSet
-  , firstBidder :: PlayerIndex           -- This person will play the first turn, and have the first chance at bidding.
-  , myIndex :: PlayerIndex
-  , myCards :: [Card]
-  , gameId :: String
-  }
-
 data CardDistribution = CD
   { cardSet1 :: [Card]
   , cardSet2 :: [Card]
@@ -53,23 +28,46 @@ data CardDistribution = CD
   , cardSet6 :: [Card]
   }
 
--- Initial Data
-newPlayer :: String -> Player
-newPlayer str = P
-  { totalScore = 0
-  , gameScore = 0
-  , name = str
+data PlayerNameSet = PlayerNameSet
+  { name1 :: T.Text
+  , name2 :: T.Text
+  , name3 :: T.Text
+  , name4 :: T.Text
+  , name5 :: T.Text
+  , name6 :: T.Text
   }
 
-initPlayerSet :: PlayerSet
-initPlayerSet = PS
-  { player1 = newPlayer $ show Player1
-  , player2 = newPlayer $ show Player2
-  , player3 = newPlayer $ show Player3
-  , player4 = newPlayer $ show Player4
-  , player5 = newPlayer $ show Player5
-  , player6 = newPlayer $ show Player6
+data PlayerScores = PlayerScores
+  { score1 :: Int
+  , score2 :: Int
+  , score3 :: Int
+  , score4 :: Int
+  , score5 :: Int
+  , score6 :: Int
   }
+
+setPlayerName :: (PlayerIndex, T.Text) -> PlayerNameSet -> PlayerNameSet
+setPlayerName (playerIndex, name) playerNameSet =
+  case playerIndex of
+    Player1 -> playerNameSet { name1 = name }
+    Player2 -> playerNameSet { name2 = name }
+    Player3 -> playerNameSet { name3 = name }
+    Player4 -> playerNameSet { name4 = name }
+    Player5 -> playerNameSet { name5 = name }
+    Player6 -> playerNameSet { name6 = name }
+
+initialisePlayerNameSet :: [(PlayerIndex, T.Text)] -> PlayerNameSet
+initialisePlayerNameSet =
+  foldl' (flip setPlayerName) emptyNameSet
+  where
+    emptyNameSet = PlayerNameSet
+      { name1 = ""
+      , name2 = ""
+      , name3 = ""
+      , name4 = ""
+      , name5 = ""
+      , name6 = ""
+      }
 
 -- Helpers
 nextTurn :: PlayerIndex -> PlayerIndex
@@ -102,9 +100,44 @@ shuffledCards = do
 playerIndices :: [PlayerIndex]
 playerIndices = [Player1 .. Player6]
 
--- JSON derivations
-$(deriveJSON defaultOptions ''IntroData)
+zeroScores :: PlayerScores
+zeroScores = PlayerScores
+  { score1 = 0
+  , score2 = 0
+  , score3 = 0
+  , score4 = 0
+  , score5 = 0
+  , score6 = 0
+  }
+
+getScore :: PlayerIndex -> PlayerScores -> Int
+getScore playerIndex playerScores =
+  case playerIndex of
+    Player1 -> score1 playerScores
+    Player2 -> score2 playerScores
+    Player3 -> score3 playerScores
+    Player4 -> score4 playerScores
+    Player5 -> score5 playerScores
+    Player6 -> score6 playerScores
+
+updateScore :: PlayerIndex -> Int -> PlayerScores -> PlayerScores
+updateScore playerIndex score playerScores =
+  case playerIndex of
+    Player1 -> playerScores { score1 = score + score1 playerScores }
+    Player2 -> playerScores { score2 = score + score2 playerScores }
+    Player3 -> playerScores { score3 = score + score3 playerScores }
+    Player4 -> playerScores { score4 = score + score4 playerScores }
+    Player5 -> playerScores { score5 = score + score5 playerScores }
+    Player6 -> playerScores { score6 = score + score6 playerScores }
+
 $(deriveJSON defaultOptions ''PlayerIndex)
-$(deriveJSON defaultOptions ''Player)
-$(deriveJSON defaultOptions ''PlayerSet)
-$(deriveJSON defaultOptions ''GameState)
+
+instance ToJSON PlayerNameSet where
+  toJSON playerNames = object
+    [ "name1" .= name1 playerNames
+    , "name2" .= name2 playerNames
+    , "name3" .= name3 playerNames
+    , "name4" .= name4 playerNames
+    , "name5" .= name5 playerNames
+    , "name6" .= name6 playerNames
+    ]
