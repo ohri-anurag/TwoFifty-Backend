@@ -316,7 +316,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
             -- When 8 rounds have been completed
             when (newRound == Round1) $
-              handleGameFinish firstBidder connectionMap scores roundStateData
+              handleGameFinish firstBidder connectionMap newScores roundStateData
 
           Nothing ->
             pure ()
