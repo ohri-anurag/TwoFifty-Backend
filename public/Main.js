@@ -5818,7 +5818,13 @@ var $author$project$Update$handleReceivedMessages = F2(
 				if (model.$ === 'WaitingForPlayers') {
 					var players = model.a;
 					var gameName = model.b;
-					var biddingRoundData = {amIBidding: true, bidders: $author$project$Model$allPlayerIndices, firstBidder: firstBidder, highestBid: 150, highestBidder: firstBidder, myCards: myCards, myIndex: myIndex, playerSet: playerSet};
+					var biddingRoundData = {
+						amIBidding: true,
+						bidders: $author$project$Model$allPlayerIndices,
+						biddingData: {firstBidder: firstBidder, highestBid: 150, highestBidder: firstBidder},
+						myData: {myCards: myCards, myIndex: myIndex},
+						playerSet: playerSet
+					};
 					return _Utils_Tuple2(
 						A2($author$project$Model$BiddingRound, gameName, biddingRoundData),
 						$elm$core$Platform$Cmd$none);
@@ -5831,13 +5837,20 @@ var $author$project$Update$handleReceivedMessages = F2(
 				if (model.$ === 'BiddingRound') {
 					var gameName = model.a;
 					var biddingRoundData = model.b;
+					var updateBiddingData = function (biddingData) {
+						return _Utils_update(
+							biddingData,
+							{highestBid: bid, highestBidder: bidder});
+					};
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$BiddingRound,
 							gameName,
 							_Utils_update(
 								biddingRoundData,
-								{highestBid: bid, highestBidder: bidder})),
+								{
+									biddingData: updateBiddingData(biddingRoundData.biddingData)
+								})),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -5851,16 +5864,13 @@ var $author$project$Update$handleReceivedMessages = F2(
 						$elm$core$List$filter,
 						$elm$core$Basics$neq(quitter),
 						biddingRoundData.bidders);
-					return (!$elm$core$List$length(newBidders)) ? (_Utils_eq(biddingRoundData.myIndex, biddingRoundData.highestBidder) ? _Utils_Tuple2(
+					return (!$elm$core$List$length(newBidders)) ? (_Utils_eq(biddingRoundData.myData.myIndex, biddingRoundData.biddingData.highestBidder) ? _Utils_Tuple2(
 						A2(
 							$author$project$Model$TrumpSelection,
 							gameName,
 							{
-								bid: biddingRoundData.highestBid,
-								bidder: biddingRoundData.highestBidder,
-								firstBidder: biddingRoundData.firstBidder,
-								myCards: biddingRoundData.myCards,
-								myIndex: biddingRoundData.myIndex,
+								biddingData: biddingRoundData.biddingData,
+								myData: biddingRoundData.myData,
 								playerSet: biddingRoundData.playerSet,
 								selectionData: {helpers: _List_Nil, trump: $author$project$Model$Spade}
 							}),
@@ -5883,7 +5893,8 @@ var $author$project$Update$handleReceivedMessages = F2(
 					case 'TrumpSelection':
 						var gameName = model.a;
 						var trumpSelectionData = model.b;
-						var _v7 = A5($author$project$Update$getPlayersStatus, trumpSelectionData.myIndex, trumpSelectionData.myIndex, trumpSelectionData.selectionData, trumpSelectionData.myCards, $author$project$Model$initPlayerStatusSet);
+						var firstBidder = trumpSelectionData.biddingData.firstBidder;
+						var _v7 = A5($author$project$Update$getPlayersStatus, trumpSelectionData.myData.myIndex, trumpSelectionData.myData.myIndex, trumpSelectionData.selectionData, trumpSelectionData.myData.myCards, $author$project$Model$initPlayerStatusSet);
 						var playersStatus = _v7.a;
 						var helpersRevealed = _v7.b;
 						return _Utils_Tuple2(
@@ -5891,20 +5902,23 @@ var $author$project$Update$handleReceivedMessages = F2(
 								$author$project$Model$PlayRound,
 								gameName,
 								{
-									bidder: trumpSelectionData.myIndex,
-									firstPlayer: trumpSelectionData.firstBidder,
+									biddingData: trumpSelectionData.biddingData,
+									firstPlayer: firstBidder,
 									hand: $author$project$Model$emptyHand,
 									helpersRevealed: helpersRevealed,
+									myData: trumpSelectionData.myData,
+									playerSet: trumpSelectionData.playerSet,
 									playersStatus: playersStatus,
 									roundIndex: $author$project$Model$Round1,
-									trumpSelectionData: trumpSelectionData,
-									turnStatus: _Utils_eq(trumpSelectionData.firstBidder, trumpSelectionData.myIndex) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(trumpSelectionData.firstBidder)
+									selectionData: trumpSelectionData.selectionData,
+									turnStatus: _Utils_eq(firstBidder, trumpSelectionData.myData.myIndex) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
 								}),
 							$elm$core$Platform$Cmd$none);
 					case 'WaitingForTrump':
 						var gameName = model.a;
 						var biddingRoundData = model.b;
-						var _v8 = A5($author$project$Update$getPlayersStatus, biddingRoundData.myIndex, biddingRoundData.highestBidder, selectionData, biddingRoundData.myCards, $author$project$Model$initPlayerStatusSet);
+						var firstBidder = biddingRoundData.biddingData.firstBidder;
+						var _v8 = A5($author$project$Update$getPlayersStatus, biddingRoundData.myData.myIndex, biddingRoundData.biddingData.highestBidder, selectionData, biddingRoundData.myData.myCards, $author$project$Model$initPlayerStatusSet);
 						var playersStatus = _v8.a;
 						var helpersRevealed = _v8.b;
 						return _Utils_Tuple2(
@@ -5912,14 +5926,16 @@ var $author$project$Update$handleReceivedMessages = F2(
 								$author$project$Model$PlayRound,
 								gameName,
 								{
-									bidder: biddingRoundData.myIndex,
-									firstPlayer: biddingRoundData.firstBidder,
+									biddingData: biddingRoundData.biddingData,
+									firstPlayer: firstBidder,
 									hand: $author$project$Model$emptyHand,
 									helpersRevealed: helpersRevealed,
+									myData: biddingRoundData.myData,
+									playerSet: biddingRoundData.playerSet,
 									playersStatus: playersStatus,
 									roundIndex: $author$project$Model$Round1,
-									trumpSelectionData: {bid: biddingRoundData.highestBid, bidder: biddingRoundData.highestBidder, firstBidder: biddingRoundData.firstBidder, myCards: biddingRoundData.myCards, myIndex: biddingRoundData.myIndex, playerSet: biddingRoundData.playerSet, selectionData: selectionData},
-									turnStatus: _Utils_eq(biddingRoundData.firstBidder, biddingRoundData.myIndex) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(biddingRoundData.firstBidder)
+									selectionData: selectionData,
+									turnStatus: _Utils_eq(firstBidder, biddingRoundData.myData.myIndex) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
 								}),
 							$elm$core$Platform$Cmd$none);
 					default:
@@ -5930,9 +5946,9 @@ var $author$project$Update$handleReceivedMessages = F2(
 				if (model.$ === 'PlayRound') {
 					var gameName = model.a;
 					var playRoundData = model.b;
-					var updateGameState = function (trumpSelectionData) {
+					var updateMyData = function (myData) {
 						return _Utils_update(
-							trumpSelectionData,
+							myData,
 							{
 								myCards: A2(
 									$elm$core$List$filter,
@@ -5940,13 +5956,13 @@ var $author$project$Update$handleReceivedMessages = F2(
 										$elm$core$Basics$composeR,
 										$elm$core$Basics$eq(card),
 										$elm$core$Basics$not),
-									trumpSelectionData.myCards)
+									myData.myCards)
 							});
 					};
-					var myIndex = playRoundData.trumpSelectionData.myIndex;
+					var myIndex = playRoundData.myData.myIndex;
 					var hadTeamBeenRevealed = _Utils_eq(
 						playRoundData.helpersRevealed,
-						$author$project$Model$maxHelpers(playRoundData.trumpSelectionData.selectionData));
+						$author$project$Model$maxHelpers(playRoundData.selectionData));
 					var _v10 = function () {
 						var _v11 = playRoundData.turnStatus;
 						switch (_v11.$) {
@@ -5998,15 +6014,15 @@ var $author$project$Update$handleReceivedMessages = F2(
 					var oldTurn = _v10.b;
 					var newHand = A3($author$project$Model$setCardInHand, oldTurn, card, playRoundData.hand);
 					var updatePlayerStatus = function (oldStatus) {
-						if (_Utils_eq(oldTurn, playRoundData.trumpSelectionData.myIndex) || hadTeamBeenRevealed) {
+						if (_Utils_eq(oldTurn, playRoundData.myData.myIndex) || hadTeamBeenRevealed) {
 							return _Utils_Tuple2(oldStatus, playRoundData.helpersRevealed);
 						} else {
-							if (A2($author$project$Model$isPlayerHelper, card, playRoundData.trumpSelectionData.selectionData)) {
+							if (A2($author$project$Model$isPlayerHelper, card, playRoundData.selectionData)) {
 								var newStatus = A3($author$project$Model$setPlayerStatus, oldTurn, $author$project$Model$BiddingTeam, oldStatus);
 								var newHelpersRevealed = playRoundData.helpersRevealed + 1;
 								var hasTeamBeenRevealed = _Utils_eq(
 									newHelpersRevealed,
-									$author$project$Model$maxHelpers(playRoundData.trumpSelectionData.selectionData));
+									$author$project$Model$maxHelpers(playRoundData.selectionData));
 								return hasTeamBeenRevealed ? function (s) {
 									return A2($elm$core$Tuple$pair, s, newHelpersRevealed);
 								}(
@@ -6044,8 +6060,8 @@ var $author$project$Update$handleReceivedMessages = F2(
 								{
 									hand: newHand,
 									helpersRevealed: newerHelpersRevealed,
+									myData: updateMyData(playRoundData.myData),
 									playersStatus: newerStatus,
-									trumpSelectionData: updateGameState(playRoundData.trumpSelectionData),
 									turnStatus: newTurnStatus
 								})),
 						$elm$core$Platform$Cmd$none);
@@ -6058,21 +6074,15 @@ var $author$project$Update$handleReceivedMessages = F2(
 				if (model.$ === 'PlayRound') {
 					var gameName = model.a;
 					var playRoundData = model.b;
-					var updatePlayers = function (trumpSelectionData) {
-						return _Utils_update(
-							trumpSelectionData,
-							{
-								playerSet: A3(
-									$author$project$Model$updatePlayer,
-									winner,
-									function (p) {
-										return _Utils_update(
-											p,
-											{gameScore: p.gameScore + score});
-									},
-									trumpSelectionData.playerSet)
-							});
-					};
+					var updatePlayers = A3(
+						$author$project$Model$updatePlayer,
+						winner,
+						function (p) {
+							return _Utils_update(
+								p,
+								{gameScore: p.gameScore + score});
+						},
+						playRoundData.playerSet);
 					var newRound = $author$project$Model$nextRound(playRoundData.roundIndex);
 					return _Utils_Tuple2(
 						A2(
@@ -6083,9 +6093,9 @@ var $author$project$Update$handleReceivedMessages = F2(
 								{
 									firstPlayer: winner,
 									hand: $author$project$Model$emptyHand,
+									playerSet: updatePlayers,
 									roundIndex: newRound,
-									trumpSelectionData: updatePlayers(playRoundData.trumpSelectionData),
-									turnStatus: _Utils_eq(newRound, $author$project$Model$Round1) ? $author$project$Model$GameFinished : (_Utils_eq(winner, playRoundData.trumpSelectionData.myIndex) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(winner))
+									turnStatus: _Utils_eq(newRound, $author$project$Model$Round1) ? $author$project$Model$GameFinished : (_Utils_eq(winner, playRoundData.myData.myIndex) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(winner))
 								})),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -6114,22 +6124,15 @@ var $author$project$Update$handleReceivedMessages = F2(
 									},
 									playerSet);
 							}),
-						playRoundData.trumpSelectionData.playerSet,
+						playRoundData.playerSet,
 						$author$project$Model$allPlayerIndices);
-					var updatePlayerSet = function (trumpSelectionData) {
-						return _Utils_update(
-							trumpSelectionData,
-							{playerSet: updatedPlayerScores});
-					};
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$PlayRound,
 							gameName,
 							_Utils_update(
 								playRoundData,
-								{
-									trumpSelectionData: updatePlayerSet(playRoundData.trumpSelectionData)
-								})),
+								{playerSet: updatedPlayerScores})),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6139,11 +6142,18 @@ var $author$project$Update$handleReceivedMessages = F2(
 				if (model.$ === 'PlayRound') {
 					var gameName = model.a;
 					var playRoundData = model.b;
+					var nextFirstBidder = $author$project$Model$nextTurn(playRoundData.biddingData.firstBidder);
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$BiddingRound,
 							gameName,
-							{amIBidding: true, bidders: $author$project$Model$allPlayerIndices, firstBidder: playRoundData.trumpSelectionData.firstBidder, highestBid: playRoundData.trumpSelectionData.bid, highestBidder: playRoundData.trumpSelectionData.bidder, myCards: cards, myIndex: playRoundData.trumpSelectionData.myIndex, playerSet: playRoundData.trumpSelectionData.playerSet}),
+							{
+								amIBidding: true,
+								bidders: $author$project$Model$allPlayerIndices,
+								biddingData: {firstBidder: nextFirstBidder, highestBid: 150, highestBidder: nextFirstBidder},
+								myData: {myCards: cards, myIndex: playRoundData.myData.myIndex},
+								playerSet: playRoundData.playerSet
+							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6414,7 +6424,7 @@ var $author$project$Update$sendIncreasedBidMessage = F2(
 		if (model.$ === 'BiddingRound') {
 			var gameName = model.a;
 			var biddingRoundData = model.b;
-			var newBid = biddingRoundData.highestBid + delta;
+			var newBid = biddingRoundData.biddingData.highestBid + delta;
 			return _Utils_Tuple2(
 				(newBid >= 250) ? A2(
 					$author$project$Model$BiddingRound,
@@ -6423,7 +6433,7 @@ var $author$project$Update$sendIncreasedBidMessage = F2(
 						biddingRoundData,
 						{amIBidding: false})) : model,
 				$author$project$Encoders$sendMessage(
-					A3($author$project$Model$IncreaseBid, gameName, biddingRoundData.myIndex, newBid)));
+					A3($author$project$Model$IncreaseBid, gameName, biddingRoundData.myData.myIndex, newBid)));
 		} else {
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
@@ -6482,7 +6492,7 @@ var $author$project$Update$update = F2(
 								biddingRoundData,
 								{amIBidding: false})),
 						$author$project$Encoders$sendMessage(
-							A2($author$project$Model$SendQuit, gameName, biddingRoundData.myIndex)));
+							A2($author$project$Model$SendQuit, gameName, biddingRoundData.myData.myIndex)));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -6767,7 +6777,7 @@ var $author$project$Model$getPlayer = F2(
 	});
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$View$biddingZoneView = function (biddingRoundData) {
-	var highestBidderName = _Utils_eq(biddingRoundData.highestBidder, biddingRoundData.myIndex) ? 'You' : A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.highestBidder).name;
+	var highestBidderName = _Utils_eq(biddingRoundData.biddingData.highestBidder, biddingRoundData.myData.myIndex) ? 'You' : A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.biddingData.highestBidder).name;
 	var biddingHtml = biddingRoundData.amIBidding ? _List_fromArray(
 		[
 			A2(
@@ -6874,7 +6884,7 @@ var $author$project$View$biddingZoneView = function (biddingRoundData) {
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$elm$core$String$fromInt(biddingRoundData.highestBid))
+							$elm$core$String$fromInt(biddingRoundData.biddingData.highestBid))
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -7322,7 +7332,7 @@ var $author$project$Model$showRound = F2(
 		}
 	});
 var $author$project$View$staticInfoView = F3(
-	function (trumpSelectionData, turnStatus, round) {
+	function (playRoundData, turnStatus, round) {
 		var roundView = function () {
 			if (turnStatus.$ === 'GameFinished') {
 				return '';
@@ -7331,10 +7341,10 @@ var $author$project$View$staticInfoView = F3(
 			}
 		}();
 		var pronounify = function (playerIndex) {
-			return _Utils_eq(playerIndex, trumpSelectionData.myIndex) ? 'Your' : function (n) {
+			return _Utils_eq(playerIndex, playRoundData.myData.myIndex) ? 'Your' : function (n) {
 				return n + '\'s';
 			}(
-				A2($author$project$Model$getPlayer, trumpSelectionData.playerSet, playerIndex).name);
+				A2($author$project$Model$getPlayer, playRoundData.playerSet, playerIndex).name);
 		};
 		var turnView = function () {
 			switch (turnStatus.$) {
@@ -7349,13 +7359,13 @@ var $author$project$View$staticInfoView = F3(
 				case 'GameFinished':
 					return 'Waiting for game to finish..';
 				default:
-					return pronounify(trumpSelectionData.myIndex) + ' Turn';
+					return pronounify(playRoundData.myData.myIndex) + ' Turn';
 			}
 		}();
 		var helperView = function (helper) {
 			return A2($author$project$View$cardView, _List_Nil, helper);
 		};
-		var helpers = A2($elm$core$List$map, helperView, trumpSelectionData.selectionData.helpers);
+		var helpers = A2($elm$core$List$map, helperView, playRoundData.selectionData.helpers);
 		var biddingInfoView = A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -7373,7 +7383,7 @@ var $author$project$View$staticInfoView = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							pronounify(trumpSelectionData.bidder) + ' bid')
+							pronounify(playRoundData.biddingData.highestBidder) + ' bid')
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -7384,7 +7394,7 @@ var $author$project$View$staticInfoView = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$elm$core$String$fromInt(trumpSelectionData.bid))
+							$elm$core$String$fromInt(playRoundData.biddingData.highestBid))
 						]))
 				]));
 		return A2(
@@ -7414,7 +7424,7 @@ var $author$project$View$staticInfoView = F3(
 							A2(
 							$author$project$View$cardView,
 							_List_Nil,
-							A2($author$project$Model$Card, $author$project$Model$Ace, trumpSelectionData.selectionData.trump))
+							A2($author$project$Model$Card, $author$project$Model$Ace, playRoundData.selectionData.trump))
 						])),
 					A2(
 					$elm$html$Html$div,
@@ -7545,7 +7555,7 @@ var $author$project$View$trumpSelectionView = function (trumpSelectionData) {
 					A2($author$project$Model$Card, $author$project$Model$Ace, suit))
 				]));
 	};
-	var me = A2($author$project$Model$getPlayer, trumpSelectionData.playerSet, trumpSelectionData.myIndex);
+	var me = A2($author$project$Model$getPlayer, trumpSelectionData.playerSet, trumpSelectionData.myData.myIndex);
 	var helperCardAttrList = function (card) {
 		return _Utils_ap(
 			_List_fromArray(
@@ -7564,7 +7574,7 @@ var $author$project$View$trumpSelectionView = function (trumpSelectionData) {
 	var filteredCards = A2(
 		$elm$core$List$filter,
 		function (card) {
-			return !A2($elm$core$List$member, card, trumpSelectionData.myCards);
+			return !A2($elm$core$List$member, card, trumpSelectionData.myData.myCards);
 		},
 		$author$project$Model$allCards);
 	var helperCards = A2(
@@ -7646,7 +7656,7 @@ var $author$project$View$trumpSelectionView = function (trumpSelectionData) {
 								$elm$html$Html$text('Proceed')
 							]))
 					])),
-				A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, trumpSelectionData.myCards, me)
+				A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, trumpSelectionData.myData.myCards, me)
 			]));
 };
 var $author$project$View$waitingForPlayersView = F2(
@@ -7703,7 +7713,7 @@ var $author$project$View$view = function (model) {
 		case 'BiddingRound':
 			var gameName = model.a;
 			var biddingRoundData = model.b;
-			var me = A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.myIndex);
+			var me = A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.myData.myIndex);
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -7733,7 +7743,7 @@ var $author$project$View$view = function (model) {
 							[
 								A3(
 								$author$project$View$otherPlayersView,
-								biddingRoundData.myIndex,
+								biddingRoundData.myData.myIndex,
 								biddingRoundData.playerSet,
 								A2(
 									$elm$core$List$map,
@@ -7748,7 +7758,7 @@ var $author$project$View$view = function (model) {
 										A2($elm$html$Html$Attributes$attribute, 'class', 'filler')
 									]),
 								_List_Nil),
-								A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, biddingRoundData.myCards, me)
+								A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, biddingRoundData.myData.myCards, me)
 							]))
 					]));
 		case 'TrumpSelection':
@@ -7767,12 +7777,13 @@ var $author$project$View$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						'Waiting for ' + (A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.highestBidder).name + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(biddingRoundData.highestBid))))
+						'Waiting for ' + (A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.biddingData.highestBidder).name + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(biddingRoundData.biddingData.highestBid))))
 					]));
 		default:
 			var gameName = model.a;
 			var playRoundData = model.b;
-			var me = A2($author$project$Model$getPlayer, playRoundData.trumpSelectionData.playerSet, playRoundData.trumpSelectionData.myIndex);
+			var myIndex = playRoundData.myData.myIndex;
+			var me = A2($author$project$Model$getPlayer, playRoundData.playerSet, myIndex);
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -7790,7 +7801,7 @@ var $author$project$View$view = function (model) {
 						_List_fromArray(
 							[
 								$author$project$View$gameNameView(gameName),
-								A3($author$project$View$staticInfoView, playRoundData.trumpSelectionData, playRoundData.turnStatus, playRoundData.roundIndex)
+								A3($author$project$View$staticInfoView, playRoundData, playRoundData.turnStatus, playRoundData.roundIndex)
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -7802,11 +7813,11 @@ var $author$project$View$view = function (model) {
 							[
 								A3(
 								$author$project$View$otherPlayersView,
-								playRoundData.trumpSelectionData.myIndex,
-								playRoundData.trumpSelectionData.playerSet,
+								myIndex,
+								playRoundData.playerSet,
 								$author$project$Model$getPlayerStatuses(playRoundData.playersStatus)),
-								A2($author$project$View$playAreaView, playRoundData.hand, playRoundData.trumpSelectionData.myIndex),
-								A3($author$project$View$myCardsView, playRoundData.turnStatus, playRoundData.trumpSelectionData.myCards, me)
+								A2($author$project$View$playAreaView, playRoundData.hand, myIndex),
+								A3($author$project$View$myCardsView, playRoundData.turnStatus, playRoundData.myData.myCards, me)
 							]))
 					]));
 	}
