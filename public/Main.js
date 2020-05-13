@@ -6789,26 +6789,35 @@ var $author$project$View$biddingZoneView = function (biddingRoundData) {
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$button,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
-							$elm$html$Html$Events$onClick($author$project$Model$BidPlus5)
+							A2($elm$html$Html$Attributes$attribute, 'class', 'increaseBidButtons')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('+5')
-						])),
-					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
-							$elm$html$Html$Events$onClick($author$project$Model$BidPlus10)
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('+10')
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
+									$elm$html$Html$Events$onClick($author$project$Model$BidPlus5)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('+5')
+								])),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
+									$elm$html$Html$Events$onClick($author$project$Model$BidPlus10)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('+10')
+								]))
 						])),
 					A2(
 					$elm$html$Html$button,
