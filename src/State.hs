@@ -13,7 +13,7 @@ import Player
 
 data BiddingStateData = BiddingStateData
   { cardDistribution :: CardDistribution    -- The cards assigned to each player
-  , numberOfBidders ::  Int                 -- Number of bidders
+  , bidders :: [PlayerIndex]                -- Number of bidders
   , highestBidder :: PlayerIndex            -- Current maximum bidder
   , highestBid :: Int                       -- Maximum bid amount
   }

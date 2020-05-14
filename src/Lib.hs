@@ -118,7 +118,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                   $ BiddingState Player1 (M.fromList connections) zeroScores
                   $ BiddingStateData
                     distributedCards
-                    6
+                    playerIndices
                     Player1
                     150
 
@@ -148,7 +148,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
       Just state ->
         case state of
           BiddingState firstBidder connectionMap scores biddingStateData
-            | bidAmount > highestBid biddingStateData -> do
+            | bidAmount > highestBid biddingStateData && bidAmount <= 250 -> do
                 putStrLn $ "Received new highest bid of " ++ show bidAmount ++ ", from " ++ show bidder ++
                   " in " ++ T.unpack gameName
                 updateState stateMapMVar gameName
@@ -161,6 +161,13 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                 -- Inform the players of the new highest bid
                 for_ connectionMap $ \conn ->
                   sendTextData conn $ encode $ MaximumBid bidder bidAmount
+
+                when (bidAmount == 250) $
+                  -- Send quit message for every remaining bidder
+                  for_ (bidders biddingStateData) $ \remainingBidder ->
+                    for_ connectionMap $ \conn ->
+                      sendTextData conn $ encode $ HasQuitBidding remainingBidder
+
             | otherwise ->
               pure ()
 
@@ -184,7 +191,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
             updateState stateMapMVar gameName
               $ BiddingState firstBidder connectionMap scores
               $ biddingStateData
-                { numberOfBidders = numberOfBidders biddingStateData - 1 }
+                { bidders = filter ( /= quitter) $ bidders biddingStateData }
 
             for_ connectionMap $ \conn ->
               sendTextData conn $ encode $ HasQuitBidding quitter
@@ -355,7 +362,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
           $ BiddingState (nextTurn firstBidder) connectionMap zeroScores
           $ BiddingStateData
             { cardDistribution = distributedCards
-            , numberOfBidders = 6
+            , bidders = playerIndices
             , highestBidder = nextTurn firstBidder
             , highestBid = 150
             }
