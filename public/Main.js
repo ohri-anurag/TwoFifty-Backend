@@ -5982,9 +5982,9 @@ var $author$project$Update$handleReceivedMessages = F2(
 								return _Utils_Tuple2(
 									_Utils_eq(
 										$author$project$Model$nextTurn(player),
-										myIndex) ? $author$project$Model$NotFirstAndMyTurn(baseCard) : (_Utils_eq(
+										playRoundData.firstPlayer) ? $author$project$Model$RoundFinished : (_Utils_eq(
 										$author$project$Model$nextTurn(player),
-										playRoundData.firstPlayer) ? $author$project$Model$RoundFinished : A2(
+										myIndex) ? $author$project$Model$NotFirstAndMyTurn(baseCard) : A2(
 										$author$project$Model$NotFirstAndNotMyTurn,
 										$author$project$Model$nextTurn(player),
 										baseCard)),
