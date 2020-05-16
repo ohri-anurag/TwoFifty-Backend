@@ -6165,6 +6165,10 @@ var $author$project$Model$IncreaseBid = F3(
 		return {$: 'IncreaseBid', a: a, b: b, c: c};
 	});
 var $elm$core$Basics$ge = _Utils_ge;
+var $elm$core$Basics$min = F2(
+	function (x, y) {
+		return (_Utils_cmp(x, y) < 0) ? x : y;
+	});
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Encoders$messageSender = _Platform_outgoingPort('messageSender', $elm$json$Json$Encode$string);
 var $elm$json$Json$Encode$int = _Json_wrap;
@@ -6433,7 +6437,11 @@ var $author$project$Update$sendIncreasedBidMessage = F2(
 						biddingRoundData,
 						{amIBidding: false})) : model,
 				$author$project$Encoders$sendMessage(
-					A3($author$project$Model$IncreaseBid, gameName, biddingRoundData.myData.myIndex, newBid)));
+					A3(
+						$author$project$Model$IncreaseBid,
+						gameName,
+						biddingRoundData.myData.myIndex,
+						A2($elm$core$Basics$min, newBid, 250))));
 		} else {
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
@@ -6778,6 +6786,33 @@ var $author$project$Model$getPlayer = F2(
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$View$biddingZoneView = function (biddingRoundData) {
 	var highestBidderName = _Utils_eq(biddingRoundData.biddingData.highestBidder, biddingRoundData.myData.myIndex) ? 'You' : A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.biddingData.highestBidder).name;
+	var buttons = A2(
+		$elm$core$List$cons,
+		A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
+					$elm$html$Html$Events$onClick($author$project$Model$BidPlus5)
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('+5')
+				])),
+		(biddingRoundData.biddingData.highestBid > 240) ? _List_Nil : _List_fromArray(
+			[
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
+						$elm$html$Html$Events$onClick($author$project$Model$BidPlus10)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('+10')
+					]))
+			]));
 	var biddingHtml = biddingRoundData.amIBidding ? _List_fromArray(
 		[
 			A2(
@@ -6794,31 +6829,7 @@ var $author$project$View$biddingZoneView = function (biddingRoundData) {
 						[
 							A2($elm$html$Html$Attributes$attribute, 'class', 'increaseBidButtons')
 						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
-									$elm$html$Html$Events$onClick($author$project$Model$BidPlus5)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('+5')
-								])),
-							A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
-									$elm$html$Html$Events$onClick($author$project$Model$BidPlus10)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('+10')
-								]))
-						])),
+					buttons),
 					A2(
 					$elm$html$Html$button,
 					_List_fromArray(
