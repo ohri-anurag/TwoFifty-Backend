@@ -57,8 +57,8 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
     case eitherDecode' bytes :: Either String ReceivedData of
       Right (ReceivedData gameName receivedDataValue) ->
         case receivedDataValue of
-          IntroData playerName ->
-            handleIntroPhase playerName gameName conn
+          IntroData playerName playerId ->
+            handleIntroPhase playerName playerId gameName conn
 
           IncreaseBid bidder bidAmount ->
             handleBidding gameName bidder bidAmount
@@ -75,8 +75,8 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
       Left err ->
         putStrLn err
   
-  handleIntroPhase :: T.Text -> T.Text -> Connection -> IO ()
-  handleIntroPhase playerName gameName conn = do
+  handleIntroPhase :: T.Text -> T.Text -> T.Text -> Connection -> IO ()
+  handleIntroPhase playerName playerId gameName conn = do
     stateMap <- readMVar stateMapMVar
     newState <-
       case M.lookup gameName stateMap of
@@ -90,10 +90,10 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                 newPlayerJoined $ map snd players
 
                 -- Inform the new player of the existing players
-                sendTextData conn $ encode $ ExistingPlayers $ map fst players
+                sendTextData conn $ encode $ ExistingPlayers $ map (fst . fst) players
 
                 -- Append the new player to the existing players
-                pure $ IntroState $ players ++ [(playerName, conn)]
+                pure $ IntroState $ players ++ [((playerName, playerId), conn)]
 
               | length players == 5 -> do
                 putStrLn $ "Adding player: " ++ T.unpack playerName
@@ -104,41 +104,56 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
                 let
                   -- Add the 6th player
-                  newPlayers = players ++ [(playerName, conn)]
-                  connections = zip playerIndices $ map snd newPlayers
-                  playerNames = initialisePlayerNameSet $ zip playerIndices $ map fst newPlayers
+                  newPlayers = players ++ [((playerName, playerId), conn)]
+                  initPlayerDataSet = fromIntroData $ zip distributedCards newPlayers
+                  playerNames = zip playerIndices $ map (fst . fst) newPlayers
 
-                for_ connections $ \(myIndex, connection) ->
-                  sendTextData connection
+                forIndex_ initPlayerDataSet $ \myIndex playerData ->
+                  sendTextData (connection playerData)
                     $ encode
-                    $ GameData playerNames Player1 myIndex (getCards myIndex distributedCards)
+                    $ GameData playerNames Player1 myIndex
+                    $ cards playerData
 
                 -- Move the state to bidding state
                 pure
-                  $ BiddingState Player1 (M.fromList connections) zeroScores
+                  $ BiddingState
+                      (CommonStateData Player1 initPlayerDataSet)
                   $ BiddingStateData
-                    distributedCards
                     playerIndices
                     Player1
                     150
 
               | otherwise -> pure state
 
-            _ -> pure state
+            -- BiddingState commonStateData biddingStateData ->
+            --   -- There are already 6 players in the game.
+            --   -- Check to see if the player got disconnected and is trying to join again
+            --   if playerId `elem` M.toList (M.map snd $ playerData commonStateData)
+            --     then
+            --       sendTextData conn ReconnectionData 
+            --     else pure state
 
+            -- RoundState commonStateData roundStateData ->
+            --   -- There are already 6 players in the game.
+            --   -- Check to see if the player got disconnected and is trying to join again
+            --   if playerId `elem` M.toList (M.map snd $ playerData commonStateData)
+            --     then
+            --       sendTextData conn ReconnectionData 
+            --     else pure state
+            _ -> pure state
 
         -- Game does not exist, create one
         Nothing -> do
           putStrLn $ "Game: " ++ T.unpack gameName ++ " does not exist, Creating..."
           putStrLn $ "Adding player: " ++ T.unpack playerName
 
-          pure $ IntroState [(playerName, conn)]
+          pure $ IntroState [((playerName, playerId), conn)]
 
     updateState stateMapMVar gameName newState
       where
         newPlayerJoined otherPlayerConnections =
-          for_ otherPlayerConnections $ \connection ->
-            sendTextData connection $ encode $ PlayerJoined playerName
+          for_ otherPlayerConnections $ \oConn ->
+            sendTextData oConn $ encode $ PlayerJoined playerName
 
   handleBidding :: T.Text -> PlayerIndex -> Int -> IO ()
   handleBidding gameName bidder bidAmount = do
@@ -147,26 +162,26 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
     case M.lookup gameName stateMap of
       Just state ->
         case state of
-          BiddingState firstBidder connectionMap scores biddingStateData
+          BiddingState commonStateData biddingStateData
             | bidAmount > highestBid biddingStateData && bidAmount <= 250 -> do
                 putStrLn $ "Received new highest bid of " ++ show bidAmount ++ ", from " ++ show bidder ++
                   " in " ++ T.unpack gameName
                 updateState stateMapMVar gameName
-                  $ BiddingState firstBidder connectionMap scores
+                  $ BiddingState commonStateData
                   $ biddingStateData
                     { highestBid = bidAmount
                     , highestBidder = bidder
                     }
                 
                 -- Inform the players of the new highest bid
-                for_ connectionMap $ \conn ->
-                  sendTextData conn $ encode $ MaximumBid bidder bidAmount
+                forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
+                  sendTextData (connection playerData) $ encode $ MaximumBid bidder bidAmount
 
                 when (bidAmount == 250) $
                   -- Send quit message for every remaining bidder
                   for_ (bidders biddingStateData) $ \remainingBidder ->
-                    for_ connectionMap $ \conn ->
-                      sendTextData conn $ encode $ HasQuitBidding remainingBidder
+                    forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
+                      sendTextData (connection playerData) $ encode $ HasQuitBidding remainingBidder
 
             | otherwise ->
               pure ()
@@ -183,18 +198,18 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
     case M.lookup gameName stateMap of
       Just state ->
         case state of
-          BiddingState firstBidder connectionMap scores biddingStateData -> do
+          BiddingState commonStateData biddingStateData -> do
             putStrLn $ show quitter ++ " has decided to quit bidding in " ++ T.unpack gameName
               ++ ", max bid: " ++ show (highestBid biddingStateData)
               ++ ", bidder: " ++ show (highestBidder biddingStateData)
 
             updateState stateMapMVar gameName
-              $ BiddingState firstBidder connectionMap scores
+              $ BiddingState commonStateData
               $ biddingStateData
                 { bidders = filter ( /= quitter) $ bidders biddingStateData }
 
-            for_ connectionMap $ \conn ->
-              sendTextData conn $ encode $ HasQuitBidding quitter
+            forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
+              sendTextData (connection playerData) $ encode $ HasQuitBidding quitter
 
           _ ->
             pure ()
@@ -210,29 +225,29 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
     case M.lookup gameName stateMap of
       Just state ->
         case state of
-          BiddingState firstBidder connectionMap scores biddingStateData -> do
+          BiddingState commonStateData biddingStateData -> do
             putStrLn $ show (highestBidder biddingStateData) ++ " has selected trump: "
               ++ show trump
               ++ " and helpers: " ++ show helpers
 
-            let bidTeam = calculateBiddingTeam (highestBidder biddingStateData) (cardDistribution biddingStateData)
+            let bidTeam = calculateBiddingTeam (highestBidder biddingStateData) commonStateData
 
             putStrLn $ "Bidding Team: " ++ show bidTeam
 
             updateState stateMapMVar gameName
-              $ RoundState firstBidder connectionMap scores
+              $ RoundState commonStateData
               $ RoundStateData
                   Round1
                   trump
                   bidTeam
-                  firstBidder
-                  firstBidder
+                  (firstBidder commonStateData)
+                  (firstBidder commonStateData)
                   M.empty
                   (highestBid biddingStateData)
 
             -- Send the trump and helpers to all players
-            for_ connectionMap $ \conn ->
-              sendTextData conn $ encode $ SentSelectionData $ SelectionData trump helpers
+            forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
+              sendTextData (connection playerData) $ encode $ SentSelectionData $ SelectionData trump helpers
           
           _ ->
             pure ()
@@ -240,14 +255,14 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
       Nothing ->
         pure ()
     where
-    calculateBiddingTeam bidder distributedCards =
+    calculateBiddingTeam bidder commonStateData =
       bidder : filter isPlayerHelper playerIndices
       where
       isPlayerHelper player =
         let
-          cards = getCards player distributedCards
+          playerCards = cards $ getPlayer player $ playerDataSet commonStateData
         in
-        any ( `elem` cards) helpers
+        any ( `elem` playerCards) helpers
 
   handlePlayedCard :: T.Text -> Card -> IO ()
   handlePlayedCard gameName card = do
@@ -256,7 +271,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
     case M.lookup gameName stateMap of
       Just state ->
         case state of
-          RoundState firstBidder connectionMap scores roundStateData -> do
+          RoundState commonStateData roundStateData -> do
             putStrLn $ show (currentTurn roundStateData) ++ " has played " ++ show card
 
             -- Update the hand
@@ -267,15 +282,15 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                 , currentTurn = nextTurn $ currentTurn roundStateData
                 }
             updateState stateMapMVar gameName
-              $ RoundState firstBidder connectionMap scores newRoundStateData
+              $ RoundState commonStateData newRoundStateData
 
             -- When all 6 players have played their turn
             when (M.size newHand == 6) $
-              handleRoundFinish firstBidder connectionMap scores newRoundStateData
+              handleRoundFinish commonStateData newRoundStateData
 
             -- Update all the players that a card has been played
-            for_ connectionMap $ \conn ->
-              sendTextData conn $ encode $ PlayCard card
+            forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
+              sendTextData (connection playerData) $ encode $ PlayCard card
           
           _ ->
             pure ()
@@ -283,7 +298,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
       Nothing ->
         pure ()
     where
-    handleRoundFinish firstBidder connectionMap scores roundStateData =
+    handleRoundFinish commonStateData roundStateData =
       void $ forkIO $ do
         let
           newHand = hand roundStateData
@@ -296,20 +311,21 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
             let
               trump = trumpSuit roundStateData
               base = suit baseCard
-              cards = M.toList newHand
-              wasTrumpUsed = any ( (==) trump . suit . snd) cards
+              myCards = M.toList newHand
+              wasTrumpUsed = any ( (==) trump . suit . snd) myCards
               comparedSuit = if wasTrumpUsed then trump else base
               winner =
-                fst $ maximumBy (compare `on` snd) $ filter ((==) comparedSuit . suit . snd) cards
-              score = sum $ map (calculateScore . snd) cards
-              newScores = updateScore winner score scores
+                fst $ maximumBy (compare `on` snd) $ filter ((==) comparedSuit . suit . snd) myCards
+              score = sum $ map (calculateScore . snd) myCards
+              newCommonStateData = commonStateData
+                { playerDataSet = updateGameScore winner score $ playerDataSet commonStateData }
 
             putStrLn $ show winner ++ " has won " ++ show (roundIndex roundStateData) ++
               " with a score of " ++ show score
 
             -- Move on to the next Round, and update the next turn
             updateState stateMapMVar gameName
-              $ RoundState firstBidder connectionMap newScores
+              $ RoundState newCommonStateData
               $ roundStateData
                   { roundIndex = newRound
                   , currentTurn = winner
@@ -318,17 +334,17 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                   }
 
             -- Update the players with the round winner and the score
-            for_ connectionMap $ \conn ->
-              sendTextData conn $ encode $ RoundData winner score
+            forIndex_ (playerDataSet newCommonStateData) $ \_ playerData ->
+              sendTextData (connection playerData) $ encode $ RoundData winner score
 
             -- When 8 rounds have been completed
             when (newRound == Round1) $
-              handleGameFinish firstBidder connectionMap newScores roundStateData
+              handleGameFinish newCommonStateData roundStateData
 
           Nothing ->
             pure ()
 
-    handleGameFinish firstBidder connectionMap scores roundStateData = do
+    handleGameFinish commonStateData roundStateData = do
       -- Delay this thread by two seconds
       threadDelay $ 2 * 1000 * 1000
 
@@ -336,9 +352,13 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
       let
         bidTeam = biddingTeam roundStateData
         antiTeam = filter ( `notElem` bidTeam) playerIndices
-        biddingTeamScore = sum $ map ( `getScore` scores) bidTeam
+        biddingTeamScore = foldrIndex (\i pData s ->
+          if i `elem` bidTeam
+            then s + gameScore pData
+            else s
+          ) 0 (playerDataSet commonStateData)
         bidAmount = bid roundStateData
-        (winningTeam, score)
+        (winningTeam, winningTeamScore)
           -- Bidding Team won
           | biddingTeamScore >= bidAmount = (bidTeam, bidAmount)
           -- Bidding team lost, but anti team could not score 100
@@ -347,10 +367,10 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
           | otherwise = (antiTeam, bidAmount)
 
 
-      putStrLn $ show winningTeam ++ " have won the game with a score of " ++ show score
+      putStrLn $ show winningTeam ++ " have won the game with a score of " ++ show winningTeamScore
 
-      for_ connectionMap $ \conn ->
-        sendTextData conn $ encode $ GameFinishedData winningTeam score
+      forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
+        sendTextData (connection playerData) $ encode $ GameFinishedData winningTeam winningTeamScore
 
       void $ forkIO $ do
         -- Delay this thread by two seconds
@@ -358,18 +378,26 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
         -- Update the state to bidding state, return the scores to zero
         distributedCards <- shuffledCards
+        let
+          newCommonStateData = foldr
+            (\(i, myCards) csd ->
+              let myScore = if i `elem` winningTeam then winningTeamScore else 0
+              in csd
+                { playerDataSet = updateTotalScoreAndCards i (myScore, myCards) $ playerDataSet csd
+                }
+            )
+            (commonStateData { firstBidder = nextTurn $ firstBidder commonStateData })
+            $ zip playerIndices distributedCards
         updateState stateMapMVar gameName
-          $ BiddingState (nextTurn firstBidder) connectionMap zeroScores
+          $ BiddingState newCommonStateData
           $ BiddingStateData
-            { cardDistribution = distributedCards
-            , bidders = playerIndices
-            , highestBidder = nextTurn firstBidder
+            { bidders = playerIndices
+            , highestBidder = nextTurn $ firstBidder newCommonStateData
             , highestBid = 150
             }
 
         -- Send new cards
-        let connections = M.toList connectionMap
-        for_ connections $ \(myIndex, connection) ->
-          sendTextData connection
+        forIndex_ (playerDataSet newCommonStateData) $ \_ playerData ->
+          sendTextData (connection playerData)
             $ encode
-            $ NewGame $ getCards myIndex distributedCards
+            $ NewGame $ cards playerData

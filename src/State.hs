@@ -11,9 +11,13 @@ import Player
 -- Now that we can distinguish between the types of data coming in,
 -- we can also keep different state types
 
+data CommonStateData = CommonStateData
+  { firstBidder :: PlayerIndex          -- First Bidder
+  , playerDataSet :: PlayerDataSet
+  }
+
 data BiddingStateData = BiddingStateData
-  { cardDistribution :: CardDistribution    -- The cards assigned to each player
-  , bidders :: [PlayerIndex]                -- Number of bidders
+  { bidders :: [PlayerIndex]                -- Number of bidders
   , highestBidder :: PlayerIndex            -- Current maximum bidder
   , highestBid :: Int                       -- Maximum bid amount
   }
@@ -30,21 +34,13 @@ data RoundStateData = RoundStateData
   }
 
 data State
-  = IntroState              -- When players are still connecting, we store player names, and game name
-      [(Text, Connection)]  -- List of player names, MAX = 6
+  = IntroState              -- When players are still connecting, we store (player names, player ids), and game name
+      [((Text, Text), Connection)]  -- List of player names, MAX = 6
   | BiddingState
-      PlayerIndex           -- First Bidder
-      (M.Map                -- Each player's connection, that will be used to send messages
-        PlayerIndex
-        Connection)
-      PlayerScores
+      CommonStateData
       BiddingStateData
   | RoundState
-      PlayerIndex           -- First Bidder
-      (M.Map                -- Each player's connection, that will be used to send messages
-        PlayerIndex
-        Connection)
-      PlayerScores
+      CommonStateData
       RoundStateData
 
 data Round

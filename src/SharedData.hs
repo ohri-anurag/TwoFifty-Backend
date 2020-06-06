@@ -4,7 +4,7 @@ module SharedData where
 
 import Data.Aeson
 import Data.Aeson.Types
-import Data.Text
+import Data.Text hiding (map)
 
 import Card
 import Player
@@ -18,6 +18,7 @@ data SelectionData =
 data ReceivedDataValue
   = IntroData
       Text          -- Player Name
+      Text          -- Player Id
   | QuitBidding
       PlayerIndex   -- The player who quit bidding
   | IncreaseBid
@@ -40,10 +41,10 @@ data SentData
   | ExistingPlayers
       [Text]        -- Already existing players in the game
   | GameData
-      PlayerNameSet -- Set of player names
-      PlayerIndex   -- The first bidder in this game
-      PlayerIndex   -- Your player index
-      [Card]        -- Your cards
+      [(PlayerIndex, Text)]   -- Player names
+      PlayerIndex             -- The first bidder in this game
+      PlayerIndex             -- Your player index
+      [Card]                  -- Your cards
   | HasQuitBidding
       PlayerIndex   -- The player who quit bidding
   | MaximumBid
@@ -61,6 +62,12 @@ data SentData
       Int           -- Their score
   | NewGame
       [Card]        -- Cards for new game
+  -- | BiddingReconnectionData
+  --     Int           -- Current Highest Bid
+  --     PlayerIndex   -- Current Highest Bidder
+  --     [Card]        -- Your cards
+
+
 
 -- JSON derivations
 instance FromJSON ReceivedDataValue where
@@ -69,7 +76,7 @@ instance FromJSON ReceivedDataValue where
     case tag of
       String str ->
         case str of
-          "IntroData" -> IntroData <$> o .: "playerName"
+          "IntroData" -> IntroData <$> o .: "playerName" <*> o .: "playerId"
           "QuitBidding" -> QuitBidding <$> o .: "quitter"
           "IncreaseBid" -> IncreaseBid <$> o .: "bidder" <*> o .: "bid"
           "SelectionData" -> ReceivedSelectionData <$> (SelectionData <$> o .: "trump" <*> o .: "helpers")
@@ -100,7 +107,7 @@ instance ToJSON SentData where
     ]
   toJSON sentData@(GameData playerNames firstBidder myIndex myCards) = object
     [ "tag" .= tagName sentData
-    , "playerNames" .= playerNames
+    , "playerNames" .= object (map (\(i, n) -> pack (show i) .= n) playerNames)
     , "firstBidder" .= firstBidder
     , "myIndex" .= myIndex
     , "myCards" .= myCards
@@ -123,19 +130,19 @@ instance ToJSON SentData where
     [ "tag" .= tagName sentData
     , "card" .= playedCard
     ]
-  toJSON sentData@(RoundData roundWinner score) = object
+  toJSON sentData@(RoundData roundWinner myScore) = object
     [ "tag" .= tagName sentData
     , "roundWinner" .= roundWinner
-    , "roundScore" .= score
+    , "roundScore" .= myScore
     ]
-  toJSON sentData@(GameFinishedData winningTeam gameScore) = object
+  toJSON sentData@(GameFinishedData winningTeam winningScore) = object
     [ "tag" .= tagName sentData
     , "winningTeam" .= winningTeam
-    , "gameScore" .= gameScore
+    , "gameScore" .= winningScore
     ]
-  toJSON sentData@(NewGame cards) = object
+  toJSON sentData@(NewGame myCards) = object
     [ "tag" .= tagName sentData
-    , "cards" .= cards
+    , "cards" .= myCards
     ]
 
 tagName :: SentData -> Text

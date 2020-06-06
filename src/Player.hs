@@ -3,10 +3,13 @@
 
 module Player where
 
-import Data.Aeson ((.=), object, toJSON, ToJSON)
+-- import Data.Aeson ((.=), object, toJSON, ToJSON)
 import Data.Aeson.TH
-import Data.List (foldl', sort)
+import Data.Foldable (traverse_)
+import Data.List (sort) -- , splitAt)
 import qualified Data.Text as T
+import Network.WebSockets.Connection (Connection)
+import Prelude hiding (id)
 
 import Card
 
@@ -19,54 +22,84 @@ data PlayerIndex
   | Player6
   deriving (Eq, Ord, Show, Enum)
 
-data CardDistribution = CD
-  { cardSet1 :: [Card]
-  , cardSet2 :: [Card]
-  , cardSet3 :: [Card]
-  , cardSet4 :: [Card]
-  , cardSet5 :: [Card]
-  , cardSet6 :: [Card]
+data PlayerData = PlayerData
+  { name :: T.Text
+  , id :: T.Text
+  , totalScore :: Int
+  , gameScore :: Int
+  , connection :: Connection
+  , cards :: [Card]
   }
 
-data PlayerNameSet = PlayerNameSet
-  { name1 :: T.Text
-  , name2 :: T.Text
-  , name3 :: T.Text
-  , name4 :: T.Text
-  , name5 :: T.Text
-  , name6 :: T.Text
+data PlayerDataSet = DataSet
+  { player1 :: PlayerData
+  , player2 :: PlayerData
+  , player3 :: PlayerData
+  , player4 :: PlayerData
+  , player5 :: PlayerData
+  , player6 :: PlayerData
   }
 
-data PlayerScores = PlayerScores
-  { score1 :: Int
-  , score2 :: Int
-  , score3 :: Int
-  , score4 :: Int
-  , score5 :: Int
-  , score6 :: Int
+getPlayer :: PlayerIndex -> PlayerDataSet -> PlayerData
+getPlayer playerIndex playerDataSet = case playerIndex of
+  Player1 -> player1 playerDataSet
+  Player2 -> player2 playerDataSet
+  Player3 -> player3 playerDataSet
+  Player4 -> player4 playerDataSet
+  Player5 -> player5 playerDataSet
+  Player6 -> player6 playerDataSet
+
+toList :: PlayerDataSet -> [PlayerData]
+toList psd = [player1 psd, player2 psd, player3 psd, player4 psd, player5 psd, player6 psd]
+
+foldrIndex :: (PlayerIndex -> PlayerData -> b -> b) -> b -> PlayerDataSet -> b
+foldrIndex f z ds = foldr (uncurry f) z $ zip playerIndices $ toList ds
+
+forIndex_ :: Applicative t => PlayerDataSet -> (PlayerIndex -> PlayerData -> t ()) -> t ()
+forIndex_ ds f = traverse_ (uncurry f) $ zip playerIndices $ toList ds
+
+updatePlayerData :: PlayerIndex -> (PlayerData -> PlayerData) -> PlayerDataSet -> PlayerDataSet
+updatePlayerData playerIndex updater playerDataSet = case playerIndex of
+  Player1 -> playerDataSet { player1 = updater $ player1 playerDataSet }
+  Player2 -> playerDataSet { player2 = updater $ player2 playerDataSet }
+  Player3 -> playerDataSet { player3 = updater $ player3 playerDataSet }
+  Player4 -> playerDataSet { player4 = updater $ player4 playerDataSet }
+  Player5 -> playerDataSet { player5 = updater $ player5 playerDataSet }
+  Player6 -> playerDataSet { player6 = updater $ player6 playerDataSet }
+
+updateTotalScoreAndCards :: PlayerIndex -> (Int, [Card]) -> PlayerDataSet -> PlayerDataSet
+updateTotalScoreAndCards playerIndex (myScore, myCards) = updatePlayerData playerIndex
+  (\p -> p
+    { totalScore = myScore + totalScore p
+    , cards = myCards
+    , gameScore = 0
+    }
+  )
+
+updateGameScore :: PlayerIndex -> Int -> PlayerDataSet -> PlayerDataSet
+updateGameScore playerIndex myScore = updatePlayerData playerIndex (\p -> p { gameScore = myScore + gameScore p })
+
+updateCards :: PlayerIndex -> Card -> PlayerDataSet -> PlayerDataSet
+updateCards playerIndex card = updatePlayerData playerIndex (\p -> p { cards = filter (/= card) $ cards p })
+
+fromIntroData :: [([Card], ((T.Text, T.Text), Connection))] -> PlayerDataSet
+fromIntroData list = DataSet
+  { player1 = createPlayerData $ head list
+  , player2 = createPlayerData $ list !! 1
+  , player3 = createPlayerData $ list !! 2
+  , player4 = createPlayerData $ list !! 3
+  , player5 = createPlayerData $ list !! 4
+  , player6 = createPlayerData $ list !! 5
   }
-
-setPlayerName :: (PlayerIndex, T.Text) -> PlayerNameSet -> PlayerNameSet
-setPlayerName (playerIndex, name) playerNameSet =
-  case playerIndex of
-    Player1 -> playerNameSet { name1 = name }
-    Player2 -> playerNameSet { name2 = name }
-    Player3 -> playerNameSet { name3 = name }
-    Player4 -> playerNameSet { name4 = name }
-    Player5 -> playerNameSet { name5 = name }
-    Player6 -> playerNameSet { name6 = name }
-
-initialisePlayerNameSet :: [(PlayerIndex, T.Text)] -> PlayerNameSet
-initialisePlayerNameSet =
-  foldl' (flip setPlayerName) emptyNameSet
   where
-    emptyNameSet = PlayerNameSet
-      { name1 = ""
-      , name2 = ""
-      , name3 = ""
-      , name4 = ""
-      , name5 = ""
-      , name6 = ""
+    createPlayerData :: ([Card], ((T.Text, T.Text), Connection)) -> PlayerData
+    createPlayerData (myCards, ((playerName, playerId), conn)) = PlayerData
+      { name = playerName
+      , id = playerId
+      , totalScore = 0
+      , gameScore = 0
+      , connection = conn
+      , cards = myCards
       }
 
 -- Helpers
@@ -74,70 +107,19 @@ nextTurn :: PlayerIndex -> PlayerIndex
 nextTurn Player6 = Player1
 nextTurn p = succ p
 
-getCards :: PlayerIndex -> CardDistribution -> [Card]
-getCards index cd =
-  case index of
-    Player1 -> cardSet1 cd
-    Player2 -> cardSet2 cd
-    Player3 -> cardSet3 cd
-    Player4 -> cardSet4 cd
-    Player5 -> cardSet5 cd
-    Player6 -> cardSet6 cd
-
-shuffledCards :: IO CardDistribution
+shuffledCards :: IO [[Card]]
 shuffledCards = do
   randomizedCards <- fisherYatesShuffle allCards
-  
-  pure $ CD
-    { cardSet1 = sort $ take 8 randomizedCards
-    , cardSet2 = sort $ take 8 $ drop 8 randomizedCards
-    , cardSet3 = sort $ take 8 $ drop 16 randomizedCards
-    , cardSet4 = sort $ take 8 $ drop 24 randomizedCards
-    , cardSet5 = sort $ take 8 $ drop 32 randomizedCards
-    , cardSet6 = sort $ take 8 $ drop 40 randomizedCards
-    }
+
+  pure $ helper randomizedCards
+  where
+    helper [] = []
+    helper cs = 
+      let (mine, others) = splitAt 8 cs
+      in
+        sort mine : helper others
 
 playerIndices :: [PlayerIndex]
 playerIndices = [Player1 .. Player6]
 
-zeroScores :: PlayerScores
-zeroScores = PlayerScores
-  { score1 = 0
-  , score2 = 0
-  , score3 = 0
-  , score4 = 0
-  , score5 = 0
-  , score6 = 0
-  }
-
-getScore :: PlayerIndex -> PlayerScores -> Int
-getScore playerIndex playerScores =
-  case playerIndex of
-    Player1 -> score1 playerScores
-    Player2 -> score2 playerScores
-    Player3 -> score3 playerScores
-    Player4 -> score4 playerScores
-    Player5 -> score5 playerScores
-    Player6 -> score6 playerScores
-
-updateScore :: PlayerIndex -> Int -> PlayerScores -> PlayerScores
-updateScore playerIndex score playerScores =
-  case playerIndex of
-    Player1 -> playerScores { score1 = score + score1 playerScores }
-    Player2 -> playerScores { score2 = score + score2 playerScores }
-    Player3 -> playerScores { score3 = score + score3 playerScores }
-    Player4 -> playerScores { score4 = score + score4 playerScores }
-    Player5 -> playerScores { score5 = score + score5 playerScores }
-    Player6 -> playerScores { score6 = score + score6 playerScores }
-
 $(deriveJSON defaultOptions ''PlayerIndex)
-
-instance ToJSON PlayerNameSet where
-  toJSON playerNames = object
-    [ "name1" .= name1 playerNames
-    , "name2" .= name2 playerNames
-    , "name3" .= name3 playerNames
-    , "name4" .= name4 playerNames
-    , "name5" .= name5 playerNames
-    , "name6" .= name6 playerNames
-    ]
