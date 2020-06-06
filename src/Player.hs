@@ -3,7 +3,7 @@
 
 module Player where
 
--- import Data.Aeson ((.=), object, toJSON, ToJSON)
+import Data.Aeson ((.=), object, toJSON, ToJSON)
 import Data.Aeson.TH
 import Data.Foldable (traverse_)
 import Data.List (sort) -- , splitAt)
@@ -49,14 +49,14 @@ getPlayer playerIndex playerDataSet = case playerIndex of
   Player5 -> player5 playerDataSet
   Player6 -> player6 playerDataSet
 
-toList :: PlayerDataSet -> [PlayerData]
-toList psd = [player1 psd, player2 psd, player3 psd, player4 psd, player5 psd, player6 psd]
+toList :: PlayerDataSet -> [(PlayerIndex, PlayerData)]
+toList psd = zip playerIndices [player1 psd, player2 psd, player3 psd, player4 psd, player5 psd, player6 psd]
 
 foldrIndex :: (PlayerIndex -> PlayerData -> b -> b) -> b -> PlayerDataSet -> b
-foldrIndex f z ds = foldr (uncurry f) z $ zip playerIndices $ toList ds
+foldrIndex f z ds = foldr (uncurry f) z $ toList ds
 
 forIndex_ :: Applicative t => PlayerDataSet -> (PlayerIndex -> PlayerData -> t ()) -> t ()
-forIndex_ ds f = traverse_ (uncurry f) $ zip playerIndices $ toList ds
+forIndex_ ds f = traverse_ (uncurry f) $ toList ds
 
 updatePlayerData :: PlayerIndex -> (PlayerData -> PlayerData) -> PlayerDataSet -> PlayerDataSet
 updatePlayerData playerIndex updater playerDataSet = case playerIndex of
@@ -123,3 +123,10 @@ playerIndices :: [PlayerIndex]
 playerIndices = [Player1 .. Player6]
 
 $(deriveJSON defaultOptions ''PlayerIndex)
+
+instance ToJSON PlayerData where
+  toJSON playerData = object
+    [ "name" .= name playerData
+    , "gameScore" .= gameScore playerData
+    , "totalScore" .= totalScore playerData
+    ]

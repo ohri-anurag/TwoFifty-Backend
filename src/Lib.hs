@@ -19,6 +19,7 @@ import qualified Data.Text as T
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Network.WebSockets.Connection
+import Prelude hiding (id)
 import Servant
 import Servant.API.WebSocket
 import System.Environment (getEnv)
@@ -125,20 +126,38 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
               | otherwise -> pure state
 
-            -- BiddingState commonStateData biddingStateData ->
-            --   -- There are already 6 players in the game.
-            --   -- Check to see if the player got disconnected and is trying to join again
-            --   if playerId `elem` M.toList (M.map snd $ playerData commonStateData)
-            --     then
-            --       sendTextData conn ReconnectionData 
-            --     else pure state
+            BiddingState commonStateData biddingStateData -> do
+              -- There are already 6 players in the game.
+              -- Check to see if the player got disconnected and is trying to join again
+              let
+                didMatchSucceed = not $ null $ matchingPlayers commonStateData
+                (player, _) = head $ matchingPlayers commonStateData
+              if didMatchSucceed
+                then do
+                  sendTextData conn
+                    $ encode
+                    $ BiddingReconnectionData player commonStateData biddingStateData
+                  let
+                    newCommonStateData = updateConnection player conn commonStateData
+                  pure $
+                    BiddingState newCommonStateData biddingStateData
+                else pure state
 
-            -- RoundState commonStateData roundStateData ->
+            -- RoundState commonStateData roundStateData -> do
             --   -- There are already 6 players in the game.
             --   -- Check to see if the player got disconnected and is trying to join again
-            --   if playerId `elem` M.toList (M.map snd $ playerData commonStateData)
-            --     then
-            --       sendTextData conn ReconnectionData 
+            --   let
+            --     didMatchSucceed = not $ null $ matchingPlayers commonStateData
+            --     (player, _) = head $ matchingPlayers commonStateData
+            --   if didMatchSucceed
+            --     then do
+            --       sendTextData conn
+            --         $ encode
+            --         $ RoundReconnectionData
+            --       let
+            --         newCommonStateData = updateConnection player conn commonStateData
+            --       pure $
+            --         RoundState newCommonStateData roundStateData
             --     else pure state
             _ -> pure state
 
@@ -151,6 +170,14 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
     updateState stateMapMVar gameName newState
       where
+        matchingPlayers commonStateData = filter ((== playerId) . id . snd) $ toList $ playerDataSet commonStateData
+        updateConnection p c commonStateData = commonStateData
+          { playerDataSet = updatePlayerData p (\pData -> pData
+              { connection = c
+              , name = playerName
+              }
+            ) $ playerDataSet commonStateData
+          }
         newPlayerJoined otherPlayerConnections =
           for_ otherPlayerConnections $ \oConn ->
             sendTextData oConn $ encode $ PlayerJoined playerName
@@ -256,11 +283,11 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         pure ()
     where
     calculateBiddingTeam bidder commonStateData =
-      bidder : filter isPlayerHelper playerIndices
+      (:) bidder $ map fst $ filter isPlayerHelper $ toList $ playerDataSet commonStateData
       where
-      isPlayerHelper player =
+      isPlayerHelper (_, player) =
         let
-          playerCards = cards $ getPlayer player $ playerDataSet commonStateData
+          playerCards = cards player
         in
         any ( `elem` playerCards) helpers
 

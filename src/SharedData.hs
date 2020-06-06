@@ -4,10 +4,11 @@ module SharedData where
 
 import Data.Aeson
 import Data.Aeson.Types
-import Data.Text hiding (map)
+import qualified Data.Text as T
 
 import Card
 import Player
+import State
 
 data SelectionData =
   SelectionData
@@ -17,8 +18,8 @@ data SelectionData =
 
 data ReceivedDataValue
   = IntroData
-      Text          -- Player Name
-      Text          -- Player Id
+      T.Text          -- Player Name
+      T.Text          -- Player Id
   | QuitBidding
       PlayerIndex   -- The player who quit bidding
   | IncreaseBid
@@ -32,16 +33,16 @@ data ReceivedDataValue
 
 -- Need to have a string here, since I need to know which game are we talking about
 data ReceivedData = ReceivedData
-  Text            -- Game Id
+  T.Text            -- Game Id
   ReceivedDataValue
 
 data SentData
   = PlayerJoined
-      Text          -- Newly Joined Player
+      T.Text          -- Newly Joined Player
   | ExistingPlayers
-      [Text]        -- Already existing players in the game
+      [T.Text]        -- Already existing players in the game
   | GameData
-      [(PlayerIndex, Text)]   -- Player names
+      [(PlayerIndex, T.Text)]   -- Player names
       PlayerIndex             -- The first bidder in this game
       PlayerIndex             -- Your player index
       [Card]                  -- Your cards
@@ -62,10 +63,10 @@ data SentData
       Int           -- Their score
   | NewGame
       [Card]        -- Cards for new game
-  -- | BiddingReconnectionData
-  --     Int           -- Current Highest Bid
-  --     PlayerIndex   -- Current Highest Bidder
-  --     [Card]        -- Your cards
+  | BiddingReconnectionData
+      PlayerIndex
+      CommonStateData
+      BiddingStateData
 
 
 
@@ -81,7 +82,7 @@ instance FromJSON ReceivedDataValue where
           "IncreaseBid" -> IncreaseBid <$> o .: "bidder" <*> o .: "bid"
           "SelectionData" -> ReceivedSelectionData <$> (SelectionData <$> o .: "trump" <*> o .: "helpers")
           "PlayedCard" -> PlayedCard <$> o .: "playedCard"
-          _ -> fail $ "Unexpected tag string received: " ++ unpack str
+          _ -> fail $ "Unexpected tag string received: " ++ T.unpack str
       x ->
         prependFailure "Tag was not a string: " $
           typeMismatch "String" x
@@ -105,10 +106,10 @@ instance ToJSON SentData where
     [ "tag" .= tagName sentData
     , "existingPlayers" .= playerNames
     ]
-  toJSON sentData@(GameData playerNames firstBidder myIndex myCards) = object
+  toJSON sentData@(GameData playerNames firstBidderIndex myIndex myCards) = object
     [ "tag" .= tagName sentData
-    , "playerNames" .= object (map (\(i, n) -> pack (show i) .= n) playerNames)
-    , "firstBidder" .= firstBidder
+    , "playerNames" .= object (map (\(i, n) -> T.pack (show i) .= n) playerNames)
+    , "firstBidder" .= firstBidderIndex
     , "myIndex" .= myIndex
     , "myCards" .= myCards
     ]
@@ -144,8 +145,23 @@ instance ToJSON SentData where
     [ "tag" .= tagName sentData
     , "cards" .= myCards
     ]
+  toJSON sentData@(BiddingReconnectionData myIndex commonStateData biddingStateData) = object
+    [ "tag" .= tagName sentData
+    , "playerSet" .= object (map (\(i, n) -> T.pack (show i) .= n) players)
+    , "biddingData" .= object
+      [ "highestBid" .= highestBid biddingStateData
+      , "highestBidder" .= highestBidder biddingStateData
+      , "firstBidder" .= firstBidder commonStateData
+      ]
+    , "myData" .= object
+      [ "myIndex" .= myIndex
+      , "myCards" .= cards (snd $ head $ filter ((==) myIndex . fst) players)
+      ]
+    , "bidders" .= bidders biddingStateData
+    ]
+    where players = toList $ playerDataSet commonStateData
 
-tagName :: SentData -> Text
+tagName :: SentData -> T.Text
 tagName (PlayerJoined _) = "PlayerJoined"
 tagName (ExistingPlayers _) = "ExistingPlayers"
 tagName GameData {} = "GameData"
@@ -156,3 +172,4 @@ tagName (PlayCard _) = "PlayCard"
 tagName (RoundData _ _) = "RoundData"
 tagName (GameFinishedData _ _) = "GameFinishedData"
 tagName (NewGame _) = "NewGame"
+tagName BiddingReconnectionData {} = "BiddingReconnectionData"
