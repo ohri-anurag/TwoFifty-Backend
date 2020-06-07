@@ -77,7 +77,7 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
   return fun.a === 9 ? fun.f(a, b, c, d, e, f, g, h, i) : fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
 }
 
-console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.1/optimize for better performance and smaller assets.');
+
 
 
 // EQUALITY
@@ -113,7 +113,7 @@ function _Utils_eqHelp(x, y, depth, stack)
 		return true;
 	}
 
-	/**/
+	/**_UNUSED/
 	if (x.$ === 'Set_elm_builtin')
 	{
 		x = $elm$core$Set$toList(x);
@@ -126,7 +126,7 @@ function _Utils_eqHelp(x, y, depth, stack)
 	}
 	//*/
 
-	/**_UNUSED/
+	/**/
 	if (x.$ < 0)
 	{
 		x = $elm$core$Dict$toList(x);
@@ -161,7 +161,7 @@ function _Utils_cmp(x, y, ord)
 		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
 	}
 
-	/**/
+	/**_UNUSED/
 	if (x instanceof String)
 	{
 		var a = x.valueOf();
@@ -170,10 +170,10 @@ function _Utils_cmp(x, y, ord)
 	}
 	//*/
 
-	/**_UNUSED/
+	/**/
 	if (typeof x.$ === 'undefined')
 	//*/
-	/**/
+	/**_UNUSED/
 	if (x.$[0] === '#')
 	//*/
 	{
@@ -203,17 +203,17 @@ var _Utils_compare = F2(function(x, y)
 
 // COMMON VALUES
 
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
+var _Utils_Tuple0 = 0;
+var _Utils_Tuple0_UNUSED = { $: '#0' };
 
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2_UNUSED(a, b) { return { $: '#2', a: a, b: b }; }
 
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3_UNUSED(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
 
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
+function _Utils_chr(c) { return c; }
+function _Utils_chr_UNUSED(c) { return new String(c); }
 
 
 // RECORDS
@@ -264,11 +264,11 @@ function _Utils_ap(xs, ys)
 
 
 
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
+var _List_Nil = { $: 0 };
+var _List_Nil_UNUSED = { $: '[]' };
 
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons_UNUSED(hd, tl) { return { $: '::', a: hd, b: tl }; }
 
 
 var _List_cons = F2(_List_Cons);
@@ -499,12 +499,12 @@ var _JsArray_appendN = F3(function(n, dest, source)
 
 // LOG
 
-var _Debug_log_UNUSED = F2(function(tag, value)
+var _Debug_log = F2(function(tag, value)
 {
 	return value;
 });
 
-var _Debug_log = F2(function(tag, value)
+var _Debug_log_UNUSED = F2(function(tag, value)
 {
 	console.log(tag + ': ' + _Debug_toString(value));
 	return value;
@@ -530,12 +530,12 @@ function _Debug_todoCase(moduleName, region, value)
 
 // TO STRING
 
-function _Debug_toString_UNUSED(value)
+function _Debug_toString(value)
 {
 	return '<internals>';
 }
 
-function _Debug_toString(value)
+function _Debug_toString_UNUSED(value)
 {
 	return _Debug_toAnsiString(false, value);
 }
@@ -720,13 +720,13 @@ function _Debug_toHexDigit(n)
 // CRASH
 
 
-function _Debug_crash_UNUSED(identifier)
+function _Debug_crash(identifier)
 {
 	throw new Error('https://github.com/elm/core/blob/1.0.0/hints/' + identifier + '.md');
 }
 
 
-function _Debug_crash(identifier, fact1, fact2, fact3, fact4)
+function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 {
 	switch(identifier)
 	{
@@ -784,11 +784,11 @@ function _Debug_crash(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.start.line === region.end.line)
+	if (region.H.y === region.M.y)
 	{
-		return 'on line ' + region.start.line;
+		return 'on line ' + region.H.y;
 	}
-	return 'on lines ' + region.start.line + ' through ' + region.end.line;
+	return 'on lines ' + region.H.y + ' through ' + region.M.y;
 }
 
 
@@ -1212,7 +1212,7 @@ function _Char_toLocaleLower(char)
 
 
 
-/**/
+/**_UNUSED/
 function _Json_errorToString(error)
 {
 	return $elm$json$Json$Decode$errorToString(error);
@@ -1616,11 +1616,11 @@ var _Json_encode = F2(function(indentLevel, value)
 	return JSON.stringify(_Json_unwrap(value), null, indentLevel) + '';
 });
 
-function _Json_wrap(value) { return { $: 0, a: value }; }
-function _Json_unwrap(value) { return value.a; }
+function _Json_wrap_UNUSED(value) { return { $: 0, a: value }; }
+function _Json_unwrap_UNUSED(value) { return value.a; }
 
-function _Json_wrap_UNUSED(value) { return value; }
-function _Json_unwrap_UNUSED(value) { return value; }
+function _Json_wrap(value) { return value; }
+function _Json_unwrap(value) { return value; }
 
 function _Json_emptyArray() { return []; }
 function _Json_emptyObject() { return {}; }
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.init,
-		impl.update,
-		impl.subscriptions,
+		impl.aI,
+		impl.a5,
+		impl.a$,
 		function() { return function() {} }
 	);
 });
@@ -1872,7 +1872,7 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 function _Platform_initialize(flagDecoder, args, init, update, subscriptions, stepperBuilder)
 {
 	var result = A2(_Json_run, flagDecoder, _Json_wrap(args ? args['flags'] : undefined));
-	$elm$core$Result$isOk(result) || _Debug_crash(2 /**/, _Json_errorToString(result.a) /**/);
+	$elm$core$Result$isOk(result) || _Debug_crash(2 /**_UNUSED/, _Json_errorToString(result.a) /**/);
 	var managers = {};
 	var initPair = init(result.a);
 	var model = initPair.a;
@@ -2316,7 +2316,7 @@ function _Platform_setupIncomingPort(name, sendToApp)
 //
 
 
-function _Platform_export_UNUSED(exports)
+function _Platform_export(exports)
 {
 	scope['Elm']
 		? _Platform_mergeExportsProd(scope['Elm'], exports)
@@ -2337,7 +2337,7 @@ function _Platform_mergeExportsProd(obj, exports)
 }
 
 
-function _Platform_export(exports)
+function _Platform_export_UNUSED(exports)
 {
 	scope['Elm']
 		? _Platform_mergeExportsDebug('Elm', scope['Elm'], exports)
@@ -2377,10 +2377,10 @@ var _VirtualDom_init = F4(function(virtualNode, flagDecoder, debugMetadata, args
 {
 	// NOTE: this function needs _Platform_export available to work
 
-	/**_UNUSED/
+	/**/
 	var node = args['node'];
 	//*/
-	/**/
+	/**_UNUSED/
 	var node = args && args['node'] ? args['node'] : _Debug_crash(0);
 	//*/
 
@@ -2635,24 +2635,24 @@ function _VirtualDom_noInnerHtmlOrFormAction(key)
 	return key == 'innerHTML' || key == 'formAction' ? 'data-' + key : key;
 }
 
-function _VirtualDom_noJavaScriptUri_UNUSED(value)
+function _VirtualDom_noJavaScriptUri(value)
 {
 	return /^javascript:/i.test(value.replace(/\s/g,'')) ? '' : value;
 }
 
-function _VirtualDom_noJavaScriptUri(value)
+function _VirtualDom_noJavaScriptUri_UNUSED(value)
 {
 	return /^javascript:/i.test(value.replace(/\s/g,''))
 		? 'javascript:alert("This is an XSS vector. Please use ports or web components instead.")'
 		: value;
 }
 
-function _VirtualDom_noJavaScriptOrHtmlUri_UNUSED(value)
+function _VirtualDom_noJavaScriptOrHtmlUri(value)
 {
 	return /^\s*(javascript:|data:text\/html)/i.test(value) ? '' : value;
 }
 
-function _VirtualDom_noJavaScriptOrHtmlUri(value)
+function _VirtualDom_noJavaScriptOrHtmlUri_UNUSED(value)
 {
 	return /^\s*(javascript:|data:text\/html)/i.test(value)
 		? 'javascript:alert("This is an XSS vector. Please use ports or web components instead.")'
@@ -2704,9 +2704,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		message: func(record.message),
-		stopPropagation: record.stopPropagation,
-		preventDefault: record.preventDefault
+		n: func(record.n),
+		I: record.I,
+		F: record.F
 	}
 });
 
@@ -2974,11 +2974,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.message;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.stopPropagation;
+		var message = !tag ? value : tag < 3 ? value.a : value.n;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.I;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.preventDefault) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.F) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3928,15 +3928,15 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.init,
-		impl.update,
-		impl.subscriptions,
+		impl.aI,
+		impl.a5,
+		impl.a$,
 		function(sendToApp, initialModel) {
-			var view = impl.view;
-			/**_UNUSED/
+			var view = impl.a7;
+			/**/
 			var domNode = args['node'];
 			//*/
-			/**/
+			/**_UNUSED/
 			var domNode = args && args['node'] ? args['node'] : _Debug_crash(0);
 			//*/
 			var currNode = _VirtualDom_virtualize(domNode);
@@ -3964,12 +3964,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.init,
-		impl.update,
-		impl.subscriptions,
+		impl.aI,
+		impl.a5,
+		impl.a$,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.setup && impl.setup(sendToApp)
-			var view = impl.view;
+			var divertHrefToApp = impl.G && impl.G(sendToApp)
+			var view = impl.a7;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3977,12 +3977,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.body);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.as);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.title) && (_VirtualDom_doc.title = title = doc.title);
+				(title !== doc.a1) && (_VirtualDom_doc.title = title = doc.a1);
 			});
 		}
 	);
@@ -4038,12 +4038,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.onUrlChange;
-	var onUrlRequest = impl.onUrlRequest;
+	var onUrlChange = impl.aN;
+	var onUrlRequest = impl.aO;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		setup: function(sendToApp)
+		G: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4059,9 +4059,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.protocol === next.protocol
-							&& curr.host === next.host
-							&& curr.port_.a === next.port_.a
+							&& curr.ae === next.ae
+							&& curr.Q === next.Q
+							&& curr.ab.a === next.ab.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4069,13 +4069,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		init: function(flags)
+		aI: function(flags)
 		{
-			return A3(impl.init, flags, _Browser_getUrl(), key);
+			return A3(impl.aI, flags, _Browser_getUrl(), key);
 		},
-		view: impl.view,
-		update: impl.update,
-		subscriptions: impl.subscriptions
+		a7: impl.a7,
+		a5: impl.a5,
+		a$: impl.a$
 	});
 }
 
@@ -4141,17 +4141,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { hidden: 'hidden', change: 'visibilitychange' }
+		? { aE: 'hidden', au: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { hidden: 'mozHidden', change: 'mozvisibilitychange' }
+		? { aE: 'mozHidden', au: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { hidden: 'msHidden', change: 'msvisibilitychange' }
+		? { aE: 'msHidden', au: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { hidden: 'webkitHidden', change: 'webkitvisibilitychange' }
-		: { hidden: 'hidden', change: 'visibilitychange' };
+		? { aE: 'webkitHidden', au: 'webkitvisibilitychange' }
+		: { aE: 'hidden', au: 'visibilitychange' };
 }
 
 
@@ -4232,12 +4232,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		scene: _Browser_getScene(),
-		viewport: {
-			x: _Browser_window.pageXOffset,
-			y: _Browser_window.pageYOffset,
-			width: _Browser_doc.documentElement.clientWidth,
-			height: _Browser_doc.documentElement.clientHeight
+		ai: _Browser_getScene(),
+		al: {
+			an: _Browser_window.pageXOffset,
+			ao: _Browser_window.pageYOffset,
+			am: _Browser_doc.documentElement.clientWidth,
+			P: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4247,8 +4247,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		width: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		height: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		am: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		P: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4271,15 +4271,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			scene: {
-				width: node.scrollWidth,
-				height: node.scrollHeight
+			ai: {
+				am: node.scrollWidth,
+				P: node.scrollHeight
 			},
-			viewport: {
-				x: node.scrollLeft,
-				y: node.scrollTop,
-				width: node.clientWidth,
-				height: node.clientHeight
+			al: {
+				an: node.scrollLeft,
+				ao: node.scrollTop,
+				am: node.clientWidth,
+				P: node.clientHeight
 			}
 		};
 	});
@@ -4309,18 +4309,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			scene: _Browser_getScene(),
-			viewport: {
-				x: x,
-				y: y,
-				width: _Browser_doc.documentElement.clientWidth,
-				height: _Browser_doc.documentElement.clientHeight
+			ai: _Browser_getScene(),
+			al: {
+				an: x,
+				ao: y,
+				am: _Browser_doc.documentElement.clientWidth,
+				P: _Browser_doc.documentElement.clientHeight
 			},
-			element: {
-				x: x + rect.left,
-				y: y + rect.top,
-				width: rect.width,
-				height: rect.height
+			aw: {
+				an: x + rect.left,
+				ao: y + rect.top,
+				am: rect.width,
+				P: rect.height
 			}
 		};
 	});
@@ -4355,15 +4355,15 @@ function _Browser_load(url)
 		}
 	}));
 }
-var $elm$core$Basics$EQ = {$: 'EQ'};
-var $elm$core$Basics$GT = {$: 'GT'};
-var $elm$core$Basics$LT = {$: 'LT'};
+var $elm$core$Basics$EQ = 1;
+var $elm$core$Basics$GT = 2;
+var $elm$core$Basics$LT = 0;
 var $elm$core$List$cons = _List_cons;
 var $elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
 		while (true) {
-			if (t.$ === 'RBEmpty_elm_builtin') {
+			if (t.$ === -2) {
 				return acc;
 			} else {
 				var key = t.b;
@@ -4408,7 +4408,7 @@ var $elm$core$Dict$keys = function (dict) {
 		dict);
 };
 var $elm$core$Set$toList = function (_v0) {
-	var dict = _v0.a;
+	var dict = _v0;
 	return $elm$core$Dict$keys(dict);
 };
 var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4418,7 +4418,7 @@ var $elm$core$Array$foldr = F3(
 		var tail = _v0.d;
 		var helper = F2(
 			function (node, acc) {
-				if (node.$ === 'SubTree') {
+				if (!node.$) {
 					var subTree = node.a;
 					return A3($elm$core$Elm$JsArray$foldr, helper, acc, subTree);
 				} else {
@@ -4436,32 +4436,32 @@ var $elm$core$Array$toList = function (array) {
 	return A3($elm$core$Array$foldr, $elm$core$List$cons, _List_Nil, array);
 };
 var $elm$core$Result$Err = function (a) {
-	return {$: 'Err', a: a};
+	return {$: 1, a: a};
 };
 var $elm$json$Json$Decode$Failure = F2(
 	function (a, b) {
-		return {$: 'Failure', a: a, b: b};
+		return {$: 3, a: a, b: b};
 	});
 var $elm$json$Json$Decode$Field = F2(
 	function (a, b) {
-		return {$: 'Field', a: a, b: b};
+		return {$: 0, a: a, b: b};
 	});
 var $elm$json$Json$Decode$Index = F2(
 	function (a, b) {
-		return {$: 'Index', a: a, b: b};
+		return {$: 1, a: a, b: b};
 	});
 var $elm$core$Result$Ok = function (a) {
-	return {$: 'Ok', a: a};
+	return {$: 0, a: a};
 };
 var $elm$json$Json$Decode$OneOf = function (a) {
-	return {$: 'OneOf', a: a};
+	return {$: 2, a: a};
 };
-var $elm$core$Basics$False = {$: 'False'};
+var $elm$core$Basics$False = 1;
 var $elm$core$Basics$add = _Basics_add;
 var $elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
+	return {$: 0, a: a};
 };
-var $elm$core$Maybe$Nothing = {$: 'Nothing'};
+var $elm$core$Maybe$Nothing = {$: 1};
 var $elm$core$String$all = _String_all;
 var $elm$core$Basics$and = _Basics_and;
 var $elm$core$Basics$append = _Utils_append;
@@ -4586,12 +4586,12 @@ var $elm$json$Json$Decode$errorToStringHelp = F2(
 		errorToStringHelp:
 		while (true) {
 			switch (error.$) {
-				case 'Field':
+				case 0:
 					var f = error.a;
 					var err = error.b;
 					var isSimple = function () {
 						var _v1 = $elm$core$String$uncons(f);
-						if (_v1.$ === 'Nothing') {
+						if (_v1.$ === 1) {
 							return false;
 						} else {
 							var _v2 = _v1.a;
@@ -4606,7 +4606,7 @@ var $elm$json$Json$Decode$errorToStringHelp = F2(
 					error = $temp$error;
 					context = $temp$context;
 					continue errorToStringHelp;
-				case 'Index':
+				case 1:
 					var i = error.a;
 					var err = error.b;
 					var indexName = '[' + ($elm$core$String$fromInt(i) + ']');
@@ -4615,7 +4615,7 @@ var $elm$json$Json$Decode$errorToStringHelp = F2(
 					error = $temp$error;
 					context = $temp$context;
 					continue errorToStringHelp;
-				case 'OneOf':
+				case 2:
 					var errors = error.a;
 					if (!errors.b) {
 						return 'Ran into a Json.Decode.oneOf with no possibilities' + function () {
@@ -4679,7 +4679,7 @@ var $elm$json$Json$Decode$errorToStringHelp = F2(
 var $elm$core$Array$branchFactor = 32;
 var $elm$core$Array$Array_elm_builtin = F4(
 	function (a, b, c, d) {
-		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
+		return {$: 0, a: a, b: b, c: c, d: d};
 	});
 var $elm$core$Elm$JsArray$empty = _JsArray_empty;
 var $elm$core$Basics$ceiling = _Basics_ceiling;
@@ -4694,7 +4694,7 @@ var $elm$core$Array$shiftStep = $elm$core$Basics$ceiling(
 var $elm$core$Array$empty = A4($elm$core$Array$Array_elm_builtin, 0, $elm$core$Array$shiftStep, $elm$core$Elm$JsArray$empty, $elm$core$Elm$JsArray$empty);
 var $elm$core$Elm$JsArray$initialize = _JsArray_initialize;
 var $elm$core$Array$Leaf = function (a) {
-	return {$: 'Leaf', a: a};
+	return {$: 1, a: a};
 };
 var $elm$core$Basics$apL = F2(
 	function (f, x) {
@@ -4714,7 +4714,7 @@ var $elm$core$Basics$max = F2(
 	});
 var $elm$core$Basics$mul = _Basics_mul;
 var $elm$core$Array$SubTree = function (a) {
-	return {$: 'SubTree', a: a};
+	return {$: 0, a: a};
 };
 var $elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
 var $elm$core$Array$compressNodes = F2(
@@ -4761,25 +4761,25 @@ var $elm$core$Array$treeFromBuilder = F2(
 	});
 var $elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
-		if (!builder.nodeListSize) {
+		if (!builder.a) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.tail),
+				$elm$core$Elm$JsArray$length(builder.c),
 				$elm$core$Array$shiftStep,
 				$elm$core$Elm$JsArray$empty,
-				builder.tail);
+				builder.c);
 		} else {
-			var treeLen = builder.nodeListSize * $elm$core$Array$branchFactor;
+			var treeLen = builder.a * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
 				A2($elm$core$Basics$logBase, $elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.nodeList) : builder.nodeList;
-			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.nodeListSize);
+			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.d) : builder.d;
+			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.a);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.tail) + treeLen,
+				$elm$core$Elm$JsArray$length(builder.c) + treeLen,
 				A2($elm$core$Basics$max, 5, depth * $elm$core$Array$shiftStep),
 				tree,
-				builder.tail);
+				builder.c);
 		}
 	});
 var $elm$core$Basics$idiv = _Basics_idiv;
@@ -4792,7 +4792,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{nodeList: nodeList, nodeListSize: (len / $elm$core$Array$branchFactor) | 0, tail: tail});
+					{d: nodeList, a: (len / $elm$core$Array$branchFactor) | 0, c: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -4822,9 +4822,9 @@ var $elm$core$Array$initialize = F2(
 			return A5($elm$core$Array$initializeHelp, fn, initialFromIndex, len, _List_Nil, tail);
 		}
 	});
-var $elm$core$Basics$True = {$: 'True'};
+var $elm$core$Basics$True = 0;
 var $elm$core$Result$isOk = function (result) {
-	if (result.$ === 'Ok') {
+	if (!result.$) {
 		return true;
 	} else {
 		return false;
@@ -4835,33 +4835,31 @@ var $elm$json$Json$Decode$map2 = _Json_map2;
 var $elm$json$Json$Decode$succeed = _Json_succeed;
 var $elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
-		case 'Normal':
+		case 0:
 			return 0;
-		case 'MayStopPropagation':
+		case 1:
 			return 1;
-		case 'MayPreventDefault':
+		case 2:
 			return 2;
 		default:
 			return 3;
 	}
 };
 var $elm$browser$Browser$External = function (a) {
-	return {$: 'External', a: a};
+	return {$: 1, a: a};
 };
 var $elm$browser$Browser$Internal = function (a) {
-	return {$: 'Internal', a: a};
+	return {$: 0, a: a};
 };
 var $elm$core$Basics$identity = function (x) {
 	return x;
 };
-var $elm$browser$Browser$Dom$NotFound = function (a) {
-	return {$: 'NotFound', a: a};
-};
-var $elm$url$Url$Http = {$: 'Http'};
-var $elm$url$Url$Https = {$: 'Https'};
+var $elm$browser$Browser$Dom$NotFound = $elm$core$Basics$identity;
+var $elm$url$Url$Http = 0;
+var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {fragment: fragment, host: host, path: path, port_: port_, protocol: protocol, query: query};
+		return {O: fragment, Q: host, _: path, ab: port_, ae: protocol, af: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -4897,7 +4895,7 @@ var $elm$url$Url$chompBeforePath = F5(
 					var i = _v0.a;
 					var _v1 = $elm$core$String$toInt(
 						A2($elm$core$String$dropLeft, i + 1, str));
-					if (_v1.$ === 'Nothing') {
+					if (_v1.$ === 1) {
 						return $elm$core$Maybe$Nothing;
 					} else {
 						var port_ = _v1;
@@ -4980,26 +4978,24 @@ var $elm$core$String$startsWith = _String_startsWith;
 var $elm$url$Url$fromString = function (str) {
 	return A2($elm$core$String$startsWith, 'http://', str) ? A2(
 		$elm$url$Url$chompAfterProtocol,
-		$elm$url$Url$Http,
+		0,
 		A2($elm$core$String$dropLeft, 7, str)) : (A2($elm$core$String$startsWith, 'https://', str) ? A2(
 		$elm$url$Url$chompAfterProtocol,
-		$elm$url$Url$Https,
+		1,
 		A2($elm$core$String$dropLeft, 8, str)) : $elm$core$Maybe$Nothing);
 };
 var $elm$core$Basics$never = function (_v0) {
 	never:
 	while (true) {
-		var nvr = _v0.a;
+		var nvr = _v0;
 		var $temp$_v0 = nvr;
 		_v0 = $temp$_v0;
 		continue never;
 	}
 };
-var $elm$core$Task$Perform = function (a) {
-	return {$: 'Perform', a: a};
-};
+var $elm$core$Task$Perform = $elm$core$Basics$identity;
 var $elm$core$Task$succeed = _Scheduler_succeed;
-var $elm$core$Task$init = $elm$core$Task$succeed(_Utils_Tuple0);
+var $elm$core$Task$init = $elm$core$Task$succeed(0);
 var $elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
 		if (!ls.b) {
@@ -5105,7 +5101,7 @@ var $elm$core$Task$sequence = function (tasks) {
 var $elm$core$Platform$sendToApp = _Platform_sendToApp;
 var $elm$core$Task$spawnCmd = F2(
 	function (router, _v0) {
-		var task = _v0.a;
+		var task = _v0;
 		return _Scheduler_spawn(
 			A2(
 				$elm$core$Task$andThen,
@@ -5117,7 +5113,7 @@ var $elm$core$Task$onEffects = F3(
 		return A2(
 			$elm$core$Task$map,
 			function (_v0) {
-				return _Utils_Tuple0;
+				return 0;
 			},
 			$elm$core$Task$sequence(
 				A2(
@@ -5127,147 +5123,190 @@ var $elm$core$Task$onEffects = F3(
 	});
 var $elm$core$Task$onSelfMsg = F3(
 	function (_v0, _v1, _v2) {
-		return $elm$core$Task$succeed(_Utils_Tuple0);
+		return $elm$core$Task$succeed(0);
 	});
 var $elm$core$Task$cmdMap = F2(
 	function (tagger, _v0) {
-		var task = _v0.a;
-		return $elm$core$Task$Perform(
-			A2($elm$core$Task$map, tagger, task));
+		var task = _v0;
+		return A2($elm$core$Task$map, tagger, task);
 	});
 _Platform_effectManagers['Task'] = _Platform_createManager($elm$core$Task$init, $elm$core$Task$onEffects, $elm$core$Task$onSelfMsg, $elm$core$Task$cmdMap);
 var $elm$core$Task$command = _Platform_leaf('Task');
 var $elm$core$Task$perform = F2(
 	function (toMessage, task) {
 		return $elm$core$Task$command(
-			$elm$core$Task$Perform(
-				A2($elm$core$Task$map, toMessage, task)));
+			A2($elm$core$Task$map, toMessage, task));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Model$BeginGamePage = F2(
-	function (a, b) {
-		return {$: 'BeginGamePage', a: a, b: b};
+var $author$project$Model$BeginGamePage = F3(
+	function (a, b, c) {
+		return {$: 0, a: a, b: b, c: c};
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Model$initModel = function (_v0) {
 	return _Utils_Tuple2(
-		A2($author$project$Model$BeginGamePage, '', ''),
+		A3($author$project$Model$BeginGamePage, '', '', ''),
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Model$NoOp = {$: 'NoOp'};
+var $author$project$Model$NoOp = {$: 11};
 var $author$project$Model$ReceivedMessageType = function (a) {
-	return {$: 'ReceivedMessageType', a: a};
+	return {$: 13, a: a};
 };
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Decoders$messageReceiver = _Platform_incomingPort('messageReceiver', $elm$json$Json$Decode$string);
+var $author$project$Model$BiddingReconnectionData = F4(
+	function (a, b, c, d) {
+		return {$: 10, a: a, b: b, c: c, d: d};
+	});
 var $author$project$Model$ExistingPlayers = function (a) {
-	return {$: 'ExistingPlayers', a: a};
+	return {$: 1, a: a};
 };
 var $author$project$Model$GameData = F4(
 	function (a, b, c, d) {
-		return {$: 'GameData', a: a, b: b, c: c, d: d};
+		return {$: 2, a: a, b: b, c: c, d: d};
 	});
 var $author$project$Model$GameFinishedData = F2(
 	function (a, b) {
-		return {$: 'GameFinishedData', a: a, b: b};
+		return {$: 8, a: a, b: b};
 	});
 var $author$project$Model$HasQuitBidding = function (a) {
-	return {$: 'HasQuitBidding', a: a};
+	return {$: 4, a: a};
 };
 var $author$project$Model$MaximumBid = F2(
 	function (a, b) {
-		return {$: 'MaximumBid', a: a, b: b};
+		return {$: 3, a: a, b: b};
 	});
 var $author$project$Model$NewGame = function (a) {
-	return {$: 'NewGame', a: a};
+	return {$: 9, a: a};
 };
 var $author$project$Model$PlayCard = function (a) {
-	return {$: 'PlayCard', a: a};
+	return {$: 6, a: a};
 };
 var $author$project$Model$PlayerJoined = function (a) {
-	return {$: 'PlayerJoined', a: a};
+	return {$: 0, a: a};
 };
 var $author$project$Model$ReceivedSelectionData = function (a) {
-	return {$: 'ReceivedSelectionData', a: a};
+	return {$: 5, a: a};
 };
 var $author$project$Model$RoundData = F2(
 	function (a, b) {
-		return {$: 'RoundData', a: a, b: b};
+		return {$: 7, a: a, b: b};
 	});
-var $author$project$Model$SelectionData = F2(
-	function (trump, helpers) {
-		return {helpers: helpers, trump: trump};
+var $author$project$Model$RoundReconnectionData = F7(
+	function (a, b, c, d, e, f, g) {
+		return {$: 11, a: a, b: b, c: c, d: d, e: e, f: f, g: g};
 	});
+var $author$project$Model$Undecided = 2;
+var $author$project$Model$WebsocketFailed = {$: 12};
 var $elm$json$Json$Decode$andThen = _Json_andThen;
-var $author$project$Model$Card = F2(
-	function (value, suit) {
-		return {suit: suit, value: value};
+var $author$project$Model$BiddingData = F3(
+	function (highestBid, highestBidder, firstBidder) {
+		return {ay: firstBidder, aF: highestBid, aG: highestBidder};
 	});
 var $elm$json$Json$Decode$field = _Json_decodeField;
-var $author$project$Model$Club = {$: 'Club'};
-var $author$project$Model$Diamond = {$: 'Diamond'};
-var $author$project$Model$Heart = {$: 'Heart'};
-var $author$project$Model$Spade = {$: 'Spade'};
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$map3 = _Json_map3;
+var $author$project$Model$Player1 = 0;
+var $author$project$Model$Player2 = 1;
+var $author$project$Model$Player3 = 2;
+var $author$project$Model$Player4 = 3;
+var $author$project$Model$Player5 = 4;
+var $author$project$Model$Player6 = 5;
 var $elm$json$Json$Decode$fail = _Json_fail;
+var $author$project$Decoders$playerIndexDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (str) {
+		switch (str) {
+			case 'Player1':
+				return $elm$json$Json$Decode$succeed(0);
+			case 'Player2':
+				return $elm$json$Json$Decode$succeed(1);
+			case 'Player3':
+				return $elm$json$Json$Decode$succeed(2);
+			case 'Player4':
+				return $elm$json$Json$Decode$succeed(3);
+			case 'Player5':
+				return $elm$json$Json$Decode$succeed(4);
+			case 'Player6':
+				return $elm$json$Json$Decode$succeed(5);
+			default:
+				return $elm$json$Json$Decode$fail('Unknown PlayerIndex: ' + str);
+		}
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Decoders$biddingDataDecoder = A4(
+	$elm$json$Json$Decode$map3,
+	$author$project$Model$BiddingData,
+	A2($elm$json$Json$Decode$field, 'highestBid', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'highestBidder', $author$project$Decoders$playerIndexDecoder),
+	A2($elm$json$Json$Decode$field, 'firstBidder', $author$project$Decoders$playerIndexDecoder));
+var $author$project$Model$Card$Card = F2(
+	function (value, suit) {
+		return {a0: suit, a6: value};
+	});
+var $author$project$Model$Card$Club = 0;
+var $author$project$Model$Card$Diamond = 2;
+var $author$project$Model$Card$Heart = 1;
+var $author$project$Model$Card$Spade = 3;
 var $author$project$Decoders$suitDecoder = A2(
 	$elm$json$Json$Decode$andThen,
 	function (str) {
 		switch (str) {
 			case 'Club':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Club);
+				return $elm$json$Json$Decode$succeed(0);
 			case 'Heart':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Heart);
+				return $elm$json$Json$Decode$succeed(1);
 			case 'Diamond':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Diamond);
+				return $elm$json$Json$Decode$succeed(2);
 			case 'Spade':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Spade);
+				return $elm$json$Json$Decode$succeed(3);
 			default:
 				return $elm$json$Json$Decode$fail('Unknown Suit: ' + str);
 		}
 	},
 	$elm$json$Json$Decode$string);
-var $author$project$Model$Ace = {$: 'Ace'};
-var $author$project$Model$Eight = {$: 'Eight'};
-var $author$project$Model$Five = {$: 'Five'};
-var $author$project$Model$Four = {$: 'Four'};
-var $author$project$Model$Jack = {$: 'Jack'};
-var $author$project$Model$King = {$: 'King'};
-var $author$project$Model$Nine = {$: 'Nine'};
-var $author$project$Model$Queen = {$: 'Queen'};
-var $author$project$Model$Seven = {$: 'Seven'};
-var $author$project$Model$Six = {$: 'Six'};
-var $author$project$Model$Ten = {$: 'Ten'};
-var $author$project$Model$Three = {$: 'Three'};
+var $author$project$Model$Card$Ace = 12;
+var $author$project$Model$Card$Eight = 6;
+var $author$project$Model$Card$Five = 3;
+var $author$project$Model$Card$Four = 2;
+var $author$project$Model$Card$Jack = 9;
+var $author$project$Model$Card$King = 11;
+var $author$project$Model$Card$Nine = 7;
+var $author$project$Model$Card$Queen = 10;
+var $author$project$Model$Card$Seven = 5;
+var $author$project$Model$Card$Six = 4;
+var $author$project$Model$Card$Ten = 8;
+var $author$project$Model$Card$Three = 1;
 var $author$project$Decoders$valueDecoder = A2(
 	$elm$json$Json$Decode$andThen,
 	function (str) {
 		switch (str) {
 			case 'Ace':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Ace);
+				return $elm$json$Json$Decode$succeed(12);
 			case 'Three':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Three);
+				return $elm$json$Json$Decode$succeed(1);
 			case 'Four':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Four);
+				return $elm$json$Json$Decode$succeed(2);
 			case 'Five':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Five);
+				return $elm$json$Json$Decode$succeed(3);
 			case 'Six':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Six);
+				return $elm$json$Json$Decode$succeed(4);
 			case 'Seven':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Seven);
+				return $elm$json$Json$Decode$succeed(5);
 			case 'Eight':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Eight);
+				return $elm$json$Json$Decode$succeed(6);
 			case 'Nine':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Nine);
+				return $elm$json$Json$Decode$succeed(7);
 			case 'Ten':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Ten);
+				return $elm$json$Json$Decode$succeed(8);
 			case 'Jack':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Jack);
+				return $elm$json$Json$Decode$succeed(9);
 			case 'Queen':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Queen);
+				return $elm$json$Json$Decode$succeed(10);
 			case 'King':
-				return $elm$json$Json$Decode$succeed($author$project$Model$King);
+				return $elm$json$Json$Decode$succeed(11);
 			default:
 				return $elm$json$Json$Decode$fail('Unknown CardValue: ' + str);
 		}
@@ -5275,7 +5314,7 @@ var $author$project$Decoders$valueDecoder = A2(
 	$elm$json$Json$Decode$string);
 var $author$project$Decoders$cardDecoder = A3(
 	$elm$json$Json$Decode$map2,
-	$author$project$Model$Card,
+	$author$project$Model$Card$Card,
 	A2($elm$json$Json$Decode$field, 'value', $author$project$Decoders$valueDecoder),
 	A2($elm$json$Json$Decode$field, 'suit', $author$project$Decoders$suitDecoder));
 var $elm$json$Json$Decode$list = _Json_decodeList;
@@ -5285,62 +5324,146 @@ var $elm$core$Basics$composeR = F3(
 		return g(
 			f(x));
 	});
-var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $elm$json$Json$Decode$map4 = _Json_map4;
-var $author$project$Model$Player1 = {$: 'Player1'};
-var $author$project$Model$Player2 = {$: 'Player2'};
-var $author$project$Model$Player3 = {$: 'Player3'};
-var $author$project$Model$Player4 = {$: 'Player4'};
-var $author$project$Model$Player5 = {$: 'Player5'};
-var $author$project$Model$Player6 = {$: 'Player6'};
-var $author$project$Decoders$playerIndexDecoder = A2(
-	$elm$json$Json$Decode$andThen,
-	function (str) {
-		switch (str) {
-			case 'Player1':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Player1);
-			case 'Player2':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Player2);
-			case 'Player3':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Player3);
-			case 'Player4':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Player4);
-			case 'Player5':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Player5);
-			case 'Player6':
-				return $elm$json$Json$Decode$succeed($author$project$Model$Player6);
-			default:
-				return $elm$json$Json$Decode$fail('Unknown PlayerIndex: ' + str);
-		}
-	},
-	$elm$json$Json$Decode$string);
+var $elm$json$Json$Decode$map7 = _Json_map7;
+var $author$project$Model$MyData = F2(
+	function (myIndex, myCards) {
+		return {aJ: myCards, aL: myIndex};
+	});
+var $author$project$Decoders$myDataDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$Model$MyData,
+	A2($elm$json$Json$Decode$field, 'myIndex', $author$project$Decoders$playerIndexDecoder),
+	A2($elm$json$Json$Decode$field, 'myCards', $author$project$Decoders$cardsDecoder));
+var $author$project$Decoders$playerIndicesDecoder = $elm$json$Json$Decode$list($author$project$Decoders$playerIndexDecoder);
 var $author$project$Decoders$PlayerNameSet = F6(
 	function (name1, name2, name3, name4, name5, name6) {
-		return {name1: name1, name2: name2, name3: name3, name4: name4, name5: name5, name6: name6};
+		return {T: name1, U: name2, V: name3, W: name4, X: name5, Y: name6};
 	});
 var $elm$json$Json$Decode$map6 = _Json_map6;
 var $author$project$Decoders$playerNameSetDecoder = A7(
 	$elm$json$Json$Decode$map6,
 	$author$project$Decoders$PlayerNameSet,
-	A2($elm$json$Json$Decode$field, 'name1', $elm$json$Json$Decode$string),
-	A2($elm$json$Json$Decode$field, 'name2', $elm$json$Json$Decode$string),
-	A2($elm$json$Json$Decode$field, 'name3', $elm$json$Json$Decode$string),
-	A2($elm$json$Json$Decode$field, 'name4', $elm$json$Json$Decode$string),
-	A2($elm$json$Json$Decode$field, 'name5', $elm$json$Json$Decode$string),
-	A2($elm$json$Json$Decode$field, 'name6', $elm$json$Json$Decode$string));
+	A2($elm$json$Json$Decode$field, 'Player1', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'Player2', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'Player3', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'Player4', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'Player5', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'Player6', $elm$json$Json$Decode$string));
+var $author$project$Model$PlayerSet = F6(
+	function (player1, player2, player3, player4, player5, player6) {
+		return {aQ: player1, aR: player2, aS: player3, aT: player4, aU: player5, aV: player6};
+	});
+var $author$project$Model$Player = F5(
+	function (totalScore, gameScore, name, card, status) {
+		return {at: card, aB: gameScore, aM: name, a_: status, a2: totalScore};
+	});
+var $elm$json$Json$Decode$map5 = _Json_map5;
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $elm$json$Json$Decode$nullable = function (decoder) {
+	return $elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
+				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
+			]));
+};
+var $author$project$Model$AntiTeam = 1;
+var $author$project$Model$BiddingTeam = 0;
+var $author$project$Decoders$playerStatusDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (str) {
+		switch (str) {
+			case 'BiddingTeam':
+				return $elm$json$Json$Decode$succeed(0);
+			case 'AntiTeam':
+				return $elm$json$Json$Decode$succeed(1);
+			case 'Undecided':
+				return $elm$json$Json$Decode$succeed(2);
+			default:
+				return $elm$json$Json$Decode$fail('Unknown PlayerStatus: ' + str);
+		}
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Decoders$playerDecoder = A6(
+	$elm$json$Json$Decode$map5,
+	$author$project$Model$Player,
+	A2($elm$json$Json$Decode$field, 'totalScore', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'gameScore', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string),
+	A2(
+		$elm$json$Json$Decode$field,
+		'card',
+		$elm$json$Json$Decode$nullable($author$project$Decoders$cardDecoder)),
+	A2($elm$json$Json$Decode$field, 'status', $author$project$Decoders$playerStatusDecoder));
+var $author$project$Decoders$playerSetDecoder = A7(
+	$elm$json$Json$Decode$map6,
+	$author$project$Model$PlayerSet,
+	A2($elm$json$Json$Decode$field, 'Player1', $author$project$Decoders$playerDecoder),
+	A2($elm$json$Json$Decode$field, 'Player2', $author$project$Decoders$playerDecoder),
+	A2($elm$json$Json$Decode$field, 'Player3', $author$project$Decoders$playerDecoder),
+	A2($elm$json$Json$Decode$field, 'Player4', $author$project$Decoders$playerDecoder),
+	A2($elm$json$Json$Decode$field, 'Player5', $author$project$Decoders$playerDecoder),
+	A2($elm$json$Json$Decode$field, 'Player6', $author$project$Decoders$playerDecoder));
+var $author$project$Model$Round1 = 0;
+var $author$project$Model$Round2 = 1;
+var $author$project$Model$Round3 = 2;
+var $author$project$Model$Round4 = 3;
+var $author$project$Model$Round5 = 4;
+var $author$project$Model$Round6 = 5;
+var $author$project$Model$Round7 = 6;
+var $author$project$Model$Round8 = 7;
+var $author$project$Decoders$roundDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (str) {
+		switch (str) {
+			case 'Round1':
+				return $elm$json$Json$Decode$succeed(0);
+			case 'Round2':
+				return $elm$json$Json$Decode$succeed(1);
+			case 'Round3':
+				return $elm$json$Json$Decode$succeed(2);
+			case 'Round4':
+				return $elm$json$Json$Decode$succeed(3);
+			case 'Round5':
+				return $elm$json$Json$Decode$succeed(4);
+			case 'Round6':
+				return $elm$json$Json$Decode$succeed(5);
+			case 'Round7':
+				return $elm$json$Json$Decode$succeed(6);
+			case 'Round8':
+				return $elm$json$Json$Decode$succeed(7);
+			default:
+				return $elm$json$Json$Decode$fail('Unknown Round: ' + str);
+		}
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Model$SelectionData = F2(
+	function (trump, helpers) {
+		return {aC: helpers, a3: trump};
+	});
+var $author$project$Decoders$selectionDataDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$Model$SelectionData,
+	A2($elm$json$Json$Decode$field, 'trump', $author$project$Decoders$suitDecoder),
+	A2(
+		$elm$json$Json$Decode$field,
+		'helpers',
+		$elm$json$Json$Decode$list($author$project$Decoders$cardDecoder)));
 var $author$project$Decoders$receivedDataDecoder = function () {
 	var playerWithName = function (name) {
-		return {gameScore: 0, name: name, totalScore: 0};
+		return {at: $elm$core$Maybe$Nothing, aB: 0, aM: name, a_: 2, a2: 0};
 	};
 	var playerNameSetToPlayerSet = function (playerNameSet) {
 		return $elm$json$Json$Decode$succeed(
 			{
-				player1: playerWithName(playerNameSet.name1),
-				player2: playerWithName(playerNameSet.name2),
-				player3: playerWithName(playerNameSet.name3),
-				player4: playerWithName(playerNameSet.name4),
-				player5: playerWithName(playerNameSet.name5),
-				player6: playerWithName(playerNameSet.name6)
+				aQ: playerWithName(playerNameSet.T),
+				aR: playerWithName(playerNameSet.U),
+				aS: playerWithName(playerNameSet.V),
+				aT: playerWithName(playerNameSet.W),
+				aU: playerWithName(playerNameSet.X),
+				aV: playerWithName(playerNameSet.Y)
 			});
 	};
 	return A2(
@@ -5386,14 +5509,7 @@ var $author$project$Decoders$receivedDataDecoder = function () {
 					return A2(
 						$elm$json$Json$Decode$andThen,
 						A2($elm$core$Basics$composeR, $author$project$Model$ReceivedSelectionData, $elm$json$Json$Decode$succeed),
-						A3(
-							$elm$json$Json$Decode$map2,
-							$author$project$Model$SelectionData,
-							A2($elm$json$Json$Decode$field, 'trump', $author$project$Decoders$suitDecoder),
-							A2(
-								$elm$json$Json$Decode$field,
-								'helpers',
-								$elm$json$Json$Decode$list($author$project$Decoders$cardDecoder))));
+						$author$project$Decoders$selectionDataDecoder);
 				case 'PlayCard':
 					return A2(
 						$elm$json$Json$Decode$map,
@@ -5419,6 +5535,27 @@ var $author$project$Decoders$receivedDataDecoder = function () {
 						$elm$json$Json$Decode$map,
 						$author$project$Model$NewGame,
 						A2($elm$json$Json$Decode$field, 'cards', $author$project$Decoders$cardsDecoder));
+				case 'BiddingReconnectionData':
+					return A5(
+						$elm$json$Json$Decode$map4,
+						$author$project$Model$BiddingReconnectionData,
+						A2($elm$json$Json$Decode$field, 'playerSet', $author$project$Decoders$playerSetDecoder),
+						A2($elm$json$Json$Decode$field, 'biddingData', $author$project$Decoders$biddingDataDecoder),
+						A2($elm$json$Json$Decode$field, 'myData', $author$project$Decoders$myDataDecoder),
+						A2($elm$json$Json$Decode$field, 'bidders', $author$project$Decoders$playerIndicesDecoder));
+				case 'RoundReconnectionData':
+					return A8(
+						$elm$json$Json$Decode$map7,
+						$author$project$Model$RoundReconnectionData,
+						A2($elm$json$Json$Decode$field, 'playerSet', $author$project$Decoders$playerSetDecoder),
+						A2($elm$json$Json$Decode$field, 'biddingData', $author$project$Decoders$biddingDataDecoder),
+						A2($elm$json$Json$Decode$field, 'myData', $author$project$Decoders$myDataDecoder),
+						A2($elm$json$Json$Decode$field, 'selectionData', $author$project$Decoders$selectionDataDecoder),
+						A2($elm$json$Json$Decode$field, 'firstPlayer', $author$project$Decoders$playerIndexDecoder),
+						A2($elm$json$Json$Decode$field, 'turn', $author$project$Decoders$playerIndexDecoder),
+						A2($elm$json$Json$Decode$field, 'round', $author$project$Decoders$roundDecoder));
+				case 'WebsocketFailed':
+					return $elm$json$Json$Decode$succeed($author$project$Model$WebsocketFailed);
 				default:
 					return $elm$json$Json$Decode$fail('Unknown tag received: ' + tag);
 			}
@@ -5428,7 +5565,7 @@ var $author$project$Decoders$receivedDataDecoder = function () {
 var $author$project$Decoders$receiveMessage = $author$project$Decoders$messageReceiver(
 	function (str) {
 		var _v0 = A2($elm$json$Json$Decode$decodeString, $author$project$Decoders$receivedDataDecoder, str);
-		if (_v0.$ === 'Ok') {
+		if (!_v0.$) {
 			var receivedMessage = _v0.a;
 			return $author$project$Model$ReceivedMessageType(receivedMessage);
 		} else {
@@ -5441,39 +5578,39 @@ var $author$project$Subscriptions$subscriptions = function (_v0) {
 };
 var $author$project$Model$BiddingRound = F2(
 	function (a, b) {
-		return {$: 'BiddingRound', a: a, b: b};
+		return {$: 2, a: a, b: b};
 	});
-var $author$project$Model$FirstAndMyTurnOver = {$: 'FirstAndMyTurnOver'};
-var $author$project$Model$IntroData = F2(
-	function (a, b) {
-		return {$: 'IntroData', a: a, b: b};
+var $author$project$Model$FirstAndMyTurnOver = {$: 3};
+var $author$project$Model$IntroData = F3(
+	function (a, b, c) {
+		return {$: 0, a: a, b: b, c: c};
 	});
 var $author$project$Model$NotFirstAndMyTurnOver = function (a) {
-	return {$: 'NotFirstAndMyTurnOver', a: a};
+	return {$: 5, a: a};
 };
 var $author$project$Model$PlayRound = F2(
 	function (a, b) {
-		return {$: 'PlayRound', a: a, b: b};
+		return {$: 5, a: a, b: b};
 	});
 var $author$project$Model$PlayedCard = F2(
 	function (a, b) {
-		return {$: 'PlayedCard', a: a, b: b};
+		return {$: 4, a: a, b: b};
 	});
 var $author$project$Model$SendQuit = F2(
 	function (a, b) {
-		return {$: 'SendQuit', a: a, b: b};
+		return {$: 2, a: a, b: b};
 	});
 var $author$project$Model$SentSelectionData = F2(
 	function (a, b) {
-		return {$: 'SentSelectionData', a: a, b: b};
+		return {$: 3, a: a, b: b};
 	});
 var $author$project$Model$TrumpSelection = F2(
 	function (a, b) {
-		return {$: 'TrumpSelection', a: a, b: b};
+		return {$: 3, a: a, b: b};
 	});
 var $author$project$Model$WaitingForPlayers = F2(
 	function (a, b) {
-		return {$: 'WaitingForPlayers', a: a, b: b};
+		return {$: 1, a: a, b: b};
 	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -5486,41 +5623,25 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var $author$project$Model$AntiTeam = {$: 'AntiTeam'};
-var $author$project$Model$BiddingTeam = {$: 'BiddingTeam'};
-var $author$project$Model$FirstAndMyTurn = {$: 'FirstAndMyTurn'};
+var $author$project$Model$ErrorState = {$: 6};
+var $author$project$Model$FirstAndMyTurn = {$: 2};
 var $author$project$Model$FirstAndNotMyTurn = function (a) {
-	return {$: 'FirstAndNotMyTurn', a: a};
+	return {$: 0, a: a};
 };
-var $author$project$Model$GameFinished = {$: 'GameFinished'};
+var $author$project$Model$GameFinished = {$: 7};
 var $author$project$Model$NotFirstAndMyTurn = function (a) {
-	return {$: 'NotFirstAndMyTurn', a: a};
+	return {$: 4, a: a};
 };
 var $author$project$Model$NotFirstAndNotMyTurn = F2(
 	function (a, b) {
-		return {$: 'NotFirstAndNotMyTurn', a: a, b: b};
+		return {$: 1, a: a, b: b};
 	});
-var $author$project$Model$Round1 = {$: 'Round1'};
-var $author$project$Model$RoundFinished = {$: 'RoundFinished'};
-var $author$project$Model$WaitingForTrump = F2(
-	function (a, b) {
-		return {$: 'WaitingForTrump', a: a, b: b};
-	});
-var $author$project$Model$allPlayerIndices = _List_fromArray(
-	[$author$project$Model$Player1, $author$project$Model$Player2, $author$project$Model$Player3, $author$project$Model$Player4, $author$project$Model$Player5, $author$project$Model$Player6]);
-var $author$project$Model$emptyHand = {card1: $elm$core$Maybe$Nothing, card2: $elm$core$Maybe$Nothing, card3: $elm$core$Maybe$Nothing, card4: $elm$core$Maybe$Nothing, card5: $elm$core$Maybe$Nothing, card6: $elm$core$Maybe$Nothing};
-var $elm$core$Tuple$pair = F2(
-	function (a, b) {
-		return _Utils_Tuple2(a, b);
-	});
-var $author$project$Model$getPlayerStatuses = function (playerStatusSet) {
-	return A3(
-		$elm$core$List$map2,
-		$elm$core$Tuple$pair,
-		$author$project$Model$allPlayerIndices,
-		_List_fromArray(
-			[playerStatusSet.status1, playerStatusSet.status2, playerStatusSet.status3, playerStatusSet.status4, playerStatusSet.status5, playerStatusSet.status6]));
+var $author$project$Model$RoundFinished = {$: 6};
+var $author$project$Model$WaitingForTrump = function (a) {
+	return {$: 4, a: a};
 };
+var $author$project$Model$allPlayerIndices = _List_fromArray(
+	[0, 1, 2, 3, 4, 5]);
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -5542,6 +5663,106 @@ var $elm$core$List$any = F2(
 			}
 		}
 	});
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $elm$core$Basics$not = _Basics_not;
+var $elm$core$List$all = F2(
+	function (isOkay, list) {
+		return !A2(
+			$elm$core$List$any,
+			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
+			list);
+	});
+var $author$project$Model$getPlayers = F2(
+	function (f, players) {
+		return _List_fromArray(
+			[
+				_Utils_Tuple2(
+				0,
+				f(players.aQ)),
+				_Utils_Tuple2(
+				1,
+				f(players.aR)),
+				_Utils_Tuple2(
+				2,
+				f(players.aS)),
+				_Utils_Tuple2(
+				3,
+				f(players.aT)),
+				_Utils_Tuple2(
+				4,
+				f(players.aU)),
+				_Utils_Tuple2(
+				5,
+				f(players.aV))
+			]);
+	});
+var $elm$core$Basics$neq = _Utils_notEqual;
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $author$project$Update$calculateHelpersRevealed = F2(
+	function (playerSet, selectionData) {
+		var players = A2(
+			$author$project$Model$getPlayers,
+			function ($) {
+				return $.a_;
+			},
+			playerSet);
+		var hasTeamBeenRevealed = A2(
+			$elm$core$List$all,
+			A2(
+				$elm$core$Basics$composeR,
+				$elm$core$Tuple$second,
+				$elm$core$Basics$neq(2)),
+			players);
+		var biddingTeam = A2(
+			$elm$core$List$filter,
+			A2(
+				$elm$core$Basics$composeR,
+				$elm$core$Tuple$second,
+				$elm$core$Basics$eq(0)),
+			players);
+		return hasTeamBeenRevealed ? $elm$core$List$length(selectionData.aC) : ($elm$core$List$length(biddingTeam) - 1);
+	});
+var $author$project$Model$getPlayer = F2(
+	function (players, index) {
+		switch (index) {
+			case 0:
+				return players.aQ;
+			case 1:
+				return players.aR;
+			case 2:
+				return players.aS;
+			case 3:
+				return players.aT;
+			case 4:
+				return players.aU;
+			default:
+				return players.aV;
+		}
+	});
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (!maybe.$) {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Update$calculateTurnStatus = F4(
+	function (turn, firstPlayer, myIndex, playerSet) {
+		var baseCard = A2(
+			$elm$core$Maybe$withDefault,
+			A2($author$project$Model$Card$Card, 12, 3),
+			A2($author$project$Model$getPlayer, playerSet, firstPlayer).at);
+		return _Utils_eq(myIndex, firstPlayer) ? (_Utils_eq(myIndex, turn) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(turn)) : (_Utils_eq(myIndex, turn) ? $author$project$Model$NotFirstAndMyTurn(baseCard) : A2($author$project$Model$NotFirstAndNotMyTurn, turn, baseCard));
+	});
 var $elm$core$List$member = F2(
 	function (x, xs) {
 		return A2(
@@ -5558,11 +5779,11 @@ var $author$project$Model$amIHelper = F2(
 			function (h) {
 				return A2($elm$core$List$member, h, myCards);
 			},
-			selectionData.helpers);
+			selectionData.aC);
 	});
 var $author$project$Model$amITheOnlyHelper = F2(
 	function (myCards, selectionData) {
-		var _v0 = selectionData.helpers;
+		var _v0 = selectionData.aC;
 		_v0$2:
 		while (true) {
 			if (_v0.b) {
@@ -5586,202 +5807,145 @@ var $author$project$Model$amITheOnlyHelper = F2(
 		return false;
 	});
 var $author$project$Model$maxHelpers = function (selectionData) {
-	return $elm$core$List$length(selectionData.helpers);
+	return $elm$core$List$length(selectionData.aC);
 };
-var $elm$core$Basics$neq = _Utils_notEqual;
-var $author$project$Model$setPlayerStatus = F3(
-	function (playerIndex, playerStatus, playerStatusSet) {
-		switch (playerIndex.$) {
-			case 'Player1':
+var $author$project$Model$updatePlayer = F3(
+	function (playerIndex, update, players) {
+		switch (playerIndex) {
+			case 0:
 				return _Utils_update(
-					playerStatusSet,
-					{status1: playerStatus});
-			case 'Player2':
+					players,
+					{
+						aQ: update(players.aQ)
+					});
+			case 1:
 				return _Utils_update(
-					playerStatusSet,
-					{status2: playerStatus});
-			case 'Player3':
+					players,
+					{
+						aR: update(players.aR)
+					});
+			case 2:
 				return _Utils_update(
-					playerStatusSet,
-					{status3: playerStatus});
-			case 'Player4':
+					players,
+					{
+						aS: update(players.aS)
+					});
+			case 3:
 				return _Utils_update(
-					playerStatusSet,
-					{status4: playerStatus});
-			case 'Player5':
+					players,
+					{
+						aT: update(players.aT)
+					});
+			case 4:
 				return _Utils_update(
-					playerStatusSet,
-					{status5: playerStatus});
+					players,
+					{
+						aU: update(players.aU)
+					});
 			default:
 				return _Utils_update(
-					playerStatusSet,
-					{status6: playerStatus});
+					players,
+					{
+						aV: update(players.aV)
+					});
 		}
 	});
-var $author$project$Update$getPlayersStatus = F5(
-	function (myIndex, winnerIndex, selectionData, myCards, playerStatusSet) {
-		var newStatusSet = A3($author$project$Model$setPlayerStatus, winnerIndex, $author$project$Model$BiddingTeam, playerStatusSet);
+var $author$project$Model$updatePlayerStatus = F2(
+	function (playerIndex, status) {
+		return A2(
+			$author$project$Model$updatePlayer,
+			playerIndex,
+			function (player) {
+				return _Utils_update(
+					player,
+					{a_: status});
+			});
+	});
+var $author$project$Update$getPlayersStatus = F4(
+	function (myData, winnerIndex, selectionData, playerSet) {
+		var newPlayerSet = A3($author$project$Model$updatePlayerStatus, winnerIndex, 0, playerSet);
 		var allAntiStatus = A3(
 			$elm$core$List$foldl,
 			F2(
 				function (p, pss) {
-					return A3($author$project$Model$setPlayerStatus, p, $author$project$Model$AntiTeam, pss);
+					return A3($author$project$Model$updatePlayerStatus, p, 1, pss);
 				}),
-			newStatusSet,
+			newPlayerSet,
 			A2(
 				$elm$core$List$filter,
 				$elm$core$Basics$neq(winnerIndex),
 				$author$project$Model$allPlayerIndices));
-		return (!$author$project$Model$maxHelpers(selectionData)) ? _Utils_Tuple2(allAntiStatus, 0) : (_Utils_eq(myIndex, winnerIndex) ? _Utils_Tuple2(newStatusSet, 0) : (A2($author$project$Model$amITheOnlyHelper, myCards, selectionData) ? _Utils_Tuple2(
-			A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$BiddingTeam, allAntiStatus),
-			$author$project$Model$maxHelpers(selectionData)) : (A2($author$project$Model$amIHelper, myCards, selectionData) ? _Utils_Tuple2(
-			A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$BiddingTeam, newStatusSet),
+		return (!$author$project$Model$maxHelpers(selectionData)) ? _Utils_Tuple2(allAntiStatus, 0) : (_Utils_eq(myData.aL, winnerIndex) ? _Utils_Tuple2(newPlayerSet, 0) : (A2($author$project$Model$amITheOnlyHelper, myData.aJ, selectionData) ? _Utils_Tuple2(
+			A3($author$project$Model$updatePlayerStatus, myData.aL, 0, allAntiStatus),
+			$author$project$Model$maxHelpers(selectionData)) : (A2($author$project$Model$amIHelper, myData.aJ, selectionData) ? _Utils_Tuple2(
+			A3($author$project$Model$updatePlayerStatus, myData.aL, 0, newPlayerSet),
 			1) : _Utils_Tuple2(
-			A3($author$project$Model$setPlayerStatus, myIndex, $author$project$Model$AntiTeam, newStatusSet),
+			A3($author$project$Model$updatePlayerStatus, myData.aL, 1, newPlayerSet),
 			0))));
 	});
-var $author$project$Model$Undecided = {$: 'Undecided'};
-var $author$project$Model$initPlayerStatusSet = {status1: $author$project$Model$Undecided, status2: $author$project$Model$Undecided, status3: $author$project$Model$Undecided, status4: $author$project$Model$Undecided, status5: $author$project$Model$Undecided, status6: $author$project$Model$Undecided};
 var $author$project$Model$isPlayerHelper = F2(
 	function (card, selectionData) {
-		return A2($elm$core$List$member, card, selectionData.helpers);
+		return A2($elm$core$List$member, card, selectionData.aC);
 	});
-var $author$project$Model$Round2 = {$: 'Round2'};
-var $author$project$Model$Round3 = {$: 'Round3'};
-var $author$project$Model$Round4 = {$: 'Round4'};
-var $author$project$Model$Round5 = {$: 'Round5'};
-var $author$project$Model$Round6 = {$: 'Round6'};
-var $author$project$Model$Round7 = {$: 'Round7'};
-var $author$project$Model$Round8 = {$: 'Round8'};
 var $author$project$Model$nextRound = function (round) {
-	switch (round.$) {
-		case 'Round1':
-			return $author$project$Model$Round2;
-		case 'Round2':
-			return $author$project$Model$Round3;
-		case 'Round3':
-			return $author$project$Model$Round4;
-		case 'Round4':
-			return $author$project$Model$Round5;
-		case 'Round5':
-			return $author$project$Model$Round6;
-		case 'Round6':
-			return $author$project$Model$Round7;
-		case 'Round7':
-			return $author$project$Model$Round8;
+	switch (round) {
+		case 0:
+			return 1;
+		case 1:
+			return 2;
+		case 2:
+			return 3;
+		case 3:
+			return 4;
+		case 4:
+			return 5;
+		case 5:
+			return 6;
+		case 6:
+			return 7;
 		default:
-			return $author$project$Model$Round1;
+			return 0;
 	}
 };
 var $author$project$Model$nextTurn = function (playerIndex) {
-	switch (playerIndex.$) {
-		case 'Player1':
-			return $author$project$Model$Player2;
-		case 'Player2':
-			return $author$project$Model$Player3;
-		case 'Player3':
-			return $author$project$Model$Player4;
-		case 'Player4':
-			return $author$project$Model$Player5;
-		case 'Player5':
-			return $author$project$Model$Player6;
+	switch (playerIndex) {
+		case 0:
+			return 1;
+		case 1:
+			return 2;
+		case 2:
+			return 3;
+		case 3:
+			return 4;
+		case 4:
+			return 5;
 		default:
-			return $author$project$Model$Player1;
+			return 0;
 	}
 };
-var $elm$core$Basics$not = _Basics_not;
-var $elm$core$Tuple$second = function (_v0) {
-	var y = _v0.b;
-	return y;
-};
-var $author$project$Model$setCardInHand = F3(
-	function (playerIndex, card, hand) {
-		switch (playerIndex.$) {
-			case 'Player1':
-				return _Utils_update(
-					hand,
-					{
-						card1: $elm$core$Maybe$Just(card)
-					});
-			case 'Player2':
-				return _Utils_update(
-					hand,
-					{
-						card2: $elm$core$Maybe$Just(card)
-					});
-			case 'Player3':
-				return _Utils_update(
-					hand,
-					{
-						card3: $elm$core$Maybe$Just(card)
-					});
-			case 'Player4':
-				return _Utils_update(
-					hand,
-					{
-						card4: $elm$core$Maybe$Just(card)
-					});
-			case 'Player5':
-				return _Utils_update(
-					hand,
-					{
-						card5: $elm$core$Maybe$Just(card)
-					});
-			default:
-				return _Utils_update(
-					hand,
-					{
-						card6: $elm$core$Maybe$Just(card)
-					});
-		}
+var $elm$core$Tuple$pair = F2(
+	function (a, b) {
+		return _Utils_Tuple2(a, b);
 	});
-var $author$project$Model$updatePlayer = F3(
-	function (playerIndex, update, players) {
-		switch (playerIndex.$) {
-			case 'Player1':
+var $author$project$Model$updateCardInSet = F2(
+	function (playerIndex, card) {
+		return A2(
+			$author$project$Model$updatePlayer,
+			playerIndex,
+			function (player) {
 				return _Utils_update(
-					players,
+					player,
 					{
-						player1: update(players.player1)
+						at: $elm$core$Maybe$Just(card)
 					});
-			case 'Player2':
-				return _Utils_update(
-					players,
-					{
-						player2: update(players.player2)
-					});
-			case 'Player3':
-				return _Utils_update(
-					players,
-					{
-						player3: update(players.player3)
-					});
-			case 'Player4':
-				return _Utils_update(
-					players,
-					{
-						player4: update(players.player4)
-					});
-			case 'Player5':
-				return _Utils_update(
-					players,
-					{
-						player5: update(players.player5)
-					});
-			default:
-				return _Utils_update(
-					players,
-					{
-						player6: update(players.player6)
-					});
-		}
+			});
 	});
 var $author$project$Update$handleReceivedMessages = F2(
 	function (receivedMessage, model) {
 		switch (receivedMessage.$) {
-			case 'PlayerJoined':
+			case 0:
 				var newPlayer = receivedMessage.a;
-				if (model.$ === 'WaitingForPlayers') {
+				if (model.$ === 1) {
 					var players = model.a;
 					var gameName = model.b;
 					return _Utils_Tuple2(
@@ -5796,9 +5960,9 @@ var $author$project$Update$handleReceivedMessages = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'ExistingPlayers':
+			case 1:
 				var existingPlayers = receivedMessage.a;
-				if (model.$ === 'WaitingForPlayers') {
+				if (model.$ === 1) {
 					var players = model.a;
 					var gameName = model.b;
 					return _Utils_Tuple2(
@@ -5810,163 +5974,144 @@ var $author$project$Update$handleReceivedMessages = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'GameData':
+			case 2:
 				var playerSet = receivedMessage.a;
 				var firstBidder = receivedMessage.b;
 				var myIndex = receivedMessage.c;
 				var myCards = receivedMessage.d;
-				if (model.$ === 'WaitingForPlayers') {
+				if (model.$ === 1) {
 					var players = model.a;
 					var gameName = model.b;
-					var biddingRoundData = {
-						amIBidding: true,
-						bidders: $author$project$Model$allPlayerIndices,
-						biddingData: {firstBidder: firstBidder, highestBid: 150, highestBidder: firstBidder},
-						myData: {myCards: myCards, myIndex: myIndex},
-						playerSet: playerSet
+					var commonData = {
+						ar: {ay: firstBidder, aF: 150, aG: firstBidder},
+						aA: gameName,
+						aK: {aJ: myCards, aL: myIndex},
+						aW: playerSet
 					};
 					return _Utils_Tuple2(
-						A2($author$project$Model$BiddingRound, gameName, biddingRoundData),
+						A2($author$project$Model$BiddingRound, commonData, $author$project$Model$allPlayerIndices),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'MaximumBid':
+			case 3:
 				var bidder = receivedMessage.a;
 				var bid = receivedMessage.b;
-				if (model.$ === 'BiddingRound') {
-					var gameName = model.a;
-					var biddingRoundData = model.b;
+				if (model.$ === 2) {
+					var commonData = model.a;
+					var bidders = model.b;
 					var updateBiddingData = function (biddingData) {
 						return _Utils_update(
 							biddingData,
-							{highestBid: bid, highestBidder: bidder});
+							{aF: bid, aG: bidder});
 					};
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$BiddingRound,
-							gameName,
 							_Utils_update(
-								biddingRoundData,
+								commonData,
 								{
-									biddingData: updateBiddingData(biddingRoundData.biddingData)
-								})),
+									ar: updateBiddingData(commonData.ar)
+								}),
+							bidders),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'HasQuitBidding':
+			case 4:
 				var quitter = receivedMessage.a;
-				if (model.$ === 'BiddingRound') {
-					var gameName = model.a;
-					var biddingRoundData = model.b;
+				if (model.$ === 2) {
+					var commonData = model.a;
+					var bidders = model.b;
 					var newBidders = A2(
 						$elm$core$List$filter,
 						$elm$core$Basics$neq(quitter),
-						biddingRoundData.bidders);
-					return (!$elm$core$List$length(newBidders)) ? (_Utils_eq(biddingRoundData.myData.myIndex, biddingRoundData.biddingData.highestBidder) ? _Utils_Tuple2(
+						bidders);
+					return (!$elm$core$List$length(newBidders)) ? (_Utils_eq(commonData.aK.aL, commonData.ar.aG) ? _Utils_Tuple2(
 						A2(
 							$author$project$Model$TrumpSelection,
-							gameName,
-							{
-								biddingData: biddingRoundData.biddingData,
-								myData: biddingRoundData.myData,
-								playerSet: biddingRoundData.playerSet,
-								selectionData: {helpers: _List_Nil, trump: $author$project$Model$Spade}
-							}),
+							commonData,
+							{aC: _List_Nil, a3: 3}),
 						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-						A2($author$project$Model$WaitingForTrump, gameName, biddingRoundData),
+						$author$project$Model$WaitingForTrump(commonData),
 						$elm$core$Platform$Cmd$none)) : _Utils_Tuple2(
-						A2(
-							$author$project$Model$BiddingRound,
-							gameName,
-							_Utils_update(
-								biddingRoundData,
-								{bidders: newBidders})),
+						A2($author$project$Model$BiddingRound, commonData, newBidders),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'ReceivedSelectionData':
+			case 5:
 				var selectionData = receivedMessage.a;
 				switch (model.$) {
-					case 'TrumpSelection':
-						var gameName = model.a;
-						var trumpSelectionData = model.b;
-						var firstBidder = trumpSelectionData.biddingData.firstBidder;
-						var _v7 = A5($author$project$Update$getPlayersStatus, trumpSelectionData.myData.myIndex, trumpSelectionData.myData.myIndex, trumpSelectionData.selectionData, trumpSelectionData.myData.myCards, $author$project$Model$initPlayerStatusSet);
-						var playersStatus = _v7.a;
+					case 3:
+						var commonData = model.a;
+						var firstBidder = commonData.ar.ay;
+						var _v7 = A4($author$project$Update$getPlayersStatus, commonData.aK, commonData.aK.aL, selectionData, commonData.aW);
+						var playerSet = _v7.a;
 						var helpersRevealed = _v7.b;
 						return _Utils_Tuple2(
 							A2(
 								$author$project$Model$PlayRound,
-								gameName,
+								_Utils_update(
+									commonData,
+									{aW: playerSet}),
 								{
-									biddingData: trumpSelectionData.biddingData,
-									firstPlayer: firstBidder,
-									hand: $author$project$Model$emptyHand,
-									helpersRevealed: helpersRevealed,
-									myData: trumpSelectionData.myData,
-									playerSet: trumpSelectionData.playerSet,
-									playersStatus: playersStatus,
-									roundIndex: $author$project$Model$Round1,
-									selectionData: trumpSelectionData.selectionData,
-									turnStatus: _Utils_eq(firstBidder, trumpSelectionData.myData.myIndex) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
+									az: firstBidder,
+									aD: helpersRevealed,
+									aY: 0,
+									aZ: selectionData,
+									a4: _Utils_eq(firstBidder, commonData.aK.aL) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
 								}),
 							$elm$core$Platform$Cmd$none);
-					case 'WaitingForTrump':
-						var gameName = model.a;
-						var biddingRoundData = model.b;
-						var firstBidder = biddingRoundData.biddingData.firstBidder;
-						var _v8 = A5($author$project$Update$getPlayersStatus, biddingRoundData.myData.myIndex, biddingRoundData.biddingData.highestBidder, selectionData, biddingRoundData.myData.myCards, $author$project$Model$initPlayerStatusSet);
-						var playersStatus = _v8.a;
+					case 4:
+						var commonData = model.a;
+						var firstBidder = commonData.ar.ay;
+						var _v8 = A4($author$project$Update$getPlayersStatus, commonData.aK, commonData.ar.aG, selectionData, commonData.aW);
+						var playerSet = _v8.a;
 						var helpersRevealed = _v8.b;
 						return _Utils_Tuple2(
 							A2(
 								$author$project$Model$PlayRound,
-								gameName,
+								_Utils_update(
+									commonData,
+									{aW: playerSet}),
 								{
-									biddingData: biddingRoundData.biddingData,
-									firstPlayer: firstBidder,
-									hand: $author$project$Model$emptyHand,
-									helpersRevealed: helpersRevealed,
-									myData: biddingRoundData.myData,
-									playerSet: biddingRoundData.playerSet,
-									playersStatus: playersStatus,
-									roundIndex: $author$project$Model$Round1,
-									selectionData: selectionData,
-									turnStatus: _Utils_eq(firstBidder, biddingRoundData.myData.myIndex) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
+									az: firstBidder,
+									aD: helpersRevealed,
+									aY: 0,
+									aZ: selectionData,
+									a4: _Utils_eq(firstBidder, commonData.aK.aL) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
 								}),
 							$elm$core$Platform$Cmd$none);
 					default:
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'PlayCard':
+			case 6:
 				var card = receivedMessage.a;
-				if (model.$ === 'PlayRound') {
-					var gameName = model.a;
+				if (model.$ === 5) {
+					var commonData = model.a;
 					var playRoundData = model.b;
 					var updateMyData = function (myData) {
 						return _Utils_update(
 							myData,
 							{
-								myCards: A2(
+								aJ: A2(
 									$elm$core$List$filter,
 									A2(
 										$elm$core$Basics$composeR,
 										$elm$core$Basics$eq(card),
 										$elm$core$Basics$not),
-									myData.myCards)
+									myData.aJ)
 							});
 					};
-					var myIndex = playRoundData.myData.myIndex;
+					var myIndex = commonData.aK.aL;
 					var hadTeamBeenRevealed = _Utils_eq(
-						playRoundData.helpersRevealed,
-						$author$project$Model$maxHelpers(playRoundData.selectionData));
+						playRoundData.aD,
+						$author$project$Model$maxHelpers(playRoundData.aZ));
 					var _v10 = function () {
-						var _v11 = playRoundData.turnStatus;
+						var _v11 = playRoundData.a4;
 						switch (_v11.$) {
-							case 'FirstAndNotMyTurn':
+							case 0:
 								var firstPlayer = _v11.a;
 								return _Utils_Tuple2(
 									_Utils_eq(
@@ -5976,53 +6121,52 @@ var $author$project$Update$handleReceivedMessages = F2(
 										$author$project$Model$nextTurn(firstPlayer),
 										card),
 									firstPlayer);
-							case 'NotFirstAndNotMyTurn':
+							case 1:
 								var player = _v11.a;
 								var baseCard = _v11.b;
 								return _Utils_Tuple2(
 									_Utils_eq(
 										$author$project$Model$nextTurn(player),
-										playRoundData.firstPlayer) ? $author$project$Model$RoundFinished : (_Utils_eq(
+										playRoundData.az) ? $author$project$Model$RoundFinished : (_Utils_eq(
 										$author$project$Model$nextTurn(player),
 										myIndex) ? $author$project$Model$NotFirstAndMyTurn(baseCard) : A2(
 										$author$project$Model$NotFirstAndNotMyTurn,
 										$author$project$Model$nextTurn(player),
 										baseCard)),
 									player);
-							case 'FirstAndMyTurnOver':
+							case 3:
 								return _Utils_Tuple2(
 									A2(
 										$author$project$Model$NotFirstAndNotMyTurn,
 										$author$project$Model$nextTurn(myIndex),
 										card),
 									myIndex);
-							case 'NotFirstAndMyTurnOver':
+							case 5:
 								var baseCard = _v11.a;
 								return _Utils_Tuple2(
 									_Utils_eq(
 										$author$project$Model$nextTurn(myIndex),
-										playRoundData.firstPlayer) ? $author$project$Model$RoundFinished : A2(
+										playRoundData.az) ? $author$project$Model$RoundFinished : A2(
 										$author$project$Model$NotFirstAndNotMyTurn,
 										$author$project$Model$nextTurn(myIndex),
 										card),
 									myIndex);
 							default:
-								return _Utils_Tuple2(playRoundData.turnStatus, $author$project$Model$Player1);
+								return _Utils_Tuple2(playRoundData.a4, 0);
 						}
 					}();
 					var newTurnStatus = _v10.a;
 					var oldTurn = _v10.b;
-					var newHand = A3($author$project$Model$setCardInHand, oldTurn, card, playRoundData.hand);
-					var updatePlayerStatus = function (oldStatus) {
-						if (_Utils_eq(oldTurn, playRoundData.myData.myIndex) || hadTeamBeenRevealed) {
-							return _Utils_Tuple2(oldStatus, playRoundData.helpersRevealed);
+					var updatePlayerSet = function (oldSet) {
+						if (_Utils_eq(oldTurn, commonData.aK.aL) || hadTeamBeenRevealed) {
+							return _Utils_Tuple2(oldSet, playRoundData.aD);
 						} else {
-							if (A2($author$project$Model$isPlayerHelper, card, playRoundData.selectionData)) {
-								var newStatus = A3($author$project$Model$setPlayerStatus, oldTurn, $author$project$Model$BiddingTeam, oldStatus);
-								var newHelpersRevealed = playRoundData.helpersRevealed + 1;
+							if (A2($author$project$Model$isPlayerHelper, card, playRoundData.aZ)) {
+								var newSet = A3($author$project$Model$updatePlayerStatus, oldTurn, 0, oldSet);
+								var newHelpersRevealed = playRoundData.aD + 1;
 								var hasTeamBeenRevealed = _Utils_eq(
 									newHelpersRevealed,
-									$author$project$Model$maxHelpers(playRoundData.selectionData));
+									$author$project$Model$maxHelpers(playRoundData.aZ));
 								return hasTeamBeenRevealed ? function (s) {
 									return A2($elm$core$Tuple$pair, s, newHelpersRevealed);
 								}(
@@ -6030,9 +6174,9 @@ var $author$project$Update$handleReceivedMessages = F2(
 										$elm$core$List$foldl,
 										F2(
 											function (p, pss) {
-												return A3($author$project$Model$setPlayerStatus, p, $author$project$Model$AntiTeam, pss);
+												return A3($author$project$Model$updatePlayerStatus, p, 1, pss);
 											}),
-										newStatus,
+										newSet,
 										A2(
 											$elm$core$List$map,
 											$elm$core$Tuple$first,
@@ -6041,38 +6185,42 @@ var $author$project$Update$handleReceivedMessages = F2(
 												A2(
 													$elm$core$Basics$composeR,
 													$elm$core$Tuple$second,
-													$elm$core$Basics$neq($author$project$Model$BiddingTeam)),
-												$author$project$Model$getPlayerStatuses(newStatus))))) : _Utils_Tuple2(newStatus, newHelpersRevealed);
+													$elm$core$Basics$neq(0)),
+												A2(
+													$author$project$Model$getPlayers,
+													function ($) {
+														return $.a_;
+													},
+													newSet))))) : _Utils_Tuple2(newSet, newHelpersRevealed);
 							} else {
-								return _Utils_Tuple2(oldStatus, playRoundData.helpersRevealed);
+								return _Utils_Tuple2(oldSet, playRoundData.aD);
 							}
 						}
 					};
-					var _v12 = updatePlayerStatus(playRoundData.playersStatus);
-					var newerStatus = _v12.a;
+					var _v12 = updatePlayerSet(commonData.aW);
+					var newerSet = _v12.a;
 					var newerHelpersRevealed = _v12.b;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$PlayRound,
-							gameName,
+							_Utils_update(
+								commonData,
+								{
+									aK: updateMyData(commonData.aK),
+									aW: A3($author$project$Model$updateCardInSet, oldTurn, card, newerSet)
+								}),
 							_Utils_update(
 								playRoundData,
-								{
-									hand: newHand,
-									helpersRevealed: newerHelpersRevealed,
-									myData: updateMyData(playRoundData.myData),
-									playersStatus: newerStatus,
-									turnStatus: newTurnStatus
-								})),
+								{aD: newerHelpersRevealed, a4: newTurnStatus})),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'RoundData':
+			case 7:
 				var winner = receivedMessage.a;
 				var score = receivedMessage.b;
-				if (model.$ === 'PlayRound') {
-					var gameName = model.a;
+				if (model.$ === 5) {
+					var commonData = model.a;
 					var playRoundData = model.b;
 					var updatePlayers = A3(
 						$author$project$Model$updatePlayer,
@@ -6080,32 +6228,32 @@ var $author$project$Update$handleReceivedMessages = F2(
 						function (p) {
 							return _Utils_update(
 								p,
-								{gameScore: p.gameScore + score});
+								{at: $elm$core$Maybe$Nothing, aB: p.aB + score});
 						},
-						playRoundData.playerSet);
-					var newRound = $author$project$Model$nextRound(playRoundData.roundIndex);
+						commonData.aW);
+					var newRound = $author$project$Model$nextRound(playRoundData.aY);
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$PlayRound,
-							gameName,
+							_Utils_update(
+								commonData,
+								{aW: updatePlayers}),
 							_Utils_update(
 								playRoundData,
 								{
-									firstPlayer: winner,
-									hand: $author$project$Model$emptyHand,
-									playerSet: updatePlayers,
-									roundIndex: newRound,
-									turnStatus: _Utils_eq(newRound, $author$project$Model$Round1) ? $author$project$Model$GameFinished : (_Utils_eq(winner, playRoundData.myData.myIndex) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(winner))
+									az: winner,
+									aY: newRound,
+									a4: (!newRound) ? $author$project$Model$GameFinished : (_Utils_eq(winner, commonData.aK.aL) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(winner))
 								})),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'GameFinishedData':
+			case 8:
 				var winningTeam = receivedMessage.a;
 				var totalScore = receivedMessage.b;
-				if (model.$ === 'PlayRound') {
-					var gameName = model.a;
+				if (model.$ === 5) {
+					var commonData = model.a;
 					var playRoundData = model.b;
 					var updatedPlayerScores = A3(
 						$elm$core$List$foldl,
@@ -6118,51 +6266,101 @@ var $author$project$Update$handleReceivedMessages = F2(
 										return _Utils_update(
 											player,
 											{
-												gameScore: 0,
-												totalScore: player.totalScore + (A2($elm$core$List$member, playerIndex, winningTeam) ? totalScore : 0)
+												aB: 0,
+												a2: player.a2 + (A2($elm$core$List$member, playerIndex, winningTeam) ? totalScore : 0)
 											});
 									},
 									playerSet);
 							}),
-						playRoundData.playerSet,
+						commonData.aW,
 						$author$project$Model$allPlayerIndices);
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$PlayRound,
-							gameName,
 							_Utils_update(
-								playRoundData,
-								{playerSet: updatedPlayerScores})),
+								commonData,
+								{aW: updatedPlayerScores}),
+							playRoundData),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 9:
+				var cards = receivedMessage.a;
+				if (model.$ === 5) {
+					var commonData = model.a;
+					var playRoundData = model.b;
+					var nextFirstBidder = $author$project$Model$nextTurn(commonData.ar.ay);
+					return _Utils_Tuple2(
+						A2(
+							$author$project$Model$BiddingRound,
+							_Utils_update(
+								commonData,
+								{
+									ar: {ay: nextFirstBidder, aF: 150, aG: nextFirstBidder},
+									aK: {aJ: cards, aL: commonData.aK.aL}
+								}),
+							$author$project$Model$allPlayerIndices),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 10:
+				var playerSet = receivedMessage.a;
+				var biddingData = receivedMessage.b;
+				var myData = receivedMessage.c;
+				var bidders = receivedMessage.d;
+				if (model.$ === 1) {
+					var gameName = model.b;
+					return (!$elm$core$List$length(bidders)) ? (_Utils_eq(biddingData.aG, myData.aL) ? _Utils_Tuple2(
+						A2(
+							$author$project$Model$TrumpSelection,
+							{ar: biddingData, aA: gameName, aK: myData, aW: playerSet},
+							{aC: _List_Nil, a3: 3}),
+						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+						$author$project$Model$WaitingForTrump(
+							{ar: biddingData, aA: gameName, aK: myData, aW: playerSet}),
+						$elm$core$Platform$Cmd$none)) : _Utils_Tuple2(
+						A2(
+							$author$project$Model$BiddingRound,
+							{ar: biddingData, aA: gameName, aK: myData, aW: playerSet},
+							bidders),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 11:
+				var playerSet = receivedMessage.a;
+				var biddingData = receivedMessage.b;
+				var myData = receivedMessage.c;
+				var selectionData = receivedMessage.d;
+				var firstPlayer = receivedMessage.e;
+				var turn = receivedMessage.f;
+				var round = receivedMessage.g;
+				if (model.$ === 1) {
+					var gameName = model.b;
+					return _Utils_Tuple2(
+						A2(
+							$author$project$Model$PlayRound,
+							{ar: biddingData, aA: gameName, aK: myData, aW: playerSet},
+							{
+								az: firstPlayer,
+								aD: A2($author$project$Update$calculateHelpersRevealed, playerSet, selectionData),
+								aY: round,
+								aZ: selectionData,
+								a4: A4($author$project$Update$calculateTurnStatus, turn, firstPlayer, myData.aL, playerSet)
+							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			default:
-				var cards = receivedMessage.a;
-				if (model.$ === 'PlayRound') {
-					var gameName = model.a;
-					var playRoundData = model.b;
-					var nextFirstBidder = $author$project$Model$nextTurn(playRoundData.biddingData.firstBidder);
-					return _Utils_Tuple2(
-						A2(
-							$author$project$Model$BiddingRound,
-							gameName,
-							{
-								amIBidding: true,
-								bidders: $author$project$Model$allPlayerIndices,
-								biddingData: {firstBidder: nextFirstBidder, highestBid: 150, highestBidder: nextFirstBidder},
-								myData: {myCards: cards, myIndex: playRoundData.myData.myIndex},
-								playerSet: playRoundData.playerSet
-							}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
+				return _Utils_Tuple2($author$project$Model$ErrorState, $elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Model$IncreaseBid = F3(
 	function (a, b, c) {
-		return {$: 'IncreaseBid', a: a, b: b, c: c};
+		return {$: 1, a: a, b: b, c: c};
 	});
 var $elm$core$Basics$ge = _Utils_ge;
 var $elm$core$Basics$min = F2(
@@ -6182,20 +6380,20 @@ var $elm$json$Json$Encode$object = function (pairs) {
 					var v = _v0.b;
 					return A3(_Json_addField, k, v, obj);
 				}),
-			_Json_emptyObject(_Utils_Tuple0),
+			_Json_emptyObject(0),
 			pairs));
 };
 var $author$project$Model$showPlayerIndex = function (playerIndex) {
-	switch (playerIndex.$) {
-		case 'Player1':
+	switch (playerIndex) {
+		case 0:
 			return 'Player1';
-		case 'Player2':
+		case 1:
 			return 'Player2';
-		case 'Player3':
+		case 2:
 			return 'Player3';
-		case 'Player4':
+		case 3:
 			return 'Player4';
-		case 'Player5':
+		case 4:
 			return 'Player5';
 		default:
 			return 'Player6';
@@ -6227,8 +6425,8 @@ var $author$project$Encoders$increaseBidEncoder = F3(
 							])))
 				]));
 	});
-var $author$project$Encoders$introDataEncoder = F2(
-	function (playerName, gameName) {
+var $author$project$Encoders$introDataEncoder = F3(
+	function (playerId, playerName, gameName) {
 		return $elm$json$Json$Encode$object(
 			_List_fromArray(
 				[
@@ -6244,50 +6442,53 @@ var $author$project$Encoders$introDataEncoder = F2(
 								'tag',
 								$elm$json$Json$Encode$string('IntroData')),
 								_Utils_Tuple2(
+								'playerId',
+								$elm$json$Json$Encode$string(playerId)),
+								_Utils_Tuple2(
 								'playerName',
 								$elm$json$Json$Encode$string(playerName))
 							])))
 				]));
 	});
-var $author$project$Model$showCardValue = function (cardValue) {
-	switch (cardValue.$) {
-		case 'Ace':
+var $author$project$Model$Card$showCardValue = function (cardValue) {
+	switch (cardValue) {
+		case 12:
 			return 'Ace';
-		case 'Two':
+		case 0:
 			return 'Two';
-		case 'Three':
+		case 1:
 			return 'Three';
-		case 'Four':
+		case 2:
 			return 'Four';
-		case 'Five':
+		case 3:
 			return 'Five';
-		case 'Six':
+		case 4:
 			return 'Six';
-		case 'Seven':
+		case 5:
 			return 'Seven';
-		case 'Eight':
+		case 6:
 			return 'Eight';
-		case 'Nine':
+		case 7:
 			return 'Nine';
-		case 'Ten':
+		case 8:
 			return 'Ten';
-		case 'Jack':
+		case 9:
 			return 'Jack';
-		case 'Queen':
+		case 10:
 			return 'Queen';
 		default:
 			return 'King';
 	}
 };
-var $author$project$Model$showSuit = F2(
+var $author$project$Model$Card$showSuit = F2(
 	function (isPlural, suit) {
 		var suitStr = function () {
-			switch (suit.$) {
-				case 'Club':
+			switch (suit) {
+				case 0:
 					return 'Club';
-				case 'Heart':
+				case 1:
 					return 'Heart';
-				case 'Diamond':
+				case 2:
 					return 'Diamond';
 				default:
 					return 'Spade';
@@ -6304,11 +6505,11 @@ var $author$project$Encoders$cardEncoder = function (card) {
 				_Utils_Tuple2(
 				'value',
 				$elm$json$Json$Encode$string(
-					$author$project$Model$showCardValue(card.value))),
+					$author$project$Model$Card$showCardValue(card.a6))),
 				_Utils_Tuple2(
 				'suit',
 				$elm$json$Json$Encode$string(
-					A2($author$project$Model$showSuit, false, card.suit)))
+					A2($author$project$Model$Card$showSuit, false, card.a0)))
 			]));
 };
 var $author$project$Encoders$playedCardEncoder = F2(
@@ -6362,7 +6563,7 @@ var $elm$json$Json$Encode$list = F2(
 			A3(
 				$elm$core$List$foldl,
 				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
+				_Json_emptyArray(0),
 				entries));
 	});
 var $author$project$Encoders$selectionDataEncoder = F3(
@@ -6384,7 +6585,7 @@ var $author$project$Encoders$selectionDataEncoder = F3(
 								_Utils_Tuple2(
 								'trump',
 								$elm$json$Json$Encode$string(
-									A2($author$project$Model$showSuit, false, suit))),
+									A2($author$project$Model$Card$showSuit, false, suit))),
 								_Utils_Tuple2(
 								'helpers',
 								A2($elm$json$Json$Encode$list, $author$project$Encoders$cardEncoder, helpers))
@@ -6393,23 +6594,24 @@ var $author$project$Encoders$selectionDataEncoder = F3(
 	});
 var $author$project$Encoders$sentDataEncoder = function (sentData) {
 	switch (sentData.$) {
-		case 'IntroData':
-			var playerName = sentData.a;
-			var gameName = sentData.b;
-			return A2($author$project$Encoders$introDataEncoder, playerName, gameName);
-		case 'IncreaseBid':
+		case 0:
+			var playerId = sentData.a;
+			var playerName = sentData.b;
+			var gameName = sentData.c;
+			return A3($author$project$Encoders$introDataEncoder, playerId, playerName, gameName);
+		case 1:
 			var gameName = sentData.a;
 			var bidder = sentData.b;
 			var bid = sentData.c;
 			return A3($author$project$Encoders$increaseBidEncoder, gameName, bidder, bid);
-		case 'SendQuit':
+		case 2:
 			var gameName = sentData.a;
 			var myIndex = sentData.b;
 			return A2($author$project$Encoders$quitBiddingEncoder, gameName, myIndex);
-		case 'SentSelectionData':
+		case 3:
 			var gameName = sentData.a;
 			var selectionData = sentData.b;
-			return A3($author$project$Encoders$selectionDataEncoder, gameName, selectionData.trump, selectionData.helpers);
+			return A3($author$project$Encoders$selectionDataEncoder, gameName, selectionData.a3, selectionData.aC);
 		default:
 			var gameName = sentData.a;
 			var card = sentData.b;
@@ -6425,22 +6627,17 @@ var $author$project$Encoders$sendMessage = function (sentData) {
 };
 var $author$project$Update$sendIncreasedBidMessage = F2(
 	function (model, delta) {
-		if (model.$ === 'BiddingRound') {
-			var gameName = model.a;
-			var biddingRoundData = model.b;
-			var newBid = biddingRoundData.biddingData.highestBid + delta;
+		if (model.$ === 2) {
+			var commonData = model.a;
+			var bidders = model.b;
+			var newBid = commonData.ar.aF + delta;
 			return _Utils_Tuple2(
-				(newBid >= 250) ? A2(
-					$author$project$Model$BiddingRound,
-					gameName,
-					_Utils_update(
-						biddingRoundData,
-						{amIBidding: false})) : model,
+				(newBid >= 250) ? A2($author$project$Model$BiddingRound, commonData, _List_Nil) : model,
 				$author$project$Encoders$sendMessage(
 					A3(
 						$author$project$Model$IncreaseBid,
-						gameName,
-						biddingRoundData.myData.myIndex,
+						commonData.aA,
+						commonData.aK.aL,
 						A2($elm$core$Basics$min, newBid, 250))));
 		} else {
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6449,30 +6646,44 @@ var $author$project$Update$sendIncreasedBidMessage = F2(
 var $author$project$Update$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 'UpdateGameName':
+			case 2:
 				var str = msg.a;
-				if (model.$ === 'BeginGamePage') {
-					var playerName = model.a;
+				if (!model.$) {
+					var playerId = model.a;
+					var playerName = model.b;
 					return _Utils_Tuple2(
-						A2($author$project$Model$BeginGamePage, playerName, str),
+						A3($author$project$Model$BeginGamePage, playerId, playerName, str),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'UpdatePlayerName':
+			case 1:
 				var str = msg.a;
-				if (model.$ === 'BeginGamePage') {
-					var gameName = model.b;
+				if (!model.$) {
+					var playerId = model.a;
+					var gameName = model.c;
 					return _Utils_Tuple2(
-						A2($author$project$Model$BeginGamePage, str, gameName),
+						A3($author$project$Model$BeginGamePage, playerId, str, gameName),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'SendGameName':
-				if (model.$ === 'BeginGamePage') {
-					var playerName = model.a;
-					var gameName = model.b;
+			case 0:
+				var str = msg.a;
+				if (!model.$) {
+					var playerName = model.b;
+					var gameName = model.c;
+					return _Utils_Tuple2(
+						A3($author$project$Model$BeginGamePage, str, playerName, gameName),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 3:
+				if (!model.$) {
+					var playerId = model.a;
+					var playerName = model.b;
+					var gameName = model.c;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$WaitingForPlayers,
@@ -6480,130 +6691,115 @@ var $author$project$Update$update = F2(
 								[playerName]),
 							gameName),
 						$author$project$Encoders$sendMessage(
-							A2($author$project$Model$IntroData, playerName, gameName)));
+							A3($author$project$Model$IntroData, playerId, playerName, gameName)));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'BidPlus5':
+			case 4:
 				return A2($author$project$Update$sendIncreasedBidMessage, model, 5);
-			case 'BidPlus10':
+			case 5:
 				return A2($author$project$Update$sendIncreasedBidMessage, model, 10);
-			case 'QuitBidding':
-				if (model.$ === 'BiddingRound') {
-					var gameName = model.a;
-					var biddingRoundData = model.b;
+			case 6:
+				if (model.$ === 2) {
+					var commonData = model.a;
+					var bidders = model.b;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$BiddingRound,
-							gameName,
-							_Utils_update(
-								biddingRoundData,
-								{amIBidding: false})),
+							commonData,
+							A2(
+								$elm$core$List$filter,
+								$elm$core$Basics$neq(commonData.aK.aL),
+								bidders)),
 						$author$project$Encoders$sendMessage(
-							A2($author$project$Model$SendQuit, gameName, biddingRoundData.myData.myIndex)));
+							A2($author$project$Model$SendQuit, commonData.aA, commonData.aK.aL)));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'SelectTrump':
+			case 7:
 				var suit = msg.a;
-				var updateTrump = function (selectionData) {
-					return _Utils_update(
-						selectionData,
-						{trump: suit});
-				};
-				if (model.$ === 'TrumpSelection') {
-					var gameName = model.a;
-					var trumpSelectionData = model.b;
+				if (model.$ === 3) {
+					var commonData = model.a;
+					var selectionData = model.b;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$TrumpSelection,
-							gameName,
+							commonData,
 							_Utils_update(
-								trumpSelectionData,
-								{
-									selectionData: updateTrump(trumpSelectionData.selectionData)
-								})),
+								selectionData,
+								{a3: suit})),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'SelectHelper':
+			case 8:
 				var card = msg.a;
-				if (model.$ === 'TrumpSelection') {
-					var gameName = model.a;
-					var trumpSelectionData = model.b;
-					var updateHelpers = function (selectionData) {
-						return A2($elm$core$List$member, card, selectionData.helpers) ? _Utils_update(
-							selectionData,
-							{
-								helpers: A2(
-									$elm$core$List$filter,
-									$elm$core$Basics$neq(card),
-									selectionData.helpers)
-							}) : (($elm$core$List$length(selectionData.helpers) < 2) ? _Utils_update(
-							selectionData,
-							{
-								helpers: A2($elm$core$List$cons, card, selectionData.helpers)
-							}) : selectionData);
-					};
+				if (model.$ === 3) {
+					var commonData = model.a;
+					var selectionData = model.b;
+					var newSelectionData = A2($elm$core$List$member, card, selectionData.aC) ? _Utils_update(
+						selectionData,
+						{
+							aC: A2(
+								$elm$core$List$filter,
+								$elm$core$Basics$neq(card),
+								selectionData.aC)
+						}) : (($elm$core$List$length(selectionData.aC) < 2) ? _Utils_update(
+						selectionData,
+						{
+							aC: A2($elm$core$List$cons, card, selectionData.aC)
+						}) : selectionData);
 					return _Utils_Tuple2(
-						A2(
-							$author$project$Model$TrumpSelection,
-							gameName,
-							_Utils_update(
-								trumpSelectionData,
-								{
-									selectionData: updateHelpers(trumpSelectionData.selectionData)
-								})),
+						A2($author$project$Model$TrumpSelection, commonData, newSelectionData),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'SendTrump':
-				if (model.$ === 'TrumpSelection') {
-					var gameName = model.a;
-					var trumpSelectionData = model.b;
+			case 9:
+				if (model.$ === 3) {
+					var commonData = model.a;
+					var selectionData = model.b;
 					return _Utils_Tuple2(
 						model,
 						$author$project$Encoders$sendMessage(
-							A2($author$project$Model$SentSelectionData, gameName, trumpSelectionData.selectionData)));
+							A2($author$project$Model$SentSelectionData, commonData.aA, selectionData)));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'SendCard':
+			case 10:
 				var card = msg.a;
 				var updateTurn = function (turnStatus) {
 					switch (turnStatus.$) {
-						case 'FirstAndMyTurn':
+						case 2:
 							return $author$project$Model$FirstAndMyTurnOver;
-						case 'NotFirstAndMyTurn':
+						case 4:
 							var baseCard = turnStatus.a;
 							return $author$project$Model$NotFirstAndMyTurnOver(baseCard);
 						default:
 							return turnStatus;
 					}
 				};
-				if (model.$ === 'PlayRound') {
-					var gameName = model.a;
+				if (model.$ === 5) {
+					var commonData = model.a;
 					var playRoundData = model.b;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$PlayRound,
-							gameName,
+							commonData,
 							_Utils_update(
 								playRoundData,
 								{
-									turnStatus: updateTurn(playRoundData.turnStatus)
+									a4: updateTurn(playRoundData.a4)
 								})),
 						$author$project$Encoders$sendMessage(
-							A2($author$project$Model$PlayedCard, gameName, card)));
+							A2($author$project$Model$PlayedCard, commonData.aA, card)));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'ReceivedMessageType':
+			case 13:
 				var receivedMessage = msg.a;
 				return A2($author$project$Update$handleReceivedMessages, receivedMessage, model);
-			case 'SentMessageType':
+			case 12:
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			default:
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6617,18 +6813,21 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
-var $author$project$Model$SendGameName = {$: 'SendGameName'};
+var $author$project$Model$SendGameName = {$: 3};
 var $author$project$Model$UpdateGameName = function (a) {
-	return {$: 'UpdateGameName', a: a};
+	return {$: 2, a: a};
+};
+var $author$project$Model$UpdatePlayerId = function (a) {
+	return {$: 0, a: a};
 };
 var $author$project$Model$UpdatePlayerName = function (a) {
-	return {$: 'UpdatePlayerName', a: a};
+	return {$: 1, a: a};
 };
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
+	return {$: 0, a: a};
 };
 var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var $elm$html$Html$Events$on = F2(
@@ -6648,7 +6847,7 @@ var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
 var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 'MayStopPropagation', a: a};
+	return {$: 1, a: a};
 };
 var $elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
@@ -6677,8 +6876,8 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 };
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$View$beginGamePageView = F2(
-	function (playerName, gameName) {
+var $author$project$View$beginGamePageView = F3(
+	function (playerId, playerName, gameName) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -6704,10 +6903,30 @@ var $author$project$View$beginGamePageView = F2(
 						[
 							A2(
 							$elm$html$Html$label,
+							_List_Nil,
 							_List_fromArray(
 								[
-									A2($elm$html$Html$Attributes$attribute, 'for', '')
+									$elm$html$Html$text('Enter your id(this will be used if you get disconnected):')
+								])),
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerId)
 								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(playerId)
+								]))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$label,
+							_List_Nil,
 							_List_fromArray(
 								[
 									$elm$html$Html$text('Enter your display name:')
@@ -6730,10 +6949,7 @@ var $author$project$View$beginGamePageView = F2(
 						[
 							A2(
 							$elm$html$Html$label,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$attribute, 'for', '')
-								]),
+							_List_Nil,
 							_List_fromArray(
 								[
 									$elm$html$Html$text('Enter a name for the group:')
@@ -6762,180 +6978,164 @@ var $author$project$View$beginGamePageView = F2(
 						]))
 				]));
 	});
-var $author$project$Model$BidPlus10 = {$: 'BidPlus10'};
-var $author$project$Model$BidPlus5 = {$: 'BidPlus5'};
-var $author$project$Model$QuitBidding = {$: 'QuitBidding'};
+var $author$project$Model$BidPlus10 = {$: 5};
+var $author$project$Model$BidPlus5 = {$: 4};
+var $author$project$Model$QuitBidding = {$: 6};
 var $elm$html$Html$button = _VirtualDom_node('button');
-var $author$project$Model$getPlayer = F2(
-	function (players, index) {
-		switch (index.$) {
-			case 'Player1':
-				return players.player1;
-			case 'Player2':
-				return players.player2;
-			case 'Player3':
-				return players.player3;
-			case 'Player4':
-				return players.player4;
-			case 'Player5':
-				return players.player5;
-			default:
-				return players.player6;
-		}
-	});
 var $elm$html$Html$span = _VirtualDom_node('span');
-var $author$project$View$biddingZoneView = function (biddingRoundData) {
-	var highestBidderName = _Utils_eq(biddingRoundData.biddingData.highestBidder, biddingRoundData.myData.myIndex) ? 'You' : A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.biddingData.highestBidder).name;
-	var buttons = A2(
-		$elm$core$List$cons,
-		A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
-					$elm$html$Html$Events$onClick($author$project$Model$BidPlus5)
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('+5')
-				])),
-		(biddingRoundData.biddingData.highestBid > 240) ? _List_Nil : _List_fromArray(
-			[
-				A2(
+var $author$project$View$biddingZoneView = F2(
+	function (commonData, bidders) {
+		var highestBidderName = _Utils_eq(commonData.ar.aG, commonData.aK.aL) ? 'You' : A2($author$project$Model$getPlayer, commonData.aW, commonData.ar.aG).aM;
+		var buttons = A2(
+			$elm$core$List$cons,
+			A2(
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
 						A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
-						$elm$html$Html$Events$onClick($author$project$Model$BidPlus10)
+						$elm$html$Html$Events$onClick($author$project$Model$BidPlus5)
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('+10')
-					]))
-			]));
-	var biddingHtml = biddingRoundData.amIBidding ? _List_fromArray(
-		[
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
+						$elm$html$Html$text('+5')
+					])),
+			(commonData.ar.aF > 240) ? _List_Nil : _List_fromArray(
 				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'bidButtonContainer')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$attribute, 'class', 'increaseBidButtons')
-						]),
-					buttons),
 					A2(
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$attribute, 'class', 'quitBiddingButton'),
-							$elm$html$Html$Events$onClick($author$project$Model$QuitBidding)
+							A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
+							$elm$html$Html$Events$onClick($author$project$Model$BidPlus10)
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Quit Bidding')
+							$elm$html$Html$text('+10')
 						]))
-				]))
-		]) : _List_fromArray(
-		[
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'bidButtonContainer')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('You can\'t bid anymore.')
-				]))
-		]);
-	var bidderNames = A2(
-		$elm$core$List$map,
-		A2(
-			$elm$core$Basics$composeR,
-			$author$project$Model$getPlayer(biddingRoundData.playerSet),
-			function ($) {
-				return $.name;
-			}),
-		biddingRoundData.bidders);
-	var bidders = function () {
-		var bidder = function (name) {
-			return A2(
-				$elm$html$Html$span,
-				_List_Nil,
+				]));
+		var biddingHtml = A2($elm$core$List$member, commonData.aK.aL, bidders) ? _List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(name)
-					]));
-		};
-		return A2($elm$core$List$map, bidder, bidderNames);
-	}();
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
+						A2($elm$html$Html$Attributes$attribute, 'class', 'bidButtonContainer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'increaseBidButtons')
+							]),
+						buttons),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'quitBiddingButton'),
+								$elm$html$Html$Events$onClick($author$project$Model$QuitBidding)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Quit Bidding')
+							]))
+					]))
+			]) : _List_fromArray(
 			[
-				A2($elm$html$Html$Attributes$attribute, 'class', 'biddingZone')
-			]),
-		_Utils_ap(
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$span,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$attribute, 'class', 'bidValueLabel')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Highest Bid')
-						])),
-					A2(
-					$elm$html$Html$span,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$attribute, 'class', 'bidValue')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(
-							$elm$core$String$fromInt(biddingRoundData.biddingData.highestBid))
-						])),
-					A2(
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'bidButtonContainer')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('You can\'t bid anymore.')
+					]))
+			]);
+		var bidderNames = A2(
+			$elm$core$List$map,
+			A2(
+				$elm$core$Basics$composeR,
+				$author$project$Model$getPlayer(commonData.aW),
+				function ($) {
+					return $.aM;
+				}),
+			bidders);
+		var bidderDivs = function () {
+			var bidder = function (name) {
+				return A2(
 					$elm$html$Html$span,
 					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$text('(' + (highestBidderName + ')'))
-						]))
+							$elm$html$Html$text(name)
+						]));
+			};
+			return A2($elm$core$List$map, bidder, bidderNames);
+		}();
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$attribute, 'class', 'biddingZone')
 				]),
 			_Utils_ap(
-				biddingHtml,
 				_List_fromArray(
 					[
 						A2(
 						$elm$html$Html$span,
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$attribute, 'class', 'bidders')
+								A2($elm$html$Html$Attributes$attribute, 'class', 'bidValueLabel')
 							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Highest Bid')
+							])),
 						A2(
-							$elm$core$List$cons,
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'bidValue')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$elm$core$String$fromInt(commonData.ar.aF))
+							])),
+						A2(
+						$elm$html$Html$span,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('(' + (highestBidderName + ')'))
+							]))
+					]),
+				_Utils_ap(
+					biddingHtml,
+					_List_fromArray(
+						[
 							A2(
-								$elm$html$Html$span,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Current Bidders')
-									])),
-							bidders))
-					]))));
-};
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'bidders')
+								]),
+							A2(
+								$elm$core$List$cons,
+								A2(
+									$elm$html$Html$span,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Current Bidders')
+										])),
+								bidderDivs))
+						]))));
+	});
 var $author$project$View$gameNameView = function (name) {
 	return A2(
 		$elm$html$Html$div,
@@ -6948,8 +7148,9 @@ var $author$project$View$gameNameView = function (name) {
 				$elm$html$Html$text(name)
 			]));
 };
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $author$project$Model$SendCard = function (a) {
-	return {$: 'SendCard', a: a};
+	return {$: 10, a: a};
 };
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$stringProperty = F2(
@@ -6967,7 +7168,7 @@ var $elm$html$Html$Attributes$src = function (url) {
 };
 var $author$project$View$cardView = F2(
 	function (attrList, card) {
-		var path = 'img/' + ($author$project$Model$showCardValue(card.value) + (' of ' + (A2($author$project$Model$showSuit, true, card.suit) + '.png')));
+		var path = 'img/' + ($author$project$Model$Card$showCardValue(card.a6) + (' of ' + (A2($author$project$Model$Card$showSuit, true, card.a0) + '.png')));
 		var attributeList = _Utils_ap(
 			_List_fromArray(
 				[
@@ -6981,21 +7182,21 @@ var $author$project$View$myCardsView = F3(
 		var cardList = function () {
 			var attrList = function (card) {
 				switch (turnStatus.$) {
-					case 'FirstAndMyTurn':
+					case 2:
 						return _List_fromArray(
 							[
 								$elm$html$Html$Events$onClick(
 								$author$project$Model$SendCard(card))
 							]);
-					case 'NotFirstAndMyTurn':
+					case 4:
 						var baseCard = turnStatus.a;
 						var hasValidCard = A2(
 							$elm$core$List$any,
 							function (c) {
-								return _Utils_eq(c.suit, baseCard.suit);
+								return _Utils_eq(c.a0, baseCard.a0);
 							},
 							myCards);
-						return (hasValidCard && (!_Utils_eq(card.suit, baseCard.suit))) ? _List_fromArray(
+						return (hasValidCard && (!_Utils_eq(card.a0, baseCard.a0))) ? _List_fromArray(
 							[
 								A2($elm$html$Html$Attributes$attribute, 'class', 'blurCard')
 							]) : _List_fromArray(
@@ -7056,7 +7257,7 @@ var $author$project$View$myCardsView = F3(
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
-									'This game\'s score: ' + $elm$core$String$fromInt(me.gameScore))
+									'This game\'s score: ' + $elm$core$String$fromInt(me.aB))
 								])),
 							A2(
 							$elm$html$Html$div,
@@ -7064,7 +7265,7 @@ var $author$project$View$myCardsView = F3(
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
-									'Total Score: ' + $elm$core$String$fromInt(me.totalScore))
+									'Total Score: ' + $elm$core$String$fromInt(me.a2))
 								]))
 						]))
 				]));
@@ -7107,7 +7308,7 @@ var $author$project$View$playerView = F2(
 		var player = _v0.a;
 		var maybeIsAllied = _v0.b;
 		var alliedClass = function () {
-			if (maybeIsAllied.$ === 'Just') {
+			if (!maybeIsAllied.$) {
 				var isAllied = maybeIsAllied.a;
 				return isAllied ? 'ally' : 'enemy';
 			} else {
@@ -7132,7 +7333,7 @@ var $author$project$View$playerView = F2(
 							A2($elm$html$Html$Attributes$attribute, 'class', 'playerName')
 						]),
 					$elm$core$List$singleton(
-						$elm$html$Html$text(player.name))),
+						$elm$html$Html$text(player.aM))),
 					A2(
 					$elm$html$Html$span,
 					_List_fromArray(
@@ -7142,7 +7343,7 @@ var $author$project$View$playerView = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$elm$core$String$fromInt(player.totalScore))
+							$elm$core$String$fromInt(player.a2))
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -7163,7 +7364,7 @@ var $author$project$View$playerView = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$elm$core$String$fromInt(player.gameScore))
+							$elm$core$String$fromInt(player.aB))
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -7176,15 +7377,6 @@ var $author$project$View$playerView = F2(
 							$elm$html$Html$text('Current score')
 						]))
 				]));
-	});
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
 	});
 var $author$project$View$otherPlayersView = F3(
 	function (myIndex, playerSet, allStatuses) {
@@ -7203,10 +7395,10 @@ var $author$project$View$otherPlayersView = F3(
 		};
 		var myStatus = A2(
 			$elm$core$Maybe$withDefault,
-			$author$project$Model$Undecided,
+			2,
 			A2($author$project$Model$lookup, myIndex, allStatuses));
 		var isAllied = function (playerStatus) {
-			return (_Utils_eq(myStatus, $author$project$Model$Undecided) || _Utils_eq(playerStatus, $author$project$Model$Undecided)) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
+			return ((myStatus === 2) || (playerStatus === 2)) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
 				_Utils_eq(playerStatus, myStatus));
 		};
 		var otherPlayers = A2(
@@ -7231,26 +7423,9 @@ var $author$project$View$otherPlayersView = F3(
 						]),
 					A2($elm$core$List$indexedMap, $author$project$View$playerView, otherPlayers))));
 	});
-var $author$project$Model$getCardFromHand = F2(
-	function (playerIndex, hand) {
-		switch (playerIndex.$) {
-			case 'Player1':
-				return hand.card1;
-			case 'Player2':
-				return hand.card2;
-			case 'Player3':
-				return hand.card3;
-			case 'Player4':
-				return hand.card4;
-			case 'Player5':
-				return hand.card5;
-			default:
-				return hand.card6;
-		}
-	});
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
-		if (maybe.$ === 'Just') {
+		if (!maybe.$) {
 			var value = maybe.a;
 			return $elm$core$Maybe$Just(
 				f(value));
@@ -7259,22 +7434,26 @@ var $elm$core$Maybe$map = F2(
 		}
 	});
 var $author$project$View$playAreaView = F2(
-	function (hand, myIndex) {
+	function (cards, myIndex) {
 		var rotateOtherPlayers = function (allPlayers) {
 			if (allPlayers.b) {
 				var x = allPlayers.a;
 				var xs = allPlayers.b;
-				return _Utils_eq(x, myIndex) ? xs : rotateOtherPlayers(
+				return _Utils_eq(x.a, myIndex) ? _Utils_Tuple2(xs, x) : rotateOtherPlayers(
 					_Utils_ap(
 						xs,
 						_List_fromArray(
 							[x])));
 			} else {
-				return _List_Nil;
+				return _Utils_Tuple2(
+					_List_Nil,
+					_Utils_Tuple2(myIndex, $elm$core$Maybe$Nothing));
 			}
 		};
 		var playerCardView = F2(
-			function (i, playerIndex) {
+			function (i, _v2) {
+				var playerIndex = _v2.a;
+				var card = _v2.b;
 				var defaultView = A2(
 					$elm$html$Html$div,
 					_List_fromArray(
@@ -7307,11 +7486,13 @@ var $author$project$View$playAreaView = F2(
 									'class',
 									'playerCard p' + $elm$core$String$fromInt(i))
 								])),
-						A2($author$project$Model$getCardFromHand, playerIndex, hand)));
+						card));
 			});
-		var otherPlayers = rotateOtherPlayers($author$project$Model$allPlayerIndices);
+		var _v1 = rotateOtherPlayers(cards);
+		var otherPlayers = _v1.a;
+		var me = _v1.b;
+		var myCard = A2(playerCardView, 5, me);
 		var playerCards = A2($elm$core$List$indexedMap, playerCardView, otherPlayers);
-		var myCard = A2(playerCardView, 5, myIndex);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -7332,60 +7513,60 @@ var $author$project$View$playAreaView = F2(
 	});
 var $author$project$Model$showRound = F2(
 	function (isJson, round) {
-		switch (round.$) {
-			case 'Round1':
+		switch (round) {
+			case 0:
 				return 'Round' + (isJson ? '1' : ' 1');
-			case 'Round2':
+			case 1:
 				return 'Round' + (isJson ? '2' : ' 2');
-			case 'Round3':
+			case 2:
 				return 'Round' + (isJson ? '3' : ' 3');
-			case 'Round4':
+			case 3:
 				return 'Round' + (isJson ? '4' : ' 4');
-			case 'Round5':
+			case 4:
 				return 'Round' + (isJson ? '5' : ' 5');
-			case 'Round6':
+			case 5:
 				return 'Round' + (isJson ? '6' : ' 6');
-			case 'Round7':
+			case 6:
 				return 'Round' + (isJson ? '7' : ' 7');
 			default:
 				return 'Round' + (isJson ? '8' : ' 8');
 		}
 	});
-var $author$project$View$staticInfoView = F3(
-	function (playRoundData, turnStatus, round) {
+var $author$project$View$staticInfoView = F4(
+	function (commonData, selectionData, turnStatus, round) {
 		var roundView = function () {
-			if (turnStatus.$ === 'GameFinished') {
+			if (turnStatus.$ === 7) {
 				return '';
 			} else {
 				return A2($author$project$Model$showRound, false, round);
 			}
 		}();
 		var pronounify = function (playerIndex) {
-			return _Utils_eq(playerIndex, playRoundData.myData.myIndex) ? 'Your' : function (n) {
+			return _Utils_eq(playerIndex, commonData.aK.aL) ? 'Your' : function (n) {
 				return n + '\'s';
 			}(
-				A2($author$project$Model$getPlayer, playRoundData.playerSet, playerIndex).name);
+				A2($author$project$Model$getPlayer, commonData.aW, playerIndex).aM);
 		};
 		var turnView = function () {
 			switch (turnStatus.$) {
-				case 'FirstAndNotMyTurn':
+				case 0:
 					var player = turnStatus.a;
 					return pronounify(player) + ' Turn';
-				case 'NotFirstAndNotMyTurn':
+				case 1:
 					var player = turnStatus.a;
 					return pronounify(player) + ' Turn';
-				case 'RoundFinished':
+				case 6:
 					return 'Waiting for round to finish..';
-				case 'GameFinished':
+				case 7:
 					return 'Waiting for game to finish..';
 				default:
-					return pronounify(playRoundData.myData.myIndex) + ' Turn';
+					return pronounify(commonData.aK.aL) + ' Turn';
 			}
 		}();
 		var helperView = function (helper) {
 			return A2($author$project$View$cardView, _List_Nil, helper);
 		};
-		var helpers = A2($elm$core$List$map, helperView, playRoundData.selectionData.helpers);
+		var helpers = A2($elm$core$List$map, helperView, selectionData.aC);
 		var biddingInfoView = A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -7403,7 +7584,7 @@ var $author$project$View$staticInfoView = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							pronounify(playRoundData.biddingData.highestBidder) + ' bid')
+							pronounify(commonData.ar.aG) + ' bid')
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -7414,7 +7595,7 @@ var $author$project$View$staticInfoView = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$elm$core$String$fromInt(playRoundData.biddingData.highestBid))
+							$elm$core$String$fromInt(commonData.ar.aF))
 						]))
 				]));
 		return A2(
@@ -7444,7 +7625,7 @@ var $author$project$View$staticInfoView = F3(
 							A2(
 							$author$project$View$cardView,
 							_List_Nil,
-							A2($author$project$Model$Card, $author$project$Model$Ace, playRoundData.selectionData.trump))
+							A2($author$project$Model$Card$Card, 12, selectionData.a3))
 						])),
 					A2(
 					$elm$html$Html$div,
@@ -7498,16 +7679,16 @@ var $author$project$View$staticInfoView = F3(
 				]));
 	});
 var $author$project$Model$SelectHelper = function (a) {
-	return {$: 'SelectHelper', a: a};
+	return {$: 8, a: a};
 };
 var $author$project$Model$SelectTrump = function (a) {
-	return {$: 'SelectTrump', a: a};
+	return {$: 7, a: a};
 };
-var $author$project$Model$SendTrump = {$: 'SendTrump'};
-var $author$project$Model$allCardValues = _List_fromArray(
-	[$author$project$Model$Three, $author$project$Model$Four, $author$project$Model$Five, $author$project$Model$Six, $author$project$Model$Seven, $author$project$Model$Eight, $author$project$Model$Nine, $author$project$Model$Ten, $author$project$Model$Jack, $author$project$Model$Queen, $author$project$Model$King, $author$project$Model$Ace]);
-var $author$project$Model$allSuits = _List_fromArray(
-	[$author$project$Model$Club, $author$project$Model$Heart, $author$project$Model$Diamond, $author$project$Model$Spade]);
+var $author$project$Model$SendTrump = {$: 9};
+var $author$project$Model$Card$allCardValues = _List_fromArray(
+	[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+var $author$project$Model$Card$allSuits = _List_fromArray(
+	[0, 1, 2, 3]);
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -7524,37 +7705,94 @@ var $elm$core$List$concatMap = F2(
 		return $elm$core$List$concat(
 			A2($elm$core$List$map, f, list));
 	});
-var $author$project$Model$allCards = A2(
+var $author$project$Model$Card$allCards = A2(
 	$elm$core$List$concatMap,
 	function (cardValue) {
 		return A2(
 			$elm$core$List$map,
-			$author$project$Model$Card(cardValue),
-			$author$project$Model$allSuits);
+			$author$project$Model$Card$Card(cardValue),
+			$author$project$Model$Card$allSuits);
 	},
-	$author$project$Model$allCardValues);
-var $author$project$View$trumpSelectionView = function (trumpSelectionData) {
-	var trumpView = function (suit) {
-		var isSelected = _Utils_eq(suit, trumpSelectionData.selectionData.trump);
-		var labelAttr = isSelected ? ' selectedLabel' : '';
-		var attrList = _Utils_ap(
-			_List_fromArray(
-				[
-					$elm$html$Html$Events$onClick(
-					$author$project$Model$SelectTrump(suit))
-				]),
-			isSelected ? _List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'selectedTrump')
-				]) : _List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'trump')
-				]));
+	$author$project$Model$Card$allCardValues);
+var $author$project$View$trumpSelectionView = F2(
+	function (commonData, selectionData) {
+		var trumpView = function (suit) {
+			var isSelected = _Utils_eq(suit, selectionData.a3);
+			var labelAttr = isSelected ? ' selectedLabel' : '';
+			var attrList = _Utils_ap(
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Model$SelectTrump(suit))
+					]),
+				isSelected ? _List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'selectedTrump')
+					]) : _List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'trump')
+					]));
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'trumpWithLabel')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'trumpLabel' + labelAttr)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($author$project$Model$Card$showSuit, true, suit))
+							])),
+						A2(
+						$author$project$View$cardView,
+						attrList,
+						A2($author$project$Model$Card$Card, 12, suit))
+					]));
+		};
+		var me = A2($author$project$Model$getPlayer, commonData.aW, commonData.aK.aL);
+		var helperCardAttrList = function (card) {
+			return _Utils_ap(
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Model$SelectHelper(card))
+					]),
+				A2($author$project$Model$isPlayerHelper, card, selectionData) ? _List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'selectedHelper')
+					]) : _List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'helper')
+					]));
+		};
+		var filteredCards = A2(
+			$elm$core$List$filter,
+			function (card) {
+				return !A2($elm$core$List$member, card, commonData.aK.aJ);
+			},
+			$author$project$Model$Card$allCards);
+		var helperCards = A2(
+			$elm$core$List$map,
+			function (card) {
+				return A2(
+					$author$project$View$cardView,
+					helperCardAttrList(card),
+					card);
+			},
+			filteredCards);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'trumpWithLabel')
+					A2($elm$html$Html$Attributes$attribute, 'class', 'trumpContainer')
 				]),
 			_List_fromArray(
 				[
@@ -7562,123 +7800,67 @@ var $author$project$View$trumpSelectionView = function (trumpSelectionData) {
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$attribute, 'class', 'trumpLabel' + labelAttr)
+							A2($elm$html$Html$Attributes$attribute, 'class', 'trumpBox')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(
-							A2($author$project$Model$showSuit, true, suit))
-						])),
-					A2(
-					$author$project$View$cardView,
-					attrList,
-					A2($author$project$Model$Card, $author$project$Model$Ace, suit))
-				]));
-	};
-	var me = A2($author$project$Model$getPlayer, trumpSelectionData.playerSet, trumpSelectionData.myData.myIndex);
-	var helperCardAttrList = function (card) {
-		return _Utils_ap(
-			_List_fromArray(
-				[
-					$elm$html$Html$Events$onClick(
-					$author$project$Model$SelectHelper(card))
-				]),
-			A2($author$project$Model$isPlayerHelper, card, trumpSelectionData.selectionData) ? _List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'selectedHelper')
-				]) : _List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'helper')
-				]));
-	};
-	var filteredCards = A2(
-		$elm$core$List$filter,
-		function (card) {
-			return !A2($elm$core$List$member, card, trumpSelectionData.myData.myCards);
-		},
-		$author$project$Model$allCards);
-	var helperCards = A2(
-		$elm$core$List$map,
-		function (card) {
-			return A2(
-				$author$project$View$cardView,
-				helperCardAttrList(card),
-				card);
-		},
-		filteredCards);
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$attribute, 'class', 'trumpContainer')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$attribute, 'class', 'trumpBox')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$span,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$attribute, 'class', 'trumpBoxHeader')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Select Trump')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$attribute, 'class', 'trumps')
-							]),
-						_List_fromArray(
-							[
-								trumpView($author$project$Model$Spade),
-								trumpView($author$project$Model$Heart),
-								trumpView($author$project$Model$Club),
-								trumpView($author$project$Model$Diamond)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$attribute, 'class', 'helperContainer')
-							]),
-						A2(
-							$elm$core$List$cons,
 							A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										A2($elm$html$Html$Attributes$attribute, 'class', 'helperHeader')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Select Helpers')
-									])),
-							helperCards)),
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$attribute, 'class', 'proceedButton'),
-								$elm$html$Html$Events$onClick($author$project$Model$SendTrump)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Proceed')
-							]))
-					])),
-				A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, trumpSelectionData.myData.myCards, me)
-			]));
-};
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'trumpBoxHeader')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Select Trump')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'trumps')
+								]),
+							_List_fromArray(
+								[
+									trumpView(3),
+									trumpView(1),
+									trumpView(0),
+									trumpView(2)
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'helperContainer')
+								]),
+							A2(
+								$elm$core$List$cons,
+								A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$attribute, 'class', 'helperHeader')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Select Helpers')
+										])),
+								helperCards)),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'proceedButton'),
+									$elm$html$Html$Events$onClick($author$project$Model$SendTrump)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Proceed')
+								]))
+						])),
+					A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, commonData.aK.aJ, me)
+				]));
+	});
 var $author$project$View$waitingForPlayersView = F2(
 	function (playerNames, gameName) {
 		var player = function (name) {
@@ -7722,18 +7904,19 @@ var $author$project$View$waitingForPlayersView = F2(
 	});
 var $author$project$View$view = function (model) {
 	switch (model.$) {
-		case 'BeginGamePage':
-			var playerName = model.a;
-			var gameName = model.b;
-			return A2($author$project$View$beginGamePageView, playerName, gameName);
-		case 'WaitingForPlayers':
+		case 0:
+			var playerId = model.a;
+			var playerName = model.b;
+			var gameName = model.c;
+			return A3($author$project$View$beginGamePageView, playerId, playerName, gameName);
+		case 1:
 			var playerNames = model.a;
 			var gameName = model.b;
 			return A2($author$project$View$waitingForPlayersView, playerNames, gameName);
-		case 'BiddingRound':
-			var gameName = model.a;
-			var biddingRoundData = model.b;
-			var me = A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.myData.myIndex);
+		case 2:
+			var commonData = model.a;
+			var bidders = model.b;
+			var me = A2($author$project$Model$getPlayer, commonData.aW, commonData.aK.aL);
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -7750,8 +7933,8 @@ var $author$project$View$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$author$project$View$gameNameView(gameName),
-								$author$project$View$biddingZoneView(biddingRoundData)
+								$author$project$View$gameNameView(commonData.aA),
+								A2($author$project$View$biddingZoneView, commonData, bidders)
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -7763,12 +7946,12 @@ var $author$project$View$view = function (model) {
 							[
 								A3(
 								$author$project$View$otherPlayersView,
-								biddingRoundData.myData.myIndex,
-								biddingRoundData.playerSet,
+								commonData.aK.aL,
+								commonData.aW,
 								A2(
 									$elm$core$List$map,
 									function (i) {
-										return _Utils_Tuple2(i, $author$project$Model$Undecided);
+										return _Utils_Tuple2(i, 2);
 									},
 									$author$project$Model$allPlayerIndices)),
 								A2(
@@ -7778,16 +7961,15 @@ var $author$project$View$view = function (model) {
 										A2($elm$html$Html$Attributes$attribute, 'class', 'filler')
 									]),
 								_List_Nil),
-								A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, biddingRoundData.myData.myCards, me)
+								A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, commonData.aK.aJ, me)
 							]))
 					]));
-		case 'TrumpSelection':
-			var gameName = model.a;
-			var trumpSelectionData = model.b;
-			return $author$project$View$trumpSelectionView(trumpSelectionData);
-		case 'WaitingForTrump':
-			var gameName = model.a;
-			var biddingRoundData = model.b;
+		case 3:
+			var commonData = model.a;
+			var selectionData = model.b;
+			return A2($author$project$View$trumpSelectionView, commonData, selectionData);
+		case 4:
+			var commonData = model.a;
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -7797,13 +7979,19 @@ var $author$project$View$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						'Waiting for ' + (A2($author$project$Model$getPlayer, biddingRoundData.playerSet, biddingRoundData.biddingData.highestBidder).name + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(biddingRoundData.biddingData.highestBid))))
+						'Waiting for ' + (A2($author$project$Model$getPlayer, commonData.aW, commonData.ar.aG).aM + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(commonData.ar.aF))))
 					]));
-		default:
-			var gameName = model.a;
+		case 5:
+			var commonData = model.a;
 			var playRoundData = model.b;
-			var myIndex = playRoundData.myData.myIndex;
-			var me = A2($author$project$Model$getPlayer, playRoundData.playerSet, myIndex);
+			var playerCards = A2(
+				$author$project$Model$getPlayers,
+				function ($) {
+					return $.at;
+				},
+				commonData.aW);
+			var myIndex = commonData.aK.aL;
+			var me = A2($author$project$Model$getPlayer, commonData.aW, myIndex);
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -7820,8 +8008,8 @@ var $author$project$View$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$author$project$View$gameNameView(gameName),
-								A3($author$project$View$staticInfoView, playRoundData, playRoundData.turnStatus, playRoundData.roundIndex)
+								$author$project$View$gameNameView(commonData.aA),
+								A4($author$project$View$staticInfoView, commonData, playRoundData.aZ, playRoundData.a4, playRoundData.aY)
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -7834,15 +8022,59 @@ var $author$project$View$view = function (model) {
 								A3(
 								$author$project$View$otherPlayersView,
 								myIndex,
-								playRoundData.playerSet,
-								$author$project$Model$getPlayerStatuses(playRoundData.playersStatus)),
-								A2($author$project$View$playAreaView, playRoundData.hand, myIndex),
-								A3($author$project$View$myCardsView, playRoundData.turnStatus, playRoundData.myData.myCards, me)
+								commonData.aW,
+								A2(
+									$author$project$Model$getPlayers,
+									function ($) {
+										return $.a_;
+									},
+									commonData.aW)),
+								A2($author$project$View$playAreaView, playerCards, myIndex),
+								A3($author$project$View$myCardsView, playRoundData.a4, commonData.aK.aJ, me)
+							]))
+					]));
+		default:
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'errorContainer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'error')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h1,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$attribute, 'class', 'errorHeading')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('OOPS!!')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$attribute, 'class', 'errorPara')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('\r\n                  No, I\'m not talking about "Object Oriented Programming Systems".\r\n                  Your websocket connection has failed.\r\n\r\n\r\n                  But no need to worry dear friend!!\r\n                  Just refresh your page and re-enter your details,\r\n                  specifically your id.\r\n\r\n                  You\'ll magically re-join the game,\r\n                  much as your websocket magically got disconnected.\r\n                  ')
+									]))
 							]))
 					]));
 	}
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
-	{init: $author$project$Model$initModel, subscriptions: $author$project$Subscriptions$subscriptions, update: $author$project$Update$update, view: $author$project$View$view});
+	{aI: $author$project$Model$initModel, a$: $author$project$Subscriptions$subscriptions, a5: $author$project$Update$update, a7: $author$project$View$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
+	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
