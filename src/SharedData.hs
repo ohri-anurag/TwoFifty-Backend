@@ -66,7 +66,11 @@ data SentData
   | BiddingReconnectionData
       PlayerIndex
       CommonStateData
-      BiddingStateData
+      [PlayerIndex]     -- Bidders
+  | RoundReconnectionData
+      PlayerIndex
+      CommonStateData
+      RoundStateData
 
 
 
@@ -145,21 +149,37 @@ instance ToJSON SentData where
     [ "tag" .= tagName sentData
     , "cards" .= myCards
     ]
-  toJSON sentData@(BiddingReconnectionData myIndex commonStateData biddingStateData) = object
+  toJSON sentData@(BiddingReconnectionData myIndex commonStateData bidders) = object $
     [ "tag" .= tagName sentData
-    , "playerSet" .= object (map (\(i, n) -> T.pack (show i) .= n) players)
-    , "biddingData" .= object
-      [ "highestBid" .= highestBid biddingStateData
-      , "highestBidder" .= highestBidder biddingStateData
-      , "firstBidder" .= firstBidder commonStateData
-      ]
-    , "myData" .= object
-      [ "myIndex" .= myIndex
-      , "myCards" .= cards (snd $ head $ filter ((==) myIndex . fst) players)
-      ]
-    , "bidders" .= bidders biddingStateData
+    , "bidders" .= bidders
     ]
-    where players = toList $ playerDataSet commonStateData
+    ++ commonJSON myIndex commonStateData
+  toJSON sentData@(RoundReconnectionData myIndex commonStateData roundStateData) = object $
+    [ "tag" .= tagName sentData
+    , "selectionData" .= object
+      [ "trump" .= trumpSuit roundStateData
+      , "helpers" .= helperCards roundStateData
+      ]
+    , "firstPlayer" .= firstPlayer roundStateData
+    , "turn" .= currentTurn roundStateData
+    , "round" .= roundIndex roundStateData
+    ]
+    ++ commonJSON myIndex commonStateData
+
+commonJSON :: PlayerIndex -> CommonStateData -> [Pair]
+commonJSON myIndex commonStateData =
+  [ "playerSet" .= object (map (\(i, n) -> T.pack (show i) .= n) players)
+  , "biddingData" .= object
+    [ "highestBid" .= bid commonStateData
+    , "highestBidder" .= bidder commonStateData
+    , "firstBidder" .= firstBidder commonStateData
+    ]
+  , "myData" .= object
+    [ "myIndex" .= myIndex
+    , "myCards" .= currentCards (snd $ head $ filter ((==) myIndex . fst) players)
+    ]
+  ]
+  where players = toList $ playerDataSet commonStateData
 
 tagName :: SentData -> T.Text
 tagName (PlayerJoined _) = "PlayerJoined"
@@ -173,3 +193,4 @@ tagName (RoundData _ _) = "RoundData"
 tagName (GameFinishedData _ _) = "GameFinishedData"
 tagName (NewGame _) = "NewGame"
 tagName BiddingReconnectionData {} = "BiddingReconnectionData"
+tagName RoundReconnectionData {} = "RoundReconnectionData"

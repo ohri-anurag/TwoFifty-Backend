@@ -1,6 +1,8 @@
+{-# LANGUAGE TemplateHaskell #-}
 module State where
 
 import Control.Concurrent.MVar (MVar, putMVar, takeMVar)
+import Data.Aeson.TH
 import qualified Data.Map as M
 import Data.Text (Text)
 import Network.WebSockets.Connection (Connection)
@@ -14,23 +16,17 @@ import Player
 data CommonStateData = CommonStateData
   { firstBidder :: PlayerIndex          -- First Bidder
   , playerDataSet :: PlayerDataSet
-  }
-
-data BiddingStateData = BiddingStateData
-  { bidders :: [PlayerIndex]                -- Number of bidders
-  , highestBidder :: PlayerIndex            -- Current maximum bidder
-  , highestBid :: Int                       -- Maximum bid amount
+  , bidder :: PlayerIndex               -- Current maximum bidder
+  , bid :: Int                          -- Maximum bid amount
   }
 
 data RoundStateData = RoundStateData
   { roundIndex :: Round               -- Which round?
   , trumpSuit :: Suit                 -- Selected trump
+  , helperCards :: [Card]             -- Max 2 cards selected by the bidder
   , biddingTeam :: [PlayerIndex]      -- Bidding Team
   , firstPlayer :: PlayerIndex        -- Who had the first turn
   , currentTurn :: PlayerIndex        -- Current turn
-  , hand ::                           -- The cards being played
-      M.Map PlayerIndex Card
-  , bid :: Int
   }
 
 data State
@@ -38,7 +34,7 @@ data State
       [((Text, Text), Connection)]  -- List of player names, MAX = 6
   | BiddingState
       CommonStateData
-      BiddingStateData
+      [PlayerIndex]         -- Bidders
   | RoundState
       CommonStateData
       RoundStateData
@@ -71,3 +67,5 @@ nextRound Round5 = Round6
 nextRound Round6 = Round7
 nextRound Round7 = Round8
 nextRound Round8 = Round1
+
+$(deriveJSON defaultOptions ''Round)

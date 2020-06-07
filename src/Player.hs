@@ -22,13 +22,21 @@ data PlayerIndex
   | Player6
   deriving (Eq, Ord, Show, Enum)
 
+data PlayerStatus
+ = BiddingTeam
+ | AntiTeam
+ | Undecided
+
 data PlayerData = PlayerData
   { name :: T.Text
   , id :: T.Text
   , totalScore :: Int
   , gameScore :: Int
   , connection :: Connection
-  , cards :: [Card]
+  , currentCards :: [Card]
+  , initialCards :: [Card]
+  , card :: Maybe Card
+  , status :: PlayerStatus
   }
 
 data PlayerDataSet = DataSet
@@ -71,7 +79,8 @@ updateTotalScoreAndCards :: PlayerIndex -> (Int, [Card]) -> PlayerDataSet -> Pla
 updateTotalScoreAndCards playerIndex (myScore, myCards) = updatePlayerData playerIndex
   (\p -> p
     { totalScore = myScore + totalScore p
-    , cards = myCards
+    , currentCards = myCards
+    , initialCards = myCards
     , gameScore = 0
     }
   )
@@ -79,8 +88,15 @@ updateTotalScoreAndCards playerIndex (myScore, myCards) = updatePlayerData playe
 updateGameScore :: PlayerIndex -> Int -> PlayerDataSet -> PlayerDataSet
 updateGameScore playerIndex myScore = updatePlayerData playerIndex (\p -> p { gameScore = myScore + gameScore p })
 
-updateCards :: PlayerIndex -> Card -> PlayerDataSet -> PlayerDataSet
-updateCards playerIndex card = updatePlayerData playerIndex (\p -> p { cards = filter (/= card) $ cards p })
+updateCard :: PlayerIndex -> Maybe Card -> PlayerDataSet -> PlayerDataSet
+updateCard playerIndex c = updatePlayerData playerIndex (\p -> p
+    { card = c
+    , currentCards = filter ((/=) c . Just) $ currentCards p
+    }
+  )
+
+updateStatus :: PlayerIndex -> PlayerStatus -> PlayerDataSet -> PlayerDataSet
+updateStatus playerIndex playerStatus = updatePlayerData playerIndex (\p -> p { status = playerStatus })
 
 fromIntroData :: [([Card], ((T.Text, T.Text), Connection))] -> PlayerDataSet
 fromIntroData list = DataSet
@@ -99,7 +115,10 @@ fromIntroData list = DataSet
       , totalScore = 0
       , gameScore = 0
       , connection = conn
-      , cards = myCards
+      , currentCards = myCards
+      , initialCards = myCards
+      , card = Nothing
+      , status = Undecided
       }
 
 -- Helpers
@@ -123,10 +142,13 @@ playerIndices :: [PlayerIndex]
 playerIndices = [Player1 .. Player6]
 
 $(deriveJSON defaultOptions ''PlayerIndex)
+$(deriveJSON defaultOptions ''PlayerStatus)
 
 instance ToJSON PlayerData where
   toJSON playerData = object
     [ "name" .= name playerData
     , "gameScore" .= gameScore playerData
     , "totalScore" .= totalScore playerData
+    , "card" .= card playerData
+    , "status" .= status playerData
     ]
