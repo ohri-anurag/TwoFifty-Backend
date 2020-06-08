@@ -6097,10 +6097,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 							{
 								aJ: A2(
 									$elm$core$List$filter,
-									A2(
-										$elm$core$Basics$composeR,
-										$elm$core$Basics$eq(card),
-										$elm$core$Basics$not),
+									$elm$core$Basics$neq(card),
 									myData.aJ)
 							});
 					};
@@ -6222,22 +6219,32 @@ var $author$project$Update$handleReceivedMessages = F2(
 				if (model.$ === 5) {
 					var commonData = model.a;
 					var playRoundData = model.b;
-					var updatePlayers = A3(
-						$author$project$Model$updatePlayer,
-						winner,
-						function (p) {
-							return _Utils_update(
-								p,
-								{at: $elm$core$Maybe$Nothing, aB: p.aB + score});
-						},
-						commonData.aW);
 					var newRound = $author$project$Model$nextRound(playRoundData.aY);
+					var newPlayerSet = A3(
+						$elm$core$List$foldr,
+						F2(
+							function (playerIndex, playerSet) {
+								return A3(
+									$author$project$Model$updatePlayer,
+									playerIndex,
+									function (player) {
+										return _Utils_update(
+											player,
+											{
+												at: $elm$core$Maybe$Nothing,
+												aB: _Utils_eq(playerIndex, winner) ? (player.aB + score) : player.aB
+											});
+									},
+									playerSet);
+							}),
+						commonData.aW,
+						$author$project$Model$allPlayerIndices);
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$PlayRound,
 							_Utils_update(
 								commonData,
-								{aW: updatePlayers}),
+								{aW: newPlayerSet}),
 							_Utils_update(
 								playRoundData,
 								{
@@ -6267,6 +6274,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 											player,
 											{
 												aB: 0,
+												a_: 2,
 												a2: player.a2 + (A2($elm$core$List$member, playerIndex, winningTeam) ? totalScore : 0)
 											});
 									},
