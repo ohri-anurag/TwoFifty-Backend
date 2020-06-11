@@ -6942,6 +6942,14 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 };
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$View$beginGamePageView = F4(
 	function (playerId, playerName, gameName, validation) {
 		var errorText = function () {
@@ -7008,6 +7016,7 @@ var $author$project$View$beginGamePageView = F4(
 									$elm$html$Html$input,
 									_List_fromArray(
 										[
+											$elm$html$Html$Attributes$value(playerId),
 											$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerId)
 										]),
 									_List_fromArray(
@@ -7034,6 +7043,7 @@ var $author$project$View$beginGamePageView = F4(
 									$elm$html$Html$input,
 									_List_fromArray(
 										[
+											$elm$html$Html$Attributes$value(playerName),
 											$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerName)
 										]),
 									_List_fromArray(
@@ -7060,6 +7070,7 @@ var $author$project$View$beginGamePageView = F4(
 									$elm$html$Html$input,
 									_List_fromArray(
 										[
+											$elm$html$Html$Attributes$value(gameName),
 											$elm$html$Html$Events$onInput($author$project$Model$UpdateGameName)
 										]),
 									_List_fromArray(
@@ -7266,13 +7277,6 @@ var $author$project$Model$SendCard = function (a) {
 	return {$: 10, a: a};
 };
 var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
