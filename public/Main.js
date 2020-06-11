@@ -5138,15 +5138,15 @@ var $elm$core$Task$perform = F2(
 			A2($elm$core$Task$map, toMessage, task));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Model$BeginGamePage = F3(
-	function (a, b, c) {
-		return {$: 0, a: a, b: b, c: c};
+var $author$project$Model$BeginGamePage = F4(
+	function (a, b, c, d) {
+		return {$: 0, a: a, b: b, c: c, d: d};
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Model$initModel = function (_v0) {
 	return _Utils_Tuple2(
-		A3($author$project$Model$BeginGamePage, '', '', ''),
+		A4($author$project$Model$BeginGamePage, '', '', '', $elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Model$NoOp = {$: 11};
@@ -5187,6 +5187,8 @@ var $author$project$Model$PlayCard = function (a) {
 var $author$project$Model$PlayerJoined = function (a) {
 	return {$: 0, a: a};
 };
+var $author$project$Model$PlayerWithIdAlreadyExists = {$: 13};
+var $author$project$Model$PlayerWithNameAlreadyExists = {$: 14};
 var $author$project$Model$ReceivedSelectionData = function (a) {
 	return {$: 5, a: a};
 };
@@ -5556,6 +5558,10 @@ var $author$project$Decoders$receivedDataDecoder = function () {
 						A2($elm$json$Json$Decode$field, 'round', $author$project$Decoders$roundDecoder));
 				case 'WebsocketFailed':
 					return $elm$json$Json$Decode$succeed($author$project$Model$WebsocketFailed);
+				case 'PlayerWithIdAlreadyExists':
+					return $elm$json$Json$Decode$succeed($author$project$Model$PlayerWithIdAlreadyExists);
+				case 'PlayerWithNameAlreadyExists':
+					return $elm$json$Json$Decode$succeed($author$project$Model$PlayerWithNameAlreadyExists);
 				default:
 					return $elm$json$Json$Decode$fail('Unknown tag received: ' + tag);
 			}
@@ -5578,8 +5584,11 @@ var $author$project$Subscriptions$subscriptions = function (_v0) {
 };
 var $author$project$Model$BiddingRound = F2(
 	function (a, b) {
-		return {$: 2, a: a, b: b};
+		return {$: 3, a: a, b: b};
 	});
+var $author$project$Model$EmptyGameName = 2;
+var $author$project$Model$EmptyId = 0;
+var $author$project$Model$EmptyName = 1;
 var $author$project$Model$FirstAndMyTurnOver = {$: 3};
 var $author$project$Model$IntroData = F3(
 	function (a, b, c) {
@@ -5590,7 +5599,7 @@ var $author$project$Model$NotFirstAndMyTurnOver = function (a) {
 };
 var $author$project$Model$PlayRound = F2(
 	function (a, b) {
-		return {$: 5, a: a, b: b};
+		return {$: 6, a: a, b: b};
 	});
 var $author$project$Model$PlayedCard = F2(
 	function (a, b) {
@@ -5606,11 +5615,11 @@ var $author$project$Model$SentSelectionData = F2(
 	});
 var $author$project$Model$TrumpSelection = F2(
 	function (a, b) {
-		return {$: 3, a: a, b: b};
+		return {$: 4, a: a, b: b};
 	});
-var $author$project$Model$WaitingForPlayers = F2(
-	function (a, b) {
-		return {$: 1, a: a, b: b};
+var $author$project$Model$WaitingForServerValidation = F3(
+	function (a, b, c) {
+		return {$: 1, a: a, b: b, c: c};
 	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -5623,7 +5632,9 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var $author$project$Model$ErrorState = {$: 6};
+var $author$project$Model$DuplicateId = 3;
+var $author$project$Model$DuplicateName = 4;
+var $author$project$Model$ErrorState = {$: 7};
 var $author$project$Model$FirstAndMyTurn = {$: 2};
 var $author$project$Model$FirstAndNotMyTurn = function (a) {
 	return {$: 0, a: a};
@@ -5637,8 +5648,12 @@ var $author$project$Model$NotFirstAndNotMyTurn = F2(
 		return {$: 1, a: a, b: b};
 	});
 var $author$project$Model$RoundFinished = {$: 6};
+var $author$project$Model$WaitingForPlayers = F2(
+	function (a, b) {
+		return {$: 2, a: a, b: b};
+	});
 var $author$project$Model$WaitingForTrump = function (a) {
-	return {$: 4, a: a};
+	return {$: 5, a: a};
 };
 var $author$project$Model$allPlayerIndices = _List_fromArray(
 	[0, 1, 2, 3, 4, 5]);
@@ -5945,7 +5960,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 		switch (receivedMessage.$) {
 			case 0:
 				var newPlayer = receivedMessage.a;
-				if (model.$ === 1) {
+				if (model.$ === 2) {
 					var players = model.a;
 					var gameName = model.b;
 					return _Utils_Tuple2(
@@ -5963,12 +5978,16 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 1:
 				var existingPlayers = receivedMessage.a;
 				if (model.$ === 1) {
-					var players = model.a;
-					var gameName = model.b;
+					var playerId = model.a;
+					var playerName = model.b;
+					var gameName = model.c;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$WaitingForPlayers,
-							_Utils_ap(existingPlayers, players),
+							_Utils_ap(
+								existingPlayers,
+								_List_fromArray(
+									[playerName])),
 							gameName),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -5979,7 +5998,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 				var firstBidder = receivedMessage.b;
 				var myIndex = receivedMessage.c;
 				var myCards = receivedMessage.d;
-				if (model.$ === 1) {
+				if (model.$ === 2) {
 					var players = model.a;
 					var gameName = model.b;
 					var commonData = {
@@ -5997,7 +6016,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 3:
 				var bidder = receivedMessage.a;
 				var bid = receivedMessage.b;
-				if (model.$ === 2) {
+				if (model.$ === 3) {
 					var commonData = model.a;
 					var bidders = model.b;
 					var updateBiddingData = function (biddingData) {
@@ -6020,7 +6039,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 				}
 			case 4:
 				var quitter = receivedMessage.a;
-				if (model.$ === 2) {
+				if (model.$ === 3) {
 					var commonData = model.a;
 					var bidders = model.b;
 					var newBidders = A2(
@@ -6043,7 +6062,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 5:
 				var selectionData = receivedMessage.a;
 				switch (model.$) {
-					case 3:
+					case 4:
 						var commonData = model.a;
 						var firstBidder = commonData.ar.ay;
 						var _v7 = A4($author$project$Update$getPlayersStatus, commonData.aK, commonData.aK.aL, selectionData, commonData.aW);
@@ -6063,7 +6082,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 									a4: _Utils_eq(firstBidder, commonData.aK.aL) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
 								}),
 							$elm$core$Platform$Cmd$none);
-					case 4:
+					case 5:
 						var commonData = model.a;
 						var firstBidder = commonData.ar.ay;
 						var _v8 = A4($author$project$Update$getPlayersStatus, commonData.aK, commonData.ar.aG, selectionData, commonData.aW);
@@ -6088,7 +6107,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 				}
 			case 6:
 				var card = receivedMessage.a;
-				if (model.$ === 5) {
+				if (model.$ === 6) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var updateMyData = function (myData) {
@@ -6216,7 +6235,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 7:
 				var winner = receivedMessage.a;
 				var score = receivedMessage.b;
-				if (model.$ === 5) {
+				if (model.$ === 6) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var newRound = $author$project$Model$nextRound(playRoundData.aY);
@@ -6259,7 +6278,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 8:
 				var winningTeam = receivedMessage.a;
 				var totalScore = receivedMessage.b;
-				if (model.$ === 5) {
+				if (model.$ === 6) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var updatedPlayerScores = A3(
@@ -6295,7 +6314,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 				}
 			case 9:
 				var cards = receivedMessage.a;
-				if (model.$ === 5) {
+				if (model.$ === 6) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var nextFirstBidder = $author$project$Model$nextTurn(commonData.ar.ay);
@@ -6318,7 +6337,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 				var biddingData = receivedMessage.b;
 				var myData = receivedMessage.c;
 				var bidders = receivedMessage.d;
-				if (model.$ === 1) {
+				if (model.$ === 2) {
 					var gameName = model.b;
 					return (!$elm$core$List$length(bidders)) ? (_Utils_eq(biddingData.aG, myData.aL) ? _Utils_Tuple2(
 						A2(
@@ -6345,7 +6364,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 				var firstPlayer = receivedMessage.e;
 				var turn = receivedMessage.f;
 				var round = receivedMessage.g;
-				if (model.$ === 1) {
+				if (model.$ === 2) {
 					var gameName = model.b;
 					return _Utils_Tuple2(
 						A2(
@@ -6362,8 +6381,40 @@ var $author$project$Update$handleReceivedMessages = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			default:
+			case 12:
 				return _Utils_Tuple2($author$project$Model$ErrorState, $elm$core$Platform$Cmd$none);
+			case 13:
+				if (model.$ === 1) {
+					var playerId = model.a;
+					var playerName = model.b;
+					var gameName = model.c;
+					return _Utils_Tuple2(
+						A4(
+							$author$project$Model$BeginGamePage,
+							playerId,
+							playerName,
+							gameName,
+							$elm$core$Maybe$Just(3)),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			default:
+				if (model.$ === 1) {
+					var playerId = model.a;
+					var playerName = model.b;
+					var gameName = model.c;
+					return _Utils_Tuple2(
+						A4(
+							$author$project$Model$BeginGamePage,
+							playerId,
+							playerName,
+							gameName,
+							$elm$core$Maybe$Just(4)),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $author$project$Model$IncreaseBid = F3(
@@ -6635,7 +6686,7 @@ var $author$project$Encoders$sendMessage = function (sentData) {
 };
 var $author$project$Update$sendIncreasedBidMessage = F2(
 	function (model, delta) {
-		if (model.$ === 2) {
+		if (model.$ === 3) {
 			var commonData = model.a;
 			var bidders = model.b;
 			var newBid = commonData.ar.aF + delta;
@@ -6659,8 +6710,9 @@ var $author$project$Update$update = F2(
 				if (!model.$) {
 					var playerId = model.a;
 					var playerName = model.b;
+					var validation = model.d;
 					return _Utils_Tuple2(
-						A3($author$project$Model$BeginGamePage, playerId, playerName, str),
+						A4($author$project$Model$BeginGamePage, playerId, playerName, str, validation),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6670,8 +6722,9 @@ var $author$project$Update$update = F2(
 				if (!model.$) {
 					var playerId = model.a;
 					var gameName = model.c;
+					var validation = model.d;
 					return _Utils_Tuple2(
-						A3($author$project$Model$BeginGamePage, playerId, str, gameName),
+						A4($author$project$Model$BeginGamePage, playerId, str, gameName, validation),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6681,8 +6734,9 @@ var $author$project$Update$update = F2(
 				if (!model.$) {
 					var playerName = model.b;
 					var gameName = model.c;
+					var validation = model.d;
 					return _Utils_Tuple2(
-						A3($author$project$Model$BeginGamePage, str, playerName, gameName),
+						A4($author$project$Model$BeginGamePage, str, playerName, gameName, validation),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6692,14 +6746,18 @@ var $author$project$Update$update = F2(
 					var playerId = model.a;
 					var playerName = model.b;
 					var gameName = model.c;
-					return _Utils_Tuple2(
-						A2(
-							$author$project$Model$WaitingForPlayers,
-							_List_fromArray(
-								[playerName]),
-							gameName),
-						$author$project$Encoders$sendMessage(
-							A3($author$project$Model$IntroData, playerId, playerName, gameName)));
+					var validation = (playerId === '') ? $elm$core$Maybe$Just(0) : ((playerName === '') ? $elm$core$Maybe$Just(1) : ((gameName === '') ? $elm$core$Maybe$Just(2) : $elm$core$Maybe$Nothing));
+					if (validation.$ === 1) {
+						return _Utils_Tuple2(
+							A3($author$project$Model$WaitingForServerValidation, playerId, playerName, gameName),
+							$author$project$Encoders$sendMessage(
+								A3($author$project$Model$IntroData, playerId, playerName, gameName)));
+					} else {
+						var v = validation;
+						return _Utils_Tuple2(
+							A4($author$project$Model$BeginGamePage, playerId, playerName, gameName, v),
+							$elm$core$Platform$Cmd$none);
+					}
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -6708,7 +6766,7 @@ var $author$project$Update$update = F2(
 			case 5:
 				return A2($author$project$Update$sendIncreasedBidMessage, model, 10);
 			case 6:
-				if (model.$ === 2) {
+				if (model.$ === 3) {
 					var commonData = model.a;
 					var bidders = model.b;
 					return _Utils_Tuple2(
@@ -6726,7 +6784,7 @@ var $author$project$Update$update = F2(
 				}
 			case 7:
 				var suit = msg.a;
-				if (model.$ === 3) {
+				if (model.$ === 4) {
 					var commonData = model.a;
 					var selectionData = model.b;
 					return _Utils_Tuple2(
@@ -6742,7 +6800,7 @@ var $author$project$Update$update = F2(
 				}
 			case 8:
 				var card = msg.a;
-				if (model.$ === 3) {
+				if (model.$ === 4) {
 					var commonData = model.a;
 					var selectionData = model.b;
 					var newSelectionData = A2($elm$core$List$member, card, selectionData.aC) ? _Utils_update(
@@ -6764,7 +6822,7 @@ var $author$project$Update$update = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 9:
-				if (model.$ === 3) {
+				if (model.$ === 4) {
 					var commonData = model.a;
 					var selectionData = model.b;
 					return _Utils_Tuple2(
@@ -6787,7 +6845,7 @@ var $author$project$Update$update = F2(
 							return turnStatus;
 					}
 				};
-				if (model.$ === 5) {
+				if (model.$ === 6) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					return _Utils_Tuple2(
@@ -6884,13 +6942,32 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 };
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$View$beginGamePageView = F3(
-	function (playerId, playerName, gameName) {
+var $author$project$View$beginGamePageView = F4(
+	function (playerId, playerName, gameName, validation) {
+		var errorText = function () {
+			if (!validation.$) {
+				var error = validation.a;
+				switch (error) {
+					case 0:
+						return 'Username can\'t be empty';
+					case 1:
+						return 'Player Name can\'t be empty';
+					case 2:
+						return 'Game Name can\'t be empty';
+					case 3:
+						return 'A Player with the same username already exists. Please choose another.';
+					default:
+						return 'A Player with same player name already exists. Please choose another.';
+				}
+			} else {
+				return '';
+			}
+		}();
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'beginGame')
+					A2($elm$html$Html$Attributes$attribute, 'class', 'beginGameContainer')
 				]),
 			_List_fromArray(
 				[
@@ -6898,91 +6975,119 @@ var $author$project$View$beginGamePageView = F3(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$attribute, 'class', 'beginGameHeader')
+							A2($elm$html$Html$Attributes$attribute, 'class', 'beginGame')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Welcome to the card game 250!!')
-						])),
-					A2(
-					$elm$html$Html$div,
-					_List_Nil,
-					_List_fromArray(
-						[
 							A2(
-							$elm$html$Html$label,
-							_List_Nil,
+							$elm$html$Html$div,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Enter your id(this will be used if you get disconnected):')
-								])),
-							A2(
-							$elm$html$Html$input,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerId)
+									A2($elm$html$Html$Attributes$attribute, 'class', 'beginGameHeader')
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text(playerId)
+									$elm$html$Html$text('Welcome to the card game 250!!')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'beginGameInputs')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$label,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Enter your username (this will be used if you get disconnected):')
+										])),
+									A2(
+									$elm$html$Html$input,
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerId)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(playerId)
+										]))
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'beginGameInputs')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$label,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Enter your player name (used for display):')
+										])),
+									A2(
+									$elm$html$Html$input,
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerName)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(playerName)
+										]))
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'beginGameInputs')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$label,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Enter a name for the group:')
+										])),
+									A2(
+									$elm$html$Html$input,
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onInput($author$project$Model$UpdateGameName)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(gameName)
+										]))
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'beginGameButton'),
+									$elm$html$Html$Events$onClick($author$project$Model$SendGameName)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Begin Game')
 								]))
 						])),
 					A2(
 					$elm$html$Html$div,
-					_List_Nil,
 					_List_fromArray(
 						[
-							A2(
-							$elm$html$Html$label,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Enter your display name:')
-								])),
-							A2(
-							$elm$html$Html$input,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerName)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text(playerName)
-								]))
-						])),
-					A2(
-					$elm$html$Html$div,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$label,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Enter a name for the group:')
-								])),
-							A2(
-							$elm$html$Html$input,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onInput($author$project$Model$UpdateGameName)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text(gameName)
-								]))
-						])),
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$attribute, 'class', 'beginGameButton'),
-							$elm$html$Html$Events$onClick($author$project$Model$SendGameName)
+							A2($elm$html$Html$Attributes$attribute, 'class', 'errorView')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Begin Game')
+							$elm$html$Html$text(errorText)
 						]))
 				]));
 	});
@@ -7916,12 +8021,33 @@ var $author$project$View$view = function (model) {
 			var playerId = model.a;
 			var playerName = model.b;
 			var gameName = model.c;
-			return A3($author$project$View$beginGamePageView, playerId, playerName, gameName);
+			var validation = model.d;
+			return A4($author$project$View$beginGamePageView, playerId, playerName, gameName, validation);
 		case 1:
+			var playerId = model.a;
+			var playerName = model.b;
+			var gameName = model.c;
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'serverValidationContainer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Waiting for server to validate your username and player name')
+							]))
+					]));
+		case 2:
 			var playerNames = model.a;
 			var gameName = model.b;
 			return A2($author$project$View$waitingForPlayersView, playerNames, gameName);
-		case 2:
+		case 3:
 			var commonData = model.a;
 			var bidders = model.b;
 			var me = A2($author$project$Model$getPlayer, commonData.aW, commonData.aK.aL);
@@ -7972,11 +8098,11 @@ var $author$project$View$view = function (model) {
 								A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, commonData.aK.aJ, me)
 							]))
 					]));
-		case 3:
+		case 4:
 			var commonData = model.a;
 			var selectionData = model.b;
 			return A2($author$project$View$trumpSelectionView, commonData, selectionData);
-		case 4:
+		case 5:
 			var commonData = model.a;
 			return A2(
 				$elm$html$Html$div,
@@ -7989,7 +8115,7 @@ var $author$project$View$view = function (model) {
 						$elm$html$Html$text(
 						'Waiting for ' + (A2($author$project$Model$getPlayer, commonData.aW, commonData.ar.aG).aM + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(commonData.ar.aF))))
 					]));
-		case 5:
+		case 6:
 			var commonData = model.a;
 			var playRoundData = model.b;
 			var playerCards = A2(
