@@ -85,6 +85,18 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         Just state ->
           case state of
             IntroState players
+              -- Check if player with same id already exists. If so, reject joining request
+              | all ((==) playerId . snd . fst) players -> do
+                  sendTextData conn $ encode PlayerWithIdAlreadyExists
+
+                  pure state
+
+              -- Check if player with same name already exists. If so, reject joining request
+              | all ((==) playerName . fst . fst) players -> do
+                  sendTextData conn $ encode PlayerWithNameAlreadyExists
+
+                  pure state
+
               | length players < 5 -> do
                 putStrLn $ "Adding player: " ++ T.unpack playerName
 
@@ -99,6 +111,10 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
               | length players == 5 -> do
                 putStrLn $ "Adding player: " ++ T.unpack playerName
+
+                -- Inform the new player of the existing players
+                sendTextData conn $ encode $ ExistingPlayers $ map (fst . fst) players
+
                 putStrLn $ "Moving " ++ T.unpack gameName ++ " to bidding round"
 
                 -- Get the cards for each player
@@ -175,6 +191,9 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         Nothing -> do
           putStrLn $ "Game: " ++ T.unpack gameName ++ " does not exist, Creating..."
           putStrLn $ "Adding player: " ++ T.unpack playerName
+
+          -- Inform the player that there are no existing players
+          sendTextData conn $ encode $ ExistingPlayers []
 
           pure $ IntroState [((playerName, playerId), conn)]
 

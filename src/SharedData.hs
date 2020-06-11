@@ -71,6 +71,8 @@ data SentData
       PlayerIndex
       CommonStateData
       RoundStateData
+  | PlayerWithIdAlreadyExists
+  | PlayerWithNameAlreadyExists
 
 
 
@@ -165,6 +167,8 @@ instance ToJSON SentData where
     , "round" .= roundIndex roundStateData
     ]
     ++ commonJSON myIndex commonStateData
+  toJSON sentData = object
+    [ "tag" .= tagName sentData ]
 
 commonJSON :: PlayerIndex -> CommonStateData -> [Pair]
 commonJSON myIndex commonStateData =
@@ -194,3 +198,5 @@ tagName (GameFinishedData _ _) = "GameFinishedData"
 tagName (NewGame _) = "NewGame"
 tagName BiddingReconnectionData {} = "BiddingReconnectionData"
 tagName RoundReconnectionData {} = "RoundReconnectionData"
+tagName PlayerWithIdAlreadyExists = "PlayerWithIdAlreadyExists"
+tagName PlayerWithNameAlreadyExists = "PlayerWithNameAlreadyExists"
