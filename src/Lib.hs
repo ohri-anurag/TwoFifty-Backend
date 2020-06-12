@@ -85,58 +85,50 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         Just state ->
           case state of
             IntroState players
-              -- Check if player with same id already exists. If so, reject joining request
-              | all ((==) playerId . snd . fst) players -> do
-                  sendTextData conn $ encode PlayerWithIdAlreadyExists
+              | length players < 5 ->
+                checkForExistingPlayers players state $ do
 
-                  pure state
+                  putStrLn $ "Adding player: " ++ T.unpack playerName
 
-              -- Check if player with same name already exists. If so, reject joining request
-              | all ((==) playerName . fst . fst) players -> do
-                  sendTextData conn $ encode PlayerWithNameAlreadyExists
+                  -- Inform the existing players that a new player has joined
+                  newPlayerJoined $ map snd players
 
-                  pure state
+                  -- Inform the new player of the existing players
+                  sendTextData conn $ encode $ ExistingPlayers $ map (fst . fst) players
 
-              | length players < 5 -> do
-                putStrLn $ "Adding player: " ++ T.unpack playerName
+                  -- Append the new player to the existing players
+                  pure $ IntroState $ players ++ [((playerName, playerId), conn)]
 
-                -- Inform the existing players that a new player has joined
-                newPlayerJoined $ map snd players
+              | length players == 5 ->
+                checkForExistingPlayers players state $ do
 
-                -- Inform the new player of the existing players
-                sendTextData conn $ encode $ ExistingPlayers $ map (fst . fst) players
+                  putStrLn $ "Adding player: " ++ T.unpack playerName
 
-                -- Append the new player to the existing players
-                pure $ IntroState $ players ++ [((playerName, playerId), conn)]
+                  -- Inform the new player of the existing players
+                  sendTextData conn $ encode $ ExistingPlayers $ map (fst . fst) players
 
-              | length players == 5 -> do
-                putStrLn $ "Adding player: " ++ T.unpack playerName
+                  putStrLn $ "Moving " ++ T.unpack gameName ++ " to bidding round"
 
-                -- Inform the new player of the existing players
-                sendTextData conn $ encode $ ExistingPlayers $ map (fst . fst) players
+                  -- Get the cards for each player
+                  distributedCards <- shuffledCards
 
-                putStrLn $ "Moving " ++ T.unpack gameName ++ " to bidding round"
+                  let
+                    -- Add the 6th player
+                    newPlayers = players ++ [((playerName, playerId), conn)]
+                    initPlayerDataSet = fromIntroData $ zip distributedCards newPlayers
+                    playerNames = zip playerIndices $ map (fst . fst) newPlayers
 
-                -- Get the cards for each player
-                distributedCards <- shuffledCards
+                  forIndex_ initPlayerDataSet $ \myIndex playerData ->
+                    sendTextData (connection playerData)
+                      $ encode
+                      $ GameData playerNames Player1 myIndex
+                      $ currentCards playerData
 
-                let
-                  -- Add the 6th player
-                  newPlayers = players ++ [((playerName, playerId), conn)]
-                  initPlayerDataSet = fromIntroData $ zip distributedCards newPlayers
-                  playerNames = zip playerIndices $ map (fst . fst) newPlayers
-
-                forIndex_ initPlayerDataSet $ \myIndex playerData ->
-                  sendTextData (connection playerData)
-                    $ encode
-                    $ GameData playerNames Player1 myIndex
-                    $ currentCards playerData
-
-                -- Move the state to bidding state
-                pure
-                  $ BiddingState
-                      (CommonStateData Player1 initPlayerDataSet Player1 150)
-                      playerIndices
+                  -- Move the state to bidding state
+                  pure
+                    $ BiddingState
+                        (CommonStateData Player1 initPlayerDataSet Player1 150)
+                        playerIndices
 
               | otherwise -> pure state
 
@@ -199,6 +191,18 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
     updateState stateMapMVar gameName newState
       where
+        checkForExistingPlayers players state action
+          -- Check if player with same id already exists. If so, reject joining request
+          | any ((==) playerId . snd . fst) players = do
+              sendTextData conn $ encode PlayerWithIdAlreadyExists
+              pure state
+
+          -- Check if player with same name already exists. If so, reject joining request
+          | any ((==) playerName . fst . fst) players = do
+              sendTextData conn $ encode PlayerWithNameAlreadyExists
+              pure state
+
+          | otherwise = action
         matchingPlayers commonStateData = filter ((== playerId) . id . snd) $ toList $ playerDataSet commonStateData
         updateConnection p c commonStateData = commonStateData
           { playerDataSet = updatePlayerData p (\pData -> pData
