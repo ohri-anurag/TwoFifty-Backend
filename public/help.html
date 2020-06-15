@@ -1,0 +1,376 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!--
+    <link rel="shortcut icon" href="img/8puzzle.ico">
+  -->
+    <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=PT+Sans">
+  <meta charset="UTF-8">
+  <title>250 - How It Works</title>
+  <script data-ad-client="ca-pub-3837844671336842" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <style>
+    * {
+      font-family: "PT Sans";
+      font-size: 22px;
+      text-align: justify;
+    }
+    html {
+      background-color: #222222;
+    }
+    body {
+      width: 60%;
+      margin: 0 20%;
+      background-color: cornflowerblue;
+      padding: 0 20px;
+      border-left: 2px solid white;
+      border-right: 2px solid white;
+    }
+    #pageHeader {
+      text-align: center;
+      font-weight: 600;
+      font-size: 48px;
+    }
+    .header {
+      font-size: 32px;
+      font-weight: 600;
+    }
+    img {
+      width: 90%;
+      margin: 10px 5%;
+      border: 2px solid black;
+      box-sizing: border-box;
+    }
+    dt {
+      font-size: 26px;
+    }
+    dd {
+      margin-left: 10px;
+    }
+    #points {
+      width: 60%;
+      margin: 10px 20%;
+      border: 2px solid black;
+    }
+    #points th {
+      color: cornflowerblue;
+      background-color: black;
+    }
+    #points td, #points th, #points tr {
+      text-align: center;
+      padding: 0;
+      margin: 0;
+    }
+    #points tr td:not(:last-of-type) {
+      border-right: 2px solid #222222;
+    }
+    #points tr th:not(:last-of-type) {
+      border-right: 2px solid cornflowerblue;
+    }
+    .odd {
+      background-color: #5289eb;
+    }
+    .even {
+      background-color: #2f71e7;
+    }
+    div.handExample {
+      display: flex;
+    }
+    img.card {
+      height: 15%;
+      width: 10%;
+      border: 0;
+      margin: 10px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="pageHeader">250</div>
+  <p id="intro">
+    250 is a 6-player card game. That's right, you need <b>6 players</b> to play this game.
+  </p>
+  <p>
+    I will try to explain the game, and how to use the website side by side in the following sections.
+  </p>
+  <br/>
+  <br/>
+  <p class="header">How to join a game?</p>
+  <p>
+    Make sure you have 6 players before you begin. The game can only start when all 6 players have connected.
+    When you open the website you should see the following image:
+  </p>
+  <img src="/img/help/beginGame.png" alt="Begin a game" />
+  <dl>
+    <dt>Username</dt>
+    <dd>
+      Choose a username for yourself. Try to keep it unique. This is used to rejoin a game, if you get disconnected
+      due to network issues.
+    </dd>
+    <br />
+    <dt>Player name</dt>
+    <dd>
+      This is your display name. This will be shown to all the other players during the game.
+      This should also be unique to you.
+    </dd>
+    <br />
+    <dt>Group Name</dt>
+    <dd>
+      This represents your 6 person group. All the players have to enter the same name. This is how we identify
+      who you are playing with.
+    </dd>
+    <br />
+    <dt>Begin Game</dt>
+    <dd>
+      After entering your details, click this. It will take you to the waiting screen, where you can see the players
+      who have joined.
+    </dd>
+    <br />
+    <dt>How It Works</dt>
+    <dd>This is how you got here!</dd>
+  </dl>
+  <p>An important thing to remember is that you can't leave any of the above details empty.</p>
+  <p class="header">I'm stuck at the waiting screen. What do I do?</p>
+  <p>No need to panic, my law abiding friend. You must be seeing some variation of the following screen:</p>
+  <img src="/img/help/waiting.png" alt="Waiting Screen" />
+  <p>
+    You are being shown the players who have joined the same group as you.
+    As soon as 6 players join, you'll be redirected to the bidding screen.
+  </p>
+  <p class="header">That's okay, but what is the game about?</p>
+  <p>
+    You ask all the right questions, my overly inquisitive friend. As mentioned before, this is a <b>6 player</b> game.
+  </p>
+  <p>
+    A deck has 52 cards, but they can't be divided evenly among 6 players. So we exclude all the <i>twos</i>
+    from the deck. This leaves us with 48 cards, which means that each player gets 8 cards (48/6 = 8).
+  </p>
+  <p>
+    Before we go further, we need to cover some concepts. You might be already familiar with them.
+    In that case, feel free to skip them.
+  </p>
+  <p class="header">Why is the game called 250?</p>
+  <p>
+    My friend, your curiosity knows no bounds!
+    This game is called 250, because 250 is the maximum number of points that you can win in a single game.
+  </p>
+  <p class="header">How are the points calculated?</p>
+  <p>
+    Before we discuss the point scheme, we need to know which card is bigger.
+    In this game, <b>Ace</b> is the biggest card, followed by <b>King</b>, <b>Queen</b>, <b>Jack</b> and so on, until 3.
+  </p>
+  <p><a name="pointsScheme">This is the points scheme:</a></p>
+  <table id="points" cellspacing="0" cellpadding="0">
+    <tr>
+      <th>Card</th>
+      <th>Suit</th>
+      <th>Points</th>
+    </tr>
+    <tr class="odd">
+      <td>Ace</td>
+      <td>Any</td>
+      <td>10</td>
+    </tr>
+    <tr class="even">
+      <td>King</td>
+      <td>Any</td>
+      <td>10</td>
+    </tr>
+    <tr class="odd">
+      <td>Queen</td>
+      <td>Any</td>
+      <td>10</td>
+    </tr>
+    <tr class="even">
+      <td>Jack</td>
+      <td>Any</td>
+      <td>10</td>
+    </tr>
+    <tr class="odd">
+      <td>Ten</td>
+      <td>Any</td>
+      <td>10</td>
+    </tr>
+    <tr class="even">
+      <td>Five</td>
+      <td>Any</td>
+      <td>5</td>
+    </tr>
+    <tr class="odd">
+      <td>Three</td>
+      <td>Spade</td>
+      <td>30</td>
+    </tr>
+  </table>
+  <p>
+    The total score becomes:
+    <br />
+    => 10x4 (Aces) + 10x4 (Kings) + 10x4 (Queens) + 10x4 (Jacks) + 10x4 (Tens) + 5x4 (Fives) + 30(Three of Spades)
+    <br />
+    => 40 + 40 + 40 + 40 + 40 + 20 + 30
+    <br />
+    => <b>250</b>
+  </p>
+  <p class="header">How do I win points?</p>
+  <p>Your abitity to ask awesome questions will surely take you places, my friend!</p>
+  <p>
+    This game uses a concept called <b><i>hands</i></b>. One hand consists of 6 cards, one from each player.
+    One game of 250 contains 8 hands. A hand is also called a <b><i>round</i></b>.
+  </p>
+  <p>
+    In any hand, a winner is determined. One by one, each player plays a card.
+    <br />
+    You can only play the suit that is already being played. If you are playing the first card, then you can play any suit.
+    <br />
+    The player with the highest card wins the hand, and they get the score of all the cards in that hand.
+    The winner plays the first card in the next hand.
+  </p>
+  <p>Let's take an example. Suppose all 6 players have played their cards, and they are as follows:</p>
+  <div class="handExample">
+    <img class="card" src="img/Three of Clubs.png" />
+    <img class="card" src="img/Five of Clubs.png" />
+    <img class="card" src="img/Four of Clubs.png" />
+    <img class="card" src="img/Ten of Clubs.png" />
+    <img class="card" src="img/Ace of Clubs.png" />
+    <img class="card" src="img/Jack of Clubs.png" />
+  </div>
+  <p>The player with <b><i>Ace</i></b> wins the hand. This hand contains 35 points.</p>
+  <p class="header">But I don't have a card of the same suit. What now?</p>
+  <p>Your reasoning skills leave me in awe, dear friend!</p>
+  <p>Somebody played <b><i>Four of Spades</i></b>. Now its your turn, but you don't have any Spades card!!</p>
+  <p>This puts you in a very special position, my friend. You can play any card now, including any card from the <b><i>TRUMP</i></b> suit.</p>
+  <p class="header">What is Trump?</p>
+  <p><b><i>Trump</i></b> refers to the a suit, which is given special status for one game.</p>
+  <p>
+    It is decided by the winner of the bidding system.
+    Before we jump into the bidding system, let us first understand the Trump suit:
+  </p>
+  <ul>
+    <li>Any card from the Trump suit is <b><i>ranked higher</i></b> than cards of the other 3 suits.</li>
+    <li>You can only play the Trump when you <b><i>don't have a card</i></b> from the suit that is already being played.</li>
+  </ul>
+  <p class="header">Ok, what is the bidding system?</p>
+  <p>You have a good eye for observation, my friend!</p>
+  <p><b><i>Bidding</i></b> is one of the 2 most important parts of this game.</p>
+  <p>
+    In the beginning of every game, we have a bidding round.
+    Every player can bid, and quit bidding whenever they feel like doing so.
+  </p>
+  <p>
+    Once you quit bidding, you cannot bid anymore. The player with the highest bid wins the bidding round.
+    Bids can range from <b><i>150</i></b> to <b><i>250</i></b>, both inclusive.
+  </p>
+  <p>Bids must be a multiple of 5. Why, you ask? It is just not possible to collect 153 points, is it?</p>
+  <img src="img/help/bidding.png" alt="Bidding Screen" />
+  <p>Here is a look at the bidding screen, you can see the following things in this screen:</p>
+  <ul>
+    <li>The group name in the top left</li>
+    <li>Other 5 players in the top area</li>
+    <li>
+      In the left area, you should see the following:
+      <ul>
+        <li>The highest bid, and the highest bidder in brackets</li>
+        <li>The buttons for increasing the highest bid by 5 and 10</li>
+        <li>The button for quitting the bidding process</li>
+        <li>A list of the current bidders</li>
+      </ul>
+    </li>
+    <li>Your cards, and your scores in the bottom area</li>
+  </ul>
+  <p class="header">What happens when someone wins the bidding round?</p>
+  <p>As always, your question is on point, my friend!</p>
+  <p>
+    When <b><i>all</i></b> players have Quit the bidding process,
+    the player with the highest bid is declared the <b><i>bidding winner</i></b>.
+    You will see the following screen when this happens.
+    Remember, <b><i>everyone</i></b> has to click Quit Bidding before you can see this screen.
+  </p>
+  <img src="img/help/waitingForTrump.png" alt="Waiting for Trump" />
+  <p>5 players will see the above screen. The <b><i>bidding winner</i></b> will see a different screen, however.</p>
+  <img src="img/help/trumpSelection.png" alt="Trump Selection" />
+  <p>As you can see, the bidding winner sees 3 different things:</p>
+  <ol>
+    <li>The 4 Suits, represented by Aces, for selecting Trump</li>
+    <li>A list of all the cards that the bidding winner <b><i>does not have</i></b>.</li>
+    <li>The bidding winner's own cards.</li>
+  </ol>
+  <p class="header">
+    Wait a sec. I though the bidding winner selected the trump suit. Why do you show so many other cards?
+  </p>
+  <p>My friend, my dear friend, if only you knew the beauty of your questions!</p>
+  <p>This brings us to the second most important part of the game. The bidding winner also selects at most <b><i>2 helpers</i></b>.</p>
+  <p class="header">What is a helper?</p>
+  <p>Ah, you see this part can be a little bit tricky. Let's take an example:</p>
+  <img src="img/help/helperSelection.png" alt="Helper Selection" />
+  <p>
+    If you look closely, you'll observe that <b><i>Ace of Hearts</i></b> and <b><i>Ace of Spades</i></b>
+    have been selected.
+  </p>
+  <p>
+    The players who have <b><i>Ace of Hearts</i></b> and <b><i>Ace of Spades</i></b>
+    are now a part of the <b><i>bidding team</i></b>.
+  </p>
+  <p class="header">Bidding Team? What is this?</p>
+  <p>My friend, 250 is a team game. There are two teams who compete to win each game.</p>
+  <dl>
+    <dt>Bidding Team</dt>
+    <dd>Consists of the bidding winner, and the helpers.</dd>
+    <br />
+    <dt>Anti Team</dt>
+    <dd>Consists of everyone <b><i>not in the bidding team</i></b>.</dd>
+  </dl>
+  <p class="header">But, I don't know who has the Ace of Hearts???</p>
+  <p>That is the beauty of the game, my friend!</p>
+  <p>Even the bidding winner does not know their allies or enemies. They get revealed as the game progresses.</p>
+  <p>
+    If you have a Helper card, then you know at least one ally - the bidding winner.
+    In the following image, you can see the Bidding winner has been colored as green.
+    Why? Because this player has the <b><i>Ace of Spades</i></b>.
+  </p>
+  <img src="img/help/playScreenBiddingTeam.png" aly="Play Screen for Bidding Team" />
+  <p>
+    If you don't have any Helper card, then you know at least one enemy - the bidding winner.
+    In the following image, the bidding winner has been colored as red, since this player
+    does not have any helper cards. They belong to the Anti team.
+  </p>
+  <img src="img/help/playScreenAntiTeam.png" aly="Play Screen for Anti Team" />
+  <p>As you can see below, the <b><i>bidding winner</i></b> does not know any ally or enemy.</p>
+  <img src="img/help/playScreenBidder.png" alt="Play Screen for the Bidder" />
+  <p>
+    In the image above, the area in the middle is called the <b><i>Play Area</i></b>.
+    It gets filled with cards when people start playing.
+  </p>
+  <p class="header">But but, who wins the game?</p>
+  <p>Aha, I see that you are still as curious as ever, my friend!</p>
+  <p>Remember the <a href="#pointsScheme">points scheme</a> that we discussed?</p>
+  <p>Bidding Team score is calculated as the sum of scores of the bidding winner and the helpers.</p>
+  <p>Anti Team score is calculated as the sum of scores of everyone else.</p>
+  <p>
+    If the bidding team <b><i>reaches their bid, or exceeds it</i></b>, they win!!
+    In such a scenario, everyone in the bidding team is awarded points <b><i>equal to their bid</i></b>,
+    while the Anti Team gets <b><i>zero</i></b>.
+  </p>
+  <p class="header">What about the Anti Team?</p>
+  <p>Did not get selected in the bidding team? Not to worry, my friend!</p>
+  <p>
+    Anti Team wins the bidding team scores <b><i>less</i></b> than their bid.
+    In such a scenario, everyone in the Anti team is awarded points <b><i>equal to their combined score</i></b>,
+    while the Bidding Team gets <b><i>zero</i></b>.
+  </p>
+  <p>
+    Moreover, if the Anti Team scores <b><i>more than 100</i></b>, they get awarded points
+    <b><i>equal to the Bidding Team's bid</i></b>, while the bidding team still gets <b><i>zero</i></b>.
+  </p>
+  <p class="header">TLDR, or Conclusion</p>
+  <p>My not so curious friend (in case you did not read the entire explanation), 250 is a <b><i>team game</i></b>.</p>
+  <p>
+    The team structure reveals itself during the course of the game.
+    You do not know in the beginning who belongs to which team.
+  </p>
+  <p>There is a <b><i>bidding round</i></b>, and the bidding winner selects a <b><i>trump suit</i></b> and <b><i>2 helpers</i></b>.</p>
+  <p>The bidding winner and helpers constitute the <b><i>bidding team</i></b>.</p>
+  <p>Everyone else forms the <b><i>anti team</i></b>.</p>
+  <p>Bidding team <b><i>reaches/exceeds</i></b> their bid, they win!</p>
+  <p>Anti Team wins when bidding team <b><i>fails</i></b>.</p>
+</body>
+</html>
