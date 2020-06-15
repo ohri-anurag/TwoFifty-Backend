@@ -8,8 +8,9 @@ module Lib
 
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Concurrent.MVar (MVar, newMVar, readMVar)
+import Control.Exception ({-IOException, catch, -}handle)
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import Control.Monad (forever, void, when)
+import Control.Monad ({-forever, -}void, when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
 import Data.Foldable (for_ , maximumBy)
@@ -20,6 +21,7 @@ import qualified Data.Text as T
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Network.WebSockets.Connection
+import Network.WebSockets (ConnectionException(..))
 import Prelude hiding (id)
 import Servant
 import Servant.API.WebSocket
@@ -49,34 +51,49 @@ app stateMap = serve api $ server stateMap
 api :: Proxy API
 api = Proxy
 
+connectionExceptionHandler :: ConnectionException -> IO ()
+connectionExceptionHandler (CloseRequest _ _) = putStrLn "Client closed the connection"
+connectionExceptionHandler ConnectionClosed = putStrLn "Connection closed unexpectedly"
+connectionExceptionHandler _ = putStrLn "Connection closed, reason unknown"
+
+sendTextDataSafe :: Connection -> B.ByteString -> IO ()
+sendTextDataSafe conn bytes = handle connectionExceptionHandler $ sendTextData conn bytes
+
 server :: MVar StateMap -> Server API
 server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
   where
   streamData :: (MonadIO m) => Connection -> m ()
-  streamData conn = liftIO $ withPingThread conn 10 (pure ()) $ forever $ do
-    bytes <- receiveData conn :: IO B.ByteString
+  streamData conn = liftIO $ withPingThread conn 10 (pure ()) $ readFromConnection conn
 
-    case eitherDecode' bytes :: Either String ReceivedData of
-      Right (ReceivedData gameName receivedDataValue) ->
-        case receivedDataValue of
-          IntroData playerName playerId ->
-            handleIntroPhase playerName playerId gameName conn
+  readFromConnection :: Connection -> IO ()
+  readFromConnection conn =
+    handle connectionExceptionHandler $ do
+      bytes <- receiveData conn :: IO B.ByteString
 
-          IncreaseBid bidderIndex bidAmount ->
-            handleBidding gameName bidderIndex bidAmount
+      case eitherDecode' bytes :: Either String ReceivedData of
+        Right (ReceivedData gameName receivedDataValue) ->
+          case receivedDataValue of
+            IntroData playerName playerId ->
+              handleIntroPhase playerName playerId gameName conn
 
-          QuitBidding quitter ->
-            handleQuitting gameName quitter
+            IncreaseBid bidderIndex bidAmount ->
+              handleBidding gameName bidderIndex bidAmount
 
-          ReceivedSelectionData (SelectionData trump helpers) ->
-            handleSelectionData gameName trump helpers
+            QuitBidding quitter ->
+              handleQuitting gameName quitter
 
-          PlayedCard playedCard ->
-            handlePlayedCard gameName playedCard
+            ReceivedSelectionData (SelectionData trump helpers) ->
+              handleSelectionData gameName trump helpers
 
-      Left err ->
-        putStrLn err
-  
+            PlayedCard playedCard ->
+              handlePlayedCard gameName playedCard
+
+        Left err ->
+          putStrLn $ "Received unknown message: " ++ err
+
+      -- If no exception was raised, connection is alright, go and read again
+      readFromConnection conn
+
   handleIntroPhase :: T.Text -> T.Text -> T.Text -> Connection -> IO ()
   handleIntroPhase playerName playerId gameName conn = do
     stateMap <- readMVar stateMapMVar
@@ -94,7 +111,8 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                   newPlayerJoined $ map snd players
 
                   -- Inform the new player of the existing players
-                  sendTextData conn $ encode $ ExistingPlayers $ map (fst . fst) players
+                  putStrLn "Send existing player data to new player"
+                  sendTextDataSafe conn $ encode $ ExistingPlayers $ map (fst . fst) players
 
                   -- Append the new player to the existing players
                   pure $ IntroState $ players ++ [((playerName, playerId), conn)]
@@ -105,7 +123,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                   putStrLn $ "Adding player: " ++ T.unpack playerName
 
                   -- Inform the new player of the existing players
-                  sendTextData conn $ encode $ ExistingPlayers $ map (fst . fst) players
+                  sendTextDataSafe conn $ encode $ ExistingPlayers $ map (fst . fst) players
 
                   putStrLn $ "Moving " ++ T.unpack gameName ++ " to bidding round"
 
@@ -119,7 +137,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                     playerNames = zip playerIndices $ map (fst . fst) newPlayers
 
                   forIndex_ initPlayerDataSet $ \myIndex playerData ->
-                    sendTextData (connection playerData)
+                    sendTextDataSafe (connection playerData)
                       $ encode
                       $ GameData playerNames Player1 myIndex
                       $ currentCards playerData
@@ -140,7 +158,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                 (player, _) = head $ matchingPlayers commonStateData
               if didMatchSucceed
                 then do
-                  sendTextData conn
+                  sendTextDataSafe conn
                     $ encode
                     $ BiddingReconnectionData player commonStateData bidders
                   let
@@ -159,7 +177,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                 then do
                   -- Before sending this, we need to recalibrate every player's status
                   -- according to this player
-                  sendTextData conn
+                  sendTextDataSafe conn
                     $ encode
                     $ RoundReconnectionData
                       player
@@ -185,7 +203,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
           putStrLn $ "Adding player: " ++ T.unpack playerName
 
           -- Inform the player that there are no existing players
-          sendTextData conn $ encode $ ExistingPlayers []
+          sendTextDataSafe conn $ encode $ ExistingPlayers []
 
           pure $ IntroState [((playerName, playerId), conn)]
 
@@ -194,12 +212,12 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         checkForExistingPlayers players state action
           -- Check if player with same id already exists. If so, reject joining request
           | any ((==) playerId . snd . fst) players = do
-              sendTextData conn $ encode PlayerWithIdAlreadyExists
+              sendTextDataSafe conn $ encode PlayerWithIdAlreadyExists
               pure state
 
           -- Check if player with same name already exists. If so, reject joining request
           | any ((==) playerName . fst . fst) players = do
-              sendTextData conn $ encode PlayerWithNameAlreadyExists
+              sendTextDataSafe conn $ encode PlayerWithNameAlreadyExists
               pure state
 
           | otherwise = action
@@ -213,7 +231,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
           }
         newPlayerJoined otherPlayerConnections =
           for_ otherPlayerConnections $ \oConn ->
-            sendTextData oConn $ encode $ PlayerJoined playerName
+            sendTextDataSafe oConn $ encode $ PlayerJoined playerName
         recalibrate player helpers bidTeam playerSet =
           let
             newBidTeam =
@@ -257,13 +275,13 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
                 -- Inform the players of the new highest bid
                 forIndex_ (playerDataSet newCommonStateData) $ \_ playerData ->
-                  sendTextData (connection playerData) $ encode $ MaximumBid bidderIndex bidAmount
+                  sendTextDataSafe (connection playerData) $ encode $ MaximumBid bidderIndex bidAmount
 
                 when (bidAmount == 250) $
                   -- Send quit message for every remaining bidder
                   for_ bidders $ \remainingBidder ->
                     forIndex_ (playerDataSet newCommonStateData) $ \_ playerData ->
-                      sendTextData (connection playerData) $ encode $ HasQuitBidding remainingBidder
+                      sendTextDataSafe (connection playerData) $ encode $ HasQuitBidding remainingBidder
 
             | otherwise ->
               pure ()
@@ -290,7 +308,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
               $ filter ( /= quitter) bidders
 
             forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
-              sendTextData (connection playerData) $ encode $ HasQuitBidding quitter
+              sendTextDataSafe (connection playerData) $ encode $ HasQuitBidding quitter
 
           _ ->
             pure ()
@@ -323,7 +341,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
             -- Send the trump and helpers to all players
             forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
-              sendTextData (connection playerData) $ encode $ SentSelectionData $ SelectionData trump helpers
+              sendTextDataSafe (connection playerData) $ encode $ SentSelectionData $ SelectionData trump helpers
           
           _ ->
             pure ()
@@ -367,7 +385,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
             -- Update all the players that a card has been played
             forIndex_ (playerDataSet newCommonStateData) $ \_ playerData ->
-              sendTextData (connection playerData) $ encode $ PlayCard playedCard
+              sendTextDataSafe (connection playerData) $ encode $ PlayCard playedCard
           
           _ ->
             pure ()
@@ -416,7 +434,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
             -- Update the players with the round winner and the score
             forIndex_ (playerDataSet newCommonStateData) $ \_ playerData ->
-              sendTextData (connection playerData) $ encode $ RoundData winner score
+              sendTextDataSafe (connection playerData) $ encode $ RoundData winner score
 
             -- When 8 rounds have been completed
             when (newRound == Round1) $
@@ -451,7 +469,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
       putStrLn $ show winningTeam ++ " have won the game with a score of " ++ show winningTeamScore
 
       forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
-        sendTextData (connection playerData) $ encode $ GameFinishedData winningTeam winningTeamScore
+        sendTextDataSafe (connection playerData) $ encode $ GameFinishedData winningTeam winningTeamScore
 
       void $ forkIO $ do
         -- Delay this thread by two seconds
@@ -480,6 +498,6 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
         -- Send new cards
         forIndex_ (playerDataSet newCommonStateData) $ \_ playerData ->
-          sendTextData (connection playerData)
+          sendTextDataSafe (connection playerData)
             $ encode
             $ NewGame $ currentCards playerData

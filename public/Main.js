@@ -6165,7 +6165,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 										playRoundData.az) ? $author$project$Model$RoundFinished : A2(
 										$author$project$Model$NotFirstAndNotMyTurn,
 										$author$project$Model$nextTurn(myIndex),
-										card),
+										baseCard),
 									myIndex);
 							default:
 								return _Utils_Tuple2(playRoundData.a4, 0);
@@ -7021,11 +7021,18 @@ var $author$project$View$beginGamePageView = F4(
 										])),
 									A2(
 									$elm$html$Html$input,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$value(playerId),
-											$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerId)
-										]),
+									_Utils_ap(
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value(playerId),
+												$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerId)
+											]),
+										_Utils_eq(
+											validation,
+											$elm$core$Maybe$Just(0)) ? _List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$attribute, 'class', 'errorInput')
+											]) : _List_Nil),
 									_List_fromArray(
 										[
 											$elm$html$Html$text(playerId)
@@ -7048,11 +7055,18 @@ var $author$project$View$beginGamePageView = F4(
 										])),
 									A2(
 									$elm$html$Html$input,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$value(playerName),
-											$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerName)
-										]),
+									_Utils_ap(
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value(playerName),
+												$elm$html$Html$Events$onInput($author$project$Model$UpdatePlayerName)
+											]),
+										_Utils_eq(
+											validation,
+											$elm$core$Maybe$Just(1)) ? _List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$attribute, 'class', 'errorInput')
+											]) : _List_Nil),
 									_List_fromArray(
 										[
 											$elm$html$Html$text(playerName)
@@ -7075,11 +7089,18 @@ var $author$project$View$beginGamePageView = F4(
 										])),
 									A2(
 									$elm$html$Html$input,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$value(gameName),
-											$elm$html$Html$Events$onInput($author$project$Model$UpdateGameName)
-										]),
+									_Utils_ap(
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value(gameName),
+												$elm$html$Html$Events$onInput($author$project$Model$UpdateGameName)
+											]),
+										_Utils_eq(
+											validation,
+											$elm$core$Maybe$Just(2)) ? _List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$attribute, 'class', 'errorInput')
+											]) : _List_Nil),
 									_List_fromArray(
 										[
 											$elm$html$Html$text(gameName)
@@ -7123,7 +7144,6 @@ var $author$project$View$beginGamePageView = F4(
 var $author$project$Model$BidPlus10 = {$: 5};
 var $author$project$Model$BidPlus5 = {$: 4};
 var $author$project$Model$QuitBidding = {$: 6};
-var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$View$biddingZoneView = F2(
 	function (commonData, bidders) {
@@ -7131,7 +7151,7 @@ var $author$project$View$biddingZoneView = F2(
 		var buttons = A2(
 			$elm$core$List$cons,
 			A2(
-				$elm$html$Html$button,
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
 						A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
@@ -7144,7 +7164,7 @@ var $author$project$View$biddingZoneView = F2(
 			(commonData.ar.aF > 240) ? _List_Nil : _List_fromArray(
 				[
 					A2(
-					$elm$html$Html$button,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
 							A2($elm$html$Html$Attributes$attribute, 'class', 'bidButton'),
@@ -7173,7 +7193,7 @@ var $author$project$View$biddingZoneView = F2(
 							]),
 						buttons),
 						A2(
-						$elm$html$Html$button,
+						$elm$html$Html$div,
 						_List_fromArray(
 							[
 								A2($elm$html$Html$Attributes$attribute, 'class', 'quitBiddingButton'),
@@ -7256,27 +7276,7 @@ var $author$project$View$biddingZoneView = F2(
 								$elm$html$Html$text('(' + (highestBidderName + ')'))
 							]))
 					]),
-				_Utils_ap(
-					biddingHtml,
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$span,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$attribute, 'class', 'bidders')
-								]),
-							A2(
-								$elm$core$List$cons,
-								A2(
-									$elm$html$Html$span,
-									_List_Nil,
-									_List_fromArray(
-										[
-											$elm$html$Html$text('Current Bidders')
-										])),
-								bidderDivs))
-						]))));
+				biddingHtml));
 	});
 var $author$project$View$gameNameView = function (name) {
 	return A2(
@@ -7426,26 +7426,21 @@ var $author$project$Model$lookup = F2(
 			}
 		}
 	});
-var $elm$core$Tuple$mapBoth = F3(
-	function (funcA, funcB, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return _Utils_Tuple2(
-			funcA(x),
-			funcB(y));
-	});
 var $elm$core$List$singleton = function (value) {
 	return _List_fromArray(
 		[value]);
 };
-var $author$project$View$playerView = F2(
-	function (i, _v0) {
-		var player = _v0.a;
-		var maybeIsAllied = _v0.b;
+var $author$project$View$playerView = F3(
+	function (bidders, i, _v0) {
+		var playerIndex = _v0.a;
+		var player = _v0.b;
+		var maybeIsAllied = _v0.c;
+		var isBidding = A2($elm$core$List$member, playerIndex, bidders);
+		var biddingClass = isBidding ? ('bidder' + ($elm$core$String$fromInt(i) + ' ')) : '';
 		var alliedClass = function () {
 			if (!maybeIsAllied.$) {
 				var isAllied = maybeIsAllied.a;
-				return isAllied ? 'ally' : 'enemy';
+				return isAllied ? 'ally ' : 'enemy ';
 			} else {
 				return '';
 			}
@@ -7457,7 +7452,7 @@ var $author$project$View$playerView = F2(
 					A2(
 					$elm$html$Html$Attributes$attribute,
 					'class',
-					alliedClass + (' player p' + $elm$core$String$fromInt(i)))
+					biddingClass + (alliedClass + ('player p' + $elm$core$String$fromInt(i))))
 				]),
 			_List_fromArray(
 				[
@@ -7513,8 +7508,8 @@ var $author$project$View$playerView = F2(
 						]))
 				]));
 	});
-var $author$project$View$otherPlayersView = F3(
-	function (myIndex, playerSet, allStatuses) {
+var $author$project$View$otherPlayersView = F4(
+	function (myIndex, playerSet, bidders, allStatuses) {
 		var rotateOtherPlayers = function (allPlayers) {
 			if (allPlayers.b) {
 				var x = allPlayers.a;
@@ -7538,10 +7533,14 @@ var $author$project$View$otherPlayersView = F3(
 		};
 		var otherPlayers = A2(
 			$elm$core$List$map,
-			A2(
-				$elm$core$Tuple$mapBoth,
-				$author$project$Model$getPlayer(playerSet),
-				isAllied),
+			function (_v1) {
+				var i = _v1.a;
+				var s = _v1.b;
+				return _Utils_Tuple3(
+					i,
+					A2($author$project$Model$getPlayer, playerSet, i),
+					isAllied(s));
+			},
 			rotateOtherPlayers(allStatuses));
 		return A2(
 			$elm$html$Html$div,
@@ -7556,7 +7555,10 @@ var $author$project$View$otherPlayersView = F3(
 						[
 							A2($elm$html$Html$Attributes$attribute, 'class', 'players')
 						]),
-					A2($elm$core$List$indexedMap, $author$project$View$playerView, otherPlayers))));
+					A2(
+						$elm$core$List$indexedMap,
+						$author$project$View$playerView(bidders),
+						otherPlayers))));
 	});
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
@@ -7982,7 +7984,7 @@ var $author$project$View$trumpSelectionView = F2(
 										])),
 								helperCards)),
 							A2(
-							$elm$html$Html$button,
+							$elm$html$Html$div,
 							_List_fromArray(
 								[
 									A2($elm$html$Html$Attributes$attribute, 'class', 'proceedButton'),
@@ -8012,30 +8014,34 @@ var $author$project$View$waitingForPlayersView = F2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					A2($elm$html$Html$Attributes$attribute, 'class', 'waitingForPlayers')
+					A2($elm$html$Html$Attributes$attribute, 'class', 'waitingForPlayersView')
 				]),
-			_Utils_ap(
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
+			$elm$core$List$singleton(
+				A2(
+					$elm$html$Html$div,
+					_List_Nil,
+					_Utils_ap(
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$attribute, 'class', 'waitingForPlayersHeader')
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$attribute, 'class', 'waitingForPlayersHeader')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Waiting For 6 Players in ' + gameName)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Current Players:')
+									]))
 							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Waiting For 6 Players in ' + gameName)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Current Players:')
-							]))
-					]),
-				players));
+						players))));
 	});
 var $author$project$View$view = function (model) {
 	switch (model.$) {
@@ -8100,10 +8106,11 @@ var $author$project$View$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								A3(
+								A4(
 								$author$project$View$otherPlayersView,
 								commonData.aK.aL,
 								commonData.aW,
+								bidders,
 								A2(
 									$elm$core$List$map,
 									function (i) {
@@ -8132,11 +8139,15 @@ var $author$project$View$view = function (model) {
 					[
 						A2($elm$html$Html$Attributes$attribute, 'class', 'waitingForTrumpView')
 					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						'Waiting for ' + (A2($author$project$Model$getPlayer, commonData.aW, commonData.ar.aG).aM + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(commonData.ar.aF))))
-					]));
+				$elm$core$List$singleton(
+					A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								'Waiting for ' + (A2($author$project$Model$getPlayer, commonData.aW, commonData.ar.aG).aM + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(commonData.ar.aF))))
+							]))));
 		case 6:
 			var commonData = model.a;
 			var playRoundData = model.b;
@@ -8175,10 +8186,11 @@ var $author$project$View$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								A3(
+								A4(
 								$author$project$View$otherPlayersView,
 								myIndex,
 								commonData.aW,
+								_List_Nil,
 								A2(
 									$author$project$Model$getPlayers,
 									function ($) {
