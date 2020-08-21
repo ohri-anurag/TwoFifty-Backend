@@ -9,7 +9,7 @@ module Lib
 
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Concurrent.MVar (MVar, newMVar, readMVar)
-import Control.Exception (handle)
+import Control.Exception (SomeException, handle)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad (void, when)
 import Data.Aeson
@@ -45,6 +45,11 @@ ioErrorHandler :: IOError -> IO String
 ioErrorHandler e = do
   print e
   pure "8080"
+
+failSilentlyHandler :: SomeException -> IO ()
+failSilentlyHandler e = do
+  putStrLn $ "Encountered error: " ++ show e
+  putStrLn "Failing silently"
 
 startApp :: IO ()
 startApp = do
@@ -503,7 +508,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
       putStrLn gameString
 
-      void $ runReq defaultHttpConfig $ req
+      handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
         POST
         (https "two-fifty-analytics.herokuapp.com")
         (ReqBodyBs $ encodeUtf8 $ T.pack gameString)
