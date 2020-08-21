@@ -513,7 +513,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
         (https "two-fifty-analytics.herokuapp.com")
         (ReqBodyBs $ encodeUtf8 $ T.pack gameString)
         ignoreResponse
-        (port 8081)
+        mempty
 
       forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
         sendTextDataSafe (connection playerData) $ encode $ GameFinishedData winningTeam winningTeamScore
