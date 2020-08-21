@@ -25,6 +25,7 @@ library
                      , bytestring
                      , containers
                      , random
+                     , req
                      , servant-server
                      , servant-websockets
                      , text

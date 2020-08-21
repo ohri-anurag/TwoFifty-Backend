@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds       #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators   #-}
 
 module Lib
@@ -8,22 +9,25 @@ module Lib
 
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Concurrent.MVar (MVar, newMVar, readMVar)
-import Control.Exception ({-IOException, catch, -}handle)
+import Control.Exception (handle)
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import Control.Monad ({-forever, -}void, when)
+import Control.Monad (void, when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
+import Data.List (intercalate, nub)
 import Data.Foldable (for_ , maximumBy)
 import Data.Function (on)
 import qualified Data.Map as M
 import Data.Maybe (mapMaybe)
 import qualified Data.Text as T
+import Data.Text.Encoding (encodeUtf8)
+import Network.HTTP.Req
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Network.WebSockets.Connection
 import Network.WebSockets (ConnectionException(..))
 import Prelude hiding (id)
-import Servant
+import Servant hiding (POST)
 import Servant.API.WebSocket
 import System.Environment (getEnv)
 
@@ -37,13 +41,17 @@ import State
 type API = "game" :> WebSocket
         :<|> Raw
 
+ioErrorHandler :: IOError -> IO String
+ioErrorHandler e = do
+  print e
+  pure "8080"
+
 startApp :: IO ()
 startApp = do
-  port <- read <$> getEnv "PORT"
-  -- let port = 8080
+  appPort <- read <$> handle ioErrorHandler (getEnv "PORT")
 
   stateMap <- newMVar M.empty
-  run port $ app stateMap
+  run appPort $ app stateMap
 
 app :: MVar StateMap -> Application
 app stateMap = serve api $ server stateMap
@@ -467,6 +475,40 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
 
       putStrLn $ show winningTeam ++ " have won the game with a score of " ++ show winningTeamScore
+
+      -- Send update to DB to persist the data
+      let
+        playerString playerIndex =
+          let
+            player = getPlayer playerIndex $ playerDataSet commonStateData
+          in
+            intercalate ":" $ map T.unpack [id player, name player]
+
+        gameString = intercalate ";"
+          [ T.unpack gameName
+          , intercalate "," $ map show [bidAmount, biddingTeamScore]
+          , intercalate "|"
+            [ show $ trumpSuit roundStateData
+            , intercalate ","
+              $ map (\(Card v s) ->
+                intercalate ":" [show v, show s]
+                )
+              $ helperCards roundStateData
+            ]
+          , intercalate "|"
+            [ intercalate "," $ map playerString $ reverse $ nub bidTeam
+            , intercalate "," $ map playerString antiTeam
+            ]
+          ]
+
+      putStrLn gameString
+
+      void $ runReq defaultHttpConfig $ req
+        POST
+        (https "two-fifty-analytics.herokuapp.com")
+        (ReqBodyBs $ encodeUtf8 $ T.pack gameString)
+        ignoreResponse
+        (port 8081)
 
       forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
         sendTextDataSafe (connection playerData) $ encode $ GameFinishedData winningTeam winningTeamScore
