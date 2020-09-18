@@ -7743,7 +7743,7 @@ var $author$project$Update$update = F2(
 						$elm$http$Http$get(
 							{
 								aE: A2($elm$http$Http$expectJson, errorHandler, $author$project$Decoders$totalDataDecoder),
-								bl: 'http://localhost:8081/total'
+								bl: 'https://two-fifty-analytics.herokuapp.com/total'
 							}));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
