@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aI,
-		impl.a5,
-		impl.a$,
+		impl.aQ,
+		impl.bk,
+		impl.bd,
 		function() { return function() {} }
 	);
 });
@@ -3928,11 +3928,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aI,
-		impl.a5,
-		impl.a$,
+		impl.aQ,
+		impl.bk,
+		impl.bd,
 		function(sendToApp, initialModel) {
-			var view = impl.a7;
+			var view = impl.bn;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3964,12 +3964,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aI,
-		impl.a5,
-		impl.a$,
+		impl.aQ,
+		impl.bk,
+		impl.bd,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.G && impl.G(sendToApp)
-			var view = impl.a7;
+			var view = impl.bn;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3977,12 +3977,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.as);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.az);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.a1) && (_VirtualDom_doc.title = title = doc.a1);
+				(title !== doc.bg) && (_VirtualDom_doc.title = title = doc.bg);
 			});
 		}
 	);
@@ -4038,8 +4038,8 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.aN;
-	var onUrlRequest = impl.aO;
+	var onUrlChange = impl.aW;
+	var onUrlRequest = impl.aX;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
@@ -4059,9 +4059,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.ae === next.ae
-							&& curr.Q === next.Q
-							&& curr.ab.a === next.ab.a
+							&& curr.af === next.af
+							&& curr.R === next.R
+							&& curr.ac.a === next.ac.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4069,13 +4069,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		aI: function(flags)
+		aQ: function(flags)
 		{
-			return A3(impl.aI, flags, _Browser_getUrl(), key);
+			return A3(impl.aQ, flags, _Browser_getUrl(), key);
 		},
-		a7: impl.a7,
-		a5: impl.a5,
-		a$: impl.a$
+		bn: impl.bn,
+		bk: impl.bk,
+		bd: impl.bd
 	});
 }
 
@@ -4141,17 +4141,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { aE: 'hidden', au: 'visibilitychange' }
+		? { aM: 'hidden', aB: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { aE: 'mozHidden', au: 'mozvisibilitychange' }
+		? { aM: 'mozHidden', aB: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { aE: 'msHidden', au: 'msvisibilitychange' }
+		? { aM: 'msHidden', aB: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { aE: 'webkitHidden', au: 'webkitvisibilitychange' }
-		: { aE: 'hidden', au: 'visibilitychange' };
+		? { aM: 'webkitHidden', aB: 'webkitvisibilitychange' }
+		: { aM: 'hidden', aB: 'visibilitychange' };
 }
 
 
@@ -4232,12 +4232,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		ai: _Browser_getScene(),
-		al: {
-			an: _Browser_window.pageXOffset,
-			ao: _Browser_window.pageYOffset,
-			am: _Browser_doc.documentElement.clientWidth,
-			P: _Browser_doc.documentElement.clientHeight
+		al: _Browser_getScene(),
+		aq: {
+			as: _Browser_window.pageXOffset,
+			at: _Browser_window.pageYOffset,
+			ar: _Browser_doc.documentElement.clientWidth,
+			Q: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4247,8 +4247,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		am: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		P: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		ar: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		Q: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4271,15 +4271,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			ai: {
-				am: node.scrollWidth,
-				P: node.scrollHeight
-			},
 			al: {
-				an: node.scrollLeft,
-				ao: node.scrollTop,
-				am: node.clientWidth,
-				P: node.clientHeight
+				ar: node.scrollWidth,
+				Q: node.scrollHeight
+			},
+			aq: {
+				as: node.scrollLeft,
+				at: node.scrollTop,
+				ar: node.clientWidth,
+				Q: node.clientHeight
 			}
 		};
 	});
@@ -4309,18 +4309,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			ai: _Browser_getScene(),
-			al: {
-				an: x,
-				ao: y,
-				am: _Browser_doc.documentElement.clientWidth,
-				P: _Browser_doc.documentElement.clientHeight
+			al: _Browser_getScene(),
+			aq: {
+				as: x,
+				at: y,
+				ar: _Browser_doc.documentElement.clientWidth,
+				Q: _Browser_doc.documentElement.clientHeight
 			},
-			aw: {
-				an: x + rect.left,
-				ao: y + rect.top,
-				am: rect.width,
-				P: rect.height
+			aD: {
+				as: x + rect.left,
+				at: y + rect.top,
+				ar: rect.width,
+				Q: rect.height
 			}
 		};
 	});
@@ -4355,7 +4355,182 @@ function _Browser_load(url)
 		}
 	}));
 }
-var $elm$core$Basics$EQ = 1;
+
+
+
+// SEND REQUEST
+
+var _Http_toTask = F3(function(router, toTask, request)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		function done(response) {
+			callback(toTask(request.aE.a(response)));
+		}
+
+		var xhr = new XMLHttpRequest();
+		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
+		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.aE.b, xhr)); });
+		$elm$core$Maybe$isJust(request.ap) && _Http_track(router, xhr, request.ap.a);
+
+		try {
+			xhr.open(request.aR, request.bl, true);
+		} catch (e) {
+			return done($elm$http$Http$BadUrl_(request.bl));
+		}
+
+		_Http_configureRequest(xhr, request);
+
+		request.az.a && xhr.setRequestHeader('Content-Type', request.az.a);
+		xhr.send(request.az.b);
+
+		return function() { xhr.c = true; xhr.abort(); };
+	});
+});
+
+
+// CONFIGURE
+
+function _Http_configureRequest(xhr, request)
+{
+	for (var headers = request.P; headers.b; headers = headers.b) // WHILE_CONS
+	{
+		xhr.setRequestHeader(headers.a.a, headers.a.b);
+	}
+	xhr.timeout = request.bf.a || 0;
+	xhr.responseType = request.aE.d;
+	xhr.withCredentials = request.av;
+}
+
+
+// RESPONSES
+
+function _Http_toResponse(toBody, xhr)
+{
+	return A2(
+		200 <= xhr.status && xhr.status < 300 ? $elm$http$Http$GoodStatus_ : $elm$http$Http$BadStatus_,
+		_Http_toMetadata(xhr),
+		toBody(xhr.response)
+	);
+}
+
+
+// METADATA
+
+function _Http_toMetadata(xhr)
+{
+	return {
+		bl: xhr.responseURL,
+		bb: xhr.status,
+		bc: xhr.statusText,
+		P: _Http_parseHeaders(xhr.getAllResponseHeaders())
+	};
+}
+
+
+// HEADERS
+
+function _Http_parseHeaders(rawHeaders)
+{
+	if (!rawHeaders)
+	{
+		return $elm$core$Dict$empty;
+	}
+
+	var headers = $elm$core$Dict$empty;
+	var headerPairs = rawHeaders.split('\r\n');
+	for (var i = headerPairs.length; i--; )
+	{
+		var headerPair = headerPairs[i];
+		var index = headerPair.indexOf(': ');
+		if (index > 0)
+		{
+			var key = headerPair.substring(0, index);
+			var value = headerPair.substring(index + 2);
+
+			headers = A3($elm$core$Dict$update, key, function(oldValue) {
+				return $elm$core$Maybe$Just($elm$core$Maybe$isJust(oldValue)
+					? value + ', ' + oldValue.a
+					: value
+				);
+			}, headers);
+		}
+	}
+	return headers;
+}
+
+
+// EXPECT
+
+var _Http_expect = F3(function(type, toBody, toValue)
+{
+	return {
+		$: 0,
+		d: type,
+		b: toBody,
+		a: toValue
+	};
+});
+
+var _Http_mapExpect = F2(function(func, expect)
+{
+	return {
+		$: 0,
+		d: expect.d,
+		b: expect.b,
+		a: function(x) { return func(expect.a(x)); }
+	};
+});
+
+function _Http_toDataView(arrayBuffer)
+{
+	return new DataView(arrayBuffer);
+}
+
+
+// BODY and PARTS
+
+var _Http_emptyBody = { $: 0 };
+var _Http_pair = F2(function(a, b) { return { $: 0, a: a, b: b }; });
+
+function _Http_toFormData(parts)
+{
+	for (var formData = new FormData(); parts.b; parts = parts.b) // WHILE_CONS
+	{
+		var part = parts.a;
+		formData.append(part.a, part.b);
+	}
+	return formData;
+}
+
+var _Http_bytesToBlob = F2(function(mime, bytes)
+{
+	return new Blob([bytes], { type: mime });
+});
+
+
+// PROGRESS
+
+function _Http_track(router, xhr, tracker)
+{
+	// TODO check out lengthComputable on loadstart event
+
+	xhr.upload.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
+			a9: event.loaded,
+			am: event.total
+		}))));
+	});
+	xhr.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
+			a4: event.loaded,
+			am: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+		}))));
+	});
+}var $elm$core$Basics$EQ = 1;
 var $elm$core$Basics$GT = 2;
 var $elm$core$Basics$LT = 0;
 var $elm$core$List$cons = _List_cons;
@@ -4859,7 +5034,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {O: fragment, Q: host, _: path, ab: port_, ae: protocol, af: query};
+		return {O: fragment, R: host, aa: path, ac: port_, af: protocol, ag: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5149,9 +5324,9 @@ var $author$project$Model$initModel = function (_v0) {
 		A4($author$project$Model$BeginGamePage, '', '', '', $elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Model$NoOp = {$: 11};
+var $author$project$Model$NoOp = {$: 12};
 var $author$project$Model$ReceivedMessageType = function (a) {
-	return {$: 13, a: a};
+	return {$: 14, a: a};
 };
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$json$Json$Decode$string = _Json_decodeString;
@@ -5205,7 +5380,7 @@ var $author$project$Model$WebsocketFailed = {$: 12};
 var $elm$json$Json$Decode$andThen = _Json_andThen;
 var $author$project$Model$BiddingData = F3(
 	function (highestBid, highestBidder, firstBidder) {
-		return {ay: firstBidder, aF: highestBid, aG: highestBidder};
+		return {aG: firstBidder, aN: highestBid, aO: highestBidder};
 	});
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$int = _Json_decodeInt;
@@ -5246,7 +5421,7 @@ var $author$project$Decoders$biddingDataDecoder = A4(
 	A2($elm$json$Json$Decode$field, 'firstBidder', $author$project$Decoders$playerIndexDecoder));
 var $author$project$Model$Card$Card = F2(
 	function (value, suit) {
-		return {a0: suit, a6: value};
+		return {be: suit, bm: value};
 	});
 var $author$project$Model$Card$Club = 0;
 var $author$project$Model$Card$Diamond = 2;
@@ -5330,7 +5505,7 @@ var $elm$json$Json$Decode$map4 = _Json_map4;
 var $elm$json$Json$Decode$map7 = _Json_map7;
 var $author$project$Model$MyData = F2(
 	function (myIndex, myCards) {
-		return {aJ: myCards, aL: myIndex};
+		return {aS: myCards, aU: myIndex};
 	});
 var $author$project$Decoders$myDataDecoder = A3(
 	$elm$json$Json$Decode$map2,
@@ -5340,7 +5515,7 @@ var $author$project$Decoders$myDataDecoder = A3(
 var $author$project$Decoders$playerIndicesDecoder = $elm$json$Json$Decode$list($author$project$Decoders$playerIndexDecoder);
 var $author$project$Decoders$PlayerNameSet = F6(
 	function (name1, name2, name3, name4, name5, name6) {
-		return {T: name1, U: name2, V: name3, W: name4, X: name5, Y: name6};
+		return {U: name1, V: name2, W: name3, X: name4, Y: name5, Z: name6};
 	});
 var $elm$json$Json$Decode$map6 = _Json_map6;
 var $author$project$Decoders$playerNameSetDecoder = A7(
@@ -5354,11 +5529,11 @@ var $author$project$Decoders$playerNameSetDecoder = A7(
 	A2($elm$json$Json$Decode$field, 'Player6', $elm$json$Json$Decode$string));
 var $author$project$Model$PlayerSet = F6(
 	function (player1, player2, player3, player4, player5, player6) {
-		return {aQ: player1, aR: player2, aS: player3, aT: player4, aU: player5, aV: player6};
+		return {aZ: player1, a_: player2, a$: player3, a0: player4, a1: player5, a2: player6};
 	});
 var $author$project$Model$Player = F5(
 	function (totalScore, gameScore, name, card, status) {
-		return {at: card, aB: gameScore, aM: name, a_: status, a2: totalScore};
+		return {aA: card, aJ: gameScore, aV: name, ba: status, bh: totalScore};
 	});
 var $elm$json$Json$Decode$map5 = _Json_map5;
 var $elm$json$Json$Decode$null = _Json_decodeNull;
@@ -5443,7 +5618,7 @@ var $author$project$Decoders$roundDecoder = A2(
 	$elm$json$Json$Decode$string);
 var $author$project$Model$SelectionData = F2(
 	function (trump, helpers) {
-		return {aC: helpers, a3: trump};
+		return {aK: helpers, bi: trump};
 	});
 var $author$project$Decoders$selectionDataDecoder = A3(
 	$elm$json$Json$Decode$map2,
@@ -5455,17 +5630,17 @@ var $author$project$Decoders$selectionDataDecoder = A3(
 		$elm$json$Json$Decode$list($author$project$Decoders$cardDecoder)));
 var $author$project$Decoders$receivedDataDecoder = function () {
 	var playerWithName = function (name) {
-		return {at: $elm$core$Maybe$Nothing, aB: 0, aM: name, a_: 2, a2: 0};
+		return {aA: $elm$core$Maybe$Nothing, aJ: 0, aV: name, ba: 2, bh: 0};
 	};
 	var playerNameSetToPlayerSet = function (playerNameSet) {
 		return $elm$json$Json$Decode$succeed(
 			{
-				aQ: playerWithName(playerNameSet.T),
-				aR: playerWithName(playerNameSet.U),
-				aS: playerWithName(playerNameSet.V),
-				aT: playerWithName(playerNameSet.W),
-				aU: playerWithName(playerNameSet.X),
-				aV: playerWithName(playerNameSet.Y)
+				aZ: playerWithName(playerNameSet.U),
+				a_: playerWithName(playerNameSet.V),
+				a$: playerWithName(playerNameSet.W),
+				a0: playerWithName(playerNameSet.X),
+				a1: playerWithName(playerNameSet.Y),
+				a2: playerWithName(playerNameSet.Z)
 			});
 	};
 	return A2(
@@ -5584,12 +5759,15 @@ var $author$project$Subscriptions$subscriptions = function (_v0) {
 };
 var $author$project$Model$BiddingRound = F2(
 	function (a, b) {
-		return {$: 3, a: a, b: b};
+		return {$: 4, a: a, b: b};
 	});
 var $author$project$Model$EmptyGameName = 2;
 var $author$project$Model$EmptyId = 0;
 var $author$project$Model$EmptyName = 1;
 var $author$project$Model$FirstAndMyTurnOver = {$: 3};
+var $author$project$Model$HttpDataType = function (a) {
+	return {$: 15, a: a};
+};
 var $author$project$Model$IntroData = F3(
 	function (a, b, c) {
 		return {$: 0, a: a, b: b, c: c};
@@ -5599,7 +5777,7 @@ var $author$project$Model$NotFirstAndMyTurnOver = function (a) {
 };
 var $author$project$Model$PlayRound = F2(
 	function (a, b) {
-		return {$: 6, a: a, b: b};
+		return {$: 7, a: a, b: b};
 	});
 var $author$project$Model$PlayedCard = F2(
 	function (a, b) {
@@ -5613,13 +5791,622 @@ var $author$project$Model$SentSelectionData = F2(
 	function (a, b) {
 		return {$: 3, a: a, b: b};
 	});
+var $author$project$Model$Analytics$TotalDataReceived = $elm$core$Basics$identity;
 var $author$project$Model$TrumpSelection = F2(
 	function (a, b) {
-		return {$: 4, a: a, b: b};
+		return {$: 5, a: a, b: b};
 	});
 var $author$project$Model$WaitingForServerValidation = F3(
 	function (a, b, c) {
-		return {$: 1, a: a, b: b, c: c};
+		return {$: 2, a: a, b: b, c: c};
+	});
+var $elm$http$Http$BadStatus_ = F2(
+	function (a, b) {
+		return {$: 3, a: a, b: b};
+	});
+var $elm$http$Http$BadUrl_ = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$http$Http$GoodStatus_ = F2(
+	function (a, b) {
+		return {$: 4, a: a, b: b};
+	});
+var $elm$http$Http$NetworkError_ = {$: 2};
+var $elm$http$Http$Receiving = function (a) {
+	return {$: 1, a: a};
+};
+var $elm$http$Http$Sending = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$http$Http$Timeout_ = {$: 1};
+var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
+var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
+var $elm$core$Maybe$isJust = function (maybe) {
+	if (!maybe.$) {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
+var $elm$core$Basics$compare = _Utils_compare;
+var $elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === -2) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
+				switch (_v1) {
+					case 0:
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 1:
+						return $elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
+		}
+	});
+var $elm$core$Dict$Black = 1;
+var $elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: -1, a: a, b: b, c: c, d: d, e: e};
+	});
+var $elm$core$Dict$Red = 0;
+var $elm$core$Dict$balance = F5(
+	function (color, key, value, left, right) {
+		if ((right.$ === -1) && (!right.a)) {
+			var _v1 = right.a;
+			var rK = right.b;
+			var rV = right.c;
+			var rLeft = right.d;
+			var rRight = right.e;
+			if ((left.$ === -1) && (!left.a)) {
+				var _v3 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var lLeft = left.d;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					0,
+					key,
+					value,
+					A5($elm$core$Dict$RBNode_elm_builtin, 1, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 1, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					rK,
+					rV,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, key, value, left, rLeft),
+					rRight);
+			}
+		} else {
+			if ((((left.$ === -1) && (!left.a)) && (left.d.$ === -1)) && (!left.d.a)) {
+				var _v5 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var _v6 = left.d;
+				var _v7 = _v6.a;
+				var llK = _v6.b;
+				var llV = _v6.c;
+				var llLeft = _v6.d;
+				var llRight = _v6.e;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					0,
+					lK,
+					lV,
+					A5($elm$core$Dict$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 1, key, value, lRight, right));
+			} else {
+				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
+			}
+		}
+	});
+var $elm$core$Dict$insertHelp = F3(
+	function (key, value, dict) {
+		if (dict.$ === -2) {
+			return A5($elm$core$Dict$RBNode_elm_builtin, 0, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
+		} else {
+			var nColor = dict.a;
+			var nKey = dict.b;
+			var nValue = dict.c;
+			var nLeft = dict.d;
+			var nRight = dict.e;
+			var _v1 = A2($elm$core$Basics$compare, key, nKey);
+			switch (_v1) {
+				case 0:
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						A3($elm$core$Dict$insertHelp, key, value, nLeft),
+						nRight);
+				case 1:
+					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+				default:
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						nLeft,
+						A3($elm$core$Dict$insertHelp, key, value, nRight));
+			}
+		}
+	});
+var $elm$core$Dict$insert = F3(
+	function (key, value, dict) {
+		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
+		if ((_v0.$ === -1) && (!_v0.a)) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, 1, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
+		}
+	});
+var $elm$core$Dict$getMin = function (dict) {
+	getMin:
+	while (true) {
+		if ((dict.$ === -1) && (dict.d.$ === -1)) {
+			var left = dict.d;
+			var $temp$dict = left;
+			dict = $temp$dict;
+			continue getMin;
+		} else {
+			return dict;
+		}
+	}
+};
+var $elm$core$Dict$moveRedLeft = function (dict) {
+	if (((dict.$ === -1) && (dict.d.$ === -1)) && (dict.e.$ === -1)) {
+		if ((dict.e.d.$ === -1) && (!dict.e.d.a)) {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v1 = dict.d;
+			var lClr = _v1.a;
+			var lK = _v1.b;
+			var lV = _v1.c;
+			var lLeft = _v1.d;
+			var lRight = _v1.e;
+			var _v2 = dict.e;
+			var rClr = _v2.a;
+			var rK = _v2.b;
+			var rV = _v2.c;
+			var rLeft = _v2.d;
+			var _v3 = rLeft.a;
+			var rlK = rLeft.b;
+			var rlV = rLeft.c;
+			var rlL = rLeft.d;
+			var rlR = rLeft.e;
+			var rRight = _v2.e;
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				0,
+				rlK,
+				rlV,
+				A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					rlL),
+				A5($elm$core$Dict$RBNode_elm_builtin, 1, rK, rV, rlR, rRight));
+		} else {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v4 = dict.d;
+			var lClr = _v4.a;
+			var lK = _v4.b;
+			var lV = _v4.c;
+			var lLeft = _v4.d;
+			var lRight = _v4.e;
+			var _v5 = dict.e;
+			var rClr = _v5.a;
+			var rK = _v5.b;
+			var rV = _v5.c;
+			var rLeft = _v5.d;
+			var rRight = _v5.e;
+			if (clr === 1) {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+			}
+		}
+	} else {
+		return dict;
+	}
+};
+var $elm$core$Dict$moveRedRight = function (dict) {
+	if (((dict.$ === -1) && (dict.d.$ === -1)) && (dict.e.$ === -1)) {
+		if ((dict.d.d.$ === -1) && (!dict.d.d.a)) {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v1 = dict.d;
+			var lClr = _v1.a;
+			var lK = _v1.b;
+			var lV = _v1.c;
+			var _v2 = _v1.d;
+			var _v3 = _v2.a;
+			var llK = _v2.b;
+			var llV = _v2.c;
+			var llLeft = _v2.d;
+			var llRight = _v2.e;
+			var lRight = _v1.e;
+			var _v4 = dict.e;
+			var rClr = _v4.a;
+			var rK = _v4.b;
+			var rV = _v4.c;
+			var rLeft = _v4.d;
+			var rRight = _v4.e;
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				0,
+				lK,
+				lV,
+				A5($elm$core$Dict$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
+				A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					lRight,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight)));
+		} else {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v5 = dict.d;
+			var lClr = _v5.a;
+			var lK = _v5.b;
+			var lV = _v5.c;
+			var lLeft = _v5.d;
+			var lRight = _v5.e;
+			var _v6 = dict.e;
+			var rClr = _v6.a;
+			var rK = _v6.b;
+			var rV = _v6.c;
+			var rLeft = _v6.d;
+			var rRight = _v6.e;
+			if (clr === 1) {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+			}
+		}
+	} else {
+		return dict;
+	}
+};
+var $elm$core$Dict$removeHelpPrepEQGT = F7(
+	function (targetKey, dict, color, key, value, left, right) {
+		if ((left.$ === -1) && (!left.a)) {
+			var _v1 = left.a;
+			var lK = left.b;
+			var lV = left.c;
+			var lLeft = left.d;
+			var lRight = left.e;
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				color,
+				lK,
+				lV,
+				lLeft,
+				A5($elm$core$Dict$RBNode_elm_builtin, 0, key, value, lRight, right));
+		} else {
+			_v2$2:
+			while (true) {
+				if ((right.$ === -1) && (right.a === 1)) {
+					if (right.d.$ === -1) {
+						if (right.d.a === 1) {
+							var _v3 = right.a;
+							var _v4 = right.d;
+							var _v5 = _v4.a;
+							return $elm$core$Dict$moveRedRight(dict);
+						} else {
+							break _v2$2;
+						}
+					} else {
+						var _v6 = right.a;
+						var _v7 = right.d;
+						return $elm$core$Dict$moveRedRight(dict);
+					}
+				} else {
+					break _v2$2;
+				}
+			}
+			return dict;
+		}
+	});
+var $elm$core$Dict$removeMin = function (dict) {
+	if ((dict.$ === -1) && (dict.d.$ === -1)) {
+		var color = dict.a;
+		var key = dict.b;
+		var value = dict.c;
+		var left = dict.d;
+		var lColor = left.a;
+		var lLeft = left.d;
+		var right = dict.e;
+		if (lColor === 1) {
+			if ((lLeft.$ === -1) && (!lLeft.a)) {
+				var _v3 = lLeft.a;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					key,
+					value,
+					$elm$core$Dict$removeMin(left),
+					right);
+			} else {
+				var _v4 = $elm$core$Dict$moveRedLeft(dict);
+				if (_v4.$ === -1) {
+					var nColor = _v4.a;
+					var nKey = _v4.b;
+					var nValue = _v4.c;
+					var nLeft = _v4.d;
+					var nRight = _v4.e;
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						$elm$core$Dict$removeMin(nLeft),
+						nRight);
+				} else {
+					return $elm$core$Dict$RBEmpty_elm_builtin;
+				}
+			}
+		} else {
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				color,
+				key,
+				value,
+				$elm$core$Dict$removeMin(left),
+				right);
+		}
+	} else {
+		return $elm$core$Dict$RBEmpty_elm_builtin;
+	}
+};
+var $elm$core$Dict$removeHelp = F2(
+	function (targetKey, dict) {
+		if (dict.$ === -2) {
+			return $elm$core$Dict$RBEmpty_elm_builtin;
+		} else {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			if (_Utils_cmp(targetKey, key) < 0) {
+				if ((left.$ === -1) && (left.a === 1)) {
+					var _v4 = left.a;
+					var lLeft = left.d;
+					if ((lLeft.$ === -1) && (!lLeft.a)) {
+						var _v6 = lLeft.a;
+						return A5(
+							$elm$core$Dict$RBNode_elm_builtin,
+							color,
+							key,
+							value,
+							A2($elm$core$Dict$removeHelp, targetKey, left),
+							right);
+					} else {
+						var _v7 = $elm$core$Dict$moveRedLeft(dict);
+						if (_v7.$ === -1) {
+							var nColor = _v7.a;
+							var nKey = _v7.b;
+							var nValue = _v7.c;
+							var nLeft = _v7.d;
+							var nRight = _v7.e;
+							return A5(
+								$elm$core$Dict$balance,
+								nColor,
+								nKey,
+								nValue,
+								A2($elm$core$Dict$removeHelp, targetKey, nLeft),
+								nRight);
+						} else {
+							return $elm$core$Dict$RBEmpty_elm_builtin;
+						}
+					}
+				} else {
+					return A5(
+						$elm$core$Dict$RBNode_elm_builtin,
+						color,
+						key,
+						value,
+						A2($elm$core$Dict$removeHelp, targetKey, left),
+						right);
+				}
+			} else {
+				return A2(
+					$elm$core$Dict$removeHelpEQGT,
+					targetKey,
+					A7($elm$core$Dict$removeHelpPrepEQGT, targetKey, dict, color, key, value, left, right));
+			}
+		}
+	});
+var $elm$core$Dict$removeHelpEQGT = F2(
+	function (targetKey, dict) {
+		if (dict.$ === -1) {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			if (_Utils_eq(targetKey, key)) {
+				var _v1 = $elm$core$Dict$getMin(right);
+				if (_v1.$ === -1) {
+					var minKey = _v1.b;
+					var minValue = _v1.c;
+					return A5(
+						$elm$core$Dict$balance,
+						color,
+						minKey,
+						minValue,
+						left,
+						$elm$core$Dict$removeMin(right));
+				} else {
+					return $elm$core$Dict$RBEmpty_elm_builtin;
+				}
+			} else {
+				return A5(
+					$elm$core$Dict$balance,
+					color,
+					key,
+					value,
+					left,
+					A2($elm$core$Dict$removeHelp, targetKey, right));
+			}
+		} else {
+			return $elm$core$Dict$RBEmpty_elm_builtin;
+		}
+	});
+var $elm$core$Dict$remove = F2(
+	function (key, dict) {
+		var _v0 = A2($elm$core$Dict$removeHelp, key, dict);
+		if ((_v0.$ === -1) && (!_v0.a)) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, 1, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
+		}
+	});
+var $elm$core$Dict$update = F3(
+	function (targetKey, alter, dictionary) {
+		var _v0 = alter(
+			A2($elm$core$Dict$get, targetKey, dictionary));
+		if (!_v0.$) {
+			var value = _v0.a;
+			return A3($elm$core$Dict$insert, targetKey, value, dictionary);
+		} else {
+			return A2($elm$core$Dict$remove, targetKey, dictionary);
+		}
+	});
+var $elm$http$Http$expectStringResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'',
+			$elm$core$Basics$identity,
+			A2($elm$core$Basics$composeR, toResult, toMsg));
+	});
+var $elm$core$Result$mapError = F2(
+	function (f, result) {
+		if (!result.$) {
+			var v = result.a;
+			return $elm$core$Result$Ok(v);
+		} else {
+			var e = result.a;
+			return $elm$core$Result$Err(
+				f(e));
+		}
+	});
+var $elm$http$Http$BadBody = function (a) {
+	return {$: 4, a: a};
+};
+var $elm$http$Http$BadStatus = function (a) {
+	return {$: 3, a: a};
+};
+var $elm$http$Http$BadUrl = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$http$Http$NetworkError = {$: 2};
+var $elm$http$Http$Timeout = {$: 1};
+var $elm$http$Http$resolve = F2(
+	function (toResult, response) {
+		switch (response.$) {
+			case 0:
+				var url = response.a;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadUrl(url));
+			case 1:
+				return $elm$core$Result$Err($elm$http$Http$Timeout);
+			case 2:
+				return $elm$core$Result$Err($elm$http$Http$NetworkError);
+			case 3:
+				var metadata = response.a;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadStatus(metadata.bb));
+			default:
+				var body = response.b;
+				return A2(
+					$elm$core$Result$mapError,
+					$elm$http$Http$BadBody,
+					toResult(body));
+		}
+	});
+var $elm$http$Http$expectJson = F2(
+	function (toMsg, decoder) {
+		return A2(
+			$elm$http$Http$expectStringResponse,
+			toMsg,
+			$elm$http$Http$resolve(
+				function (string) {
+					return A2(
+						$elm$core$Result$mapError,
+						$elm$json$Json$Decode$errorToString,
+						A2($elm$json$Json$Decode$decodeString, decoder, string));
+				}));
 	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -5632,9 +6419,193 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
+var $elm$http$Http$emptyBody = _Http_emptyBody;
+var $elm$http$Http$Request = function (a) {
+	return {$: 1, a: a};
+};
+var $elm$http$Http$State = F2(
+	function (reqs, subs) {
+		return {ai: reqs, an: subs};
+	});
+var $elm$http$Http$init = $elm$core$Task$succeed(
+	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
+var $elm$core$Process$kill = _Scheduler_kill;
+var $elm$core$Process$spawn = _Scheduler_spawn;
+var $elm$http$Http$updateReqs = F3(
+	function (router, cmds, reqs) {
+		updateReqs:
+		while (true) {
+			if (!cmds.b) {
+				return $elm$core$Task$succeed(reqs);
+			} else {
+				var cmd = cmds.a;
+				var otherCmds = cmds.b;
+				if (!cmd.$) {
+					var tracker = cmd.a;
+					var _v2 = A2($elm$core$Dict$get, tracker, reqs);
+					if (_v2.$ === 1) {
+						var $temp$router = router,
+							$temp$cmds = otherCmds,
+							$temp$reqs = reqs;
+						router = $temp$router;
+						cmds = $temp$cmds;
+						reqs = $temp$reqs;
+						continue updateReqs;
+					} else {
+						var pid = _v2.a;
+						return A2(
+							$elm$core$Task$andThen,
+							function (_v3) {
+								return A3(
+									$elm$http$Http$updateReqs,
+									router,
+									otherCmds,
+									A2($elm$core$Dict$remove, tracker, reqs));
+							},
+							$elm$core$Process$kill(pid));
+					}
+				} else {
+					var req = cmd.a;
+					return A2(
+						$elm$core$Task$andThen,
+						function (pid) {
+							var _v4 = req.ap;
+							if (_v4.$ === 1) {
+								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
+							} else {
+								var tracker = _v4.a;
+								return A3(
+									$elm$http$Http$updateReqs,
+									router,
+									otherCmds,
+									A3($elm$core$Dict$insert, tracker, pid, reqs));
+							}
+						},
+						$elm$core$Process$spawn(
+							A3(
+								_Http_toTask,
+								router,
+								$elm$core$Platform$sendToApp(router),
+								req)));
+				}
+			}
+		}
+	});
+var $elm$http$Http$onEffects = F4(
+	function (router, cmds, subs, state) {
+		return A2(
+			$elm$core$Task$andThen,
+			function (reqs) {
+				return $elm$core$Task$succeed(
+					A2($elm$http$Http$State, reqs, subs));
+			},
+			A3($elm$http$Http$updateReqs, router, cmds, state.ai));
+	});
+var $elm$core$List$maybeCons = F3(
+	function (f, mx, xs) {
+		var _v0 = f(mx);
+		if (!_v0.$) {
+			var x = _v0.a;
+			return A2($elm$core$List$cons, x, xs);
+		} else {
+			return xs;
+		}
+	});
+var $elm$core$List$filterMap = F2(
+	function (f, xs) {
+		return A3(
+			$elm$core$List$foldr,
+			$elm$core$List$maybeCons(f),
+			_List_Nil,
+			xs);
+	});
+var $elm$http$Http$maybeSend = F4(
+	function (router, desiredTracker, progress, _v0) {
+		var actualTracker = _v0.a;
+		var toMsg = _v0.b;
+		return _Utils_eq(desiredTracker, actualTracker) ? $elm$core$Maybe$Just(
+			A2(
+				$elm$core$Platform$sendToApp,
+				router,
+				toMsg(progress))) : $elm$core$Maybe$Nothing;
+	});
+var $elm$http$Http$onSelfMsg = F3(
+	function (router, _v0, state) {
+		var tracker = _v0.a;
+		var progress = _v0.b;
+		return A2(
+			$elm$core$Task$andThen,
+			function (_v1) {
+				return $elm$core$Task$succeed(state);
+			},
+			$elm$core$Task$sequence(
+				A2(
+					$elm$core$List$filterMap,
+					A3($elm$http$Http$maybeSend, router, tracker, progress),
+					state.an)));
+	});
+var $elm$http$Http$Cancel = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$http$Http$cmdMap = F2(
+	function (func, cmd) {
+		if (!cmd.$) {
+			var tracker = cmd.a;
+			return $elm$http$Http$Cancel(tracker);
+		} else {
+			var r = cmd.a;
+			return $elm$http$Http$Request(
+				{
+					av: r.av,
+					az: r.az,
+					aE: A2(_Http_mapExpect, func, r.aE),
+					P: r.P,
+					aR: r.aR,
+					bf: r.bf,
+					ap: r.ap,
+					bl: r.bl
+				});
+		}
+	});
+var $elm$http$Http$MySub = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $elm$http$Http$subMap = F2(
+	function (func, _v0) {
+		var tracker = _v0.a;
+		var toMsg = _v0.b;
+		return A2(
+			$elm$http$Http$MySub,
+			tracker,
+			A2($elm$core$Basics$composeR, toMsg, func));
+	});
+_Platform_effectManagers['Http'] = _Platform_createManager($elm$http$Http$init, $elm$http$Http$onEffects, $elm$http$Http$onSelfMsg, $elm$http$Http$cmdMap, $elm$http$Http$subMap);
+var $elm$http$Http$command = _Platform_leaf('Http');
+var $elm$http$Http$subscription = _Platform_leaf('Http');
+var $elm$http$Http$request = function (r) {
+	return $elm$http$Http$command(
+		$elm$http$Http$Request(
+			{av: false, az: r.az, aE: r.aE, P: r.P, aR: r.aR, bf: r.bf, ap: r.ap, bl: r.bl}));
+};
+var $elm$http$Http$get = function (r) {
+	return $elm$http$Http$request(
+		{az: $elm$http$Http$emptyBody, aE: r.aE, P: _List_Nil, aR: 'GET', bf: $elm$core$Maybe$Nothing, ap: $elm$core$Maybe$Nothing, bl: r.bl});
+};
+var $author$project$Model$AnalyticsPage = function (a) {
+	return {$: 1, a: a};
+};
+var $author$project$Model$Analytics$TotalMode = $elm$core$Basics$identity;
+var $author$project$Update$Analytics$handleHttpData = F2(
+	function (httpData, model) {
+		var playerScoreDataList = httpData;
+		return _Utils_Tuple2(
+			$author$project$Model$AnalyticsPage(playerScoreDataList),
+			$elm$core$Platform$Cmd$none);
+	});
 var $author$project$Model$DuplicateId = 3;
 var $author$project$Model$DuplicateName = 4;
-var $author$project$Model$ErrorState = {$: 7};
+var $author$project$Model$ErrorState = {$: 8};
 var $author$project$Model$FirstAndMyTurn = {$: 2};
 var $author$project$Model$FirstAndNotMyTurn = function (a) {
 	return {$: 0, a: a};
@@ -5650,10 +6621,10 @@ var $author$project$Model$NotFirstAndNotMyTurn = F2(
 var $author$project$Model$RoundFinished = {$: 6};
 var $author$project$Model$WaitingForPlayers = F2(
 	function (a, b) {
-		return {$: 2, a: a, b: b};
+		return {$: 3, a: a, b: b};
 	});
 var $author$project$Model$WaitingForTrump = function (a) {
-	return {$: 5, a: a};
+	return {$: 6, a: a};
 };
 var $author$project$Model$allPlayerIndices = _List_fromArray(
 	[0, 1, 2, 3, 4, 5]);
@@ -5697,22 +6668,22 @@ var $author$project$Model$getPlayers = F2(
 			[
 				_Utils_Tuple2(
 				0,
-				f(players.aQ)),
+				f(players.aZ)),
 				_Utils_Tuple2(
 				1,
-				f(players.aR)),
+				f(players.a_)),
 				_Utils_Tuple2(
 				2,
-				f(players.aS)),
+				f(players.a$)),
 				_Utils_Tuple2(
 				3,
-				f(players.aT)),
+				f(players.a0)),
 				_Utils_Tuple2(
 				4,
-				f(players.aU)),
+				f(players.a1)),
 				_Utils_Tuple2(
 				5,
-				f(players.aV))
+				f(players.a2))
 			]);
 	});
 var $elm$core$Basics$neq = _Utils_notEqual;
@@ -5725,7 +6696,7 @@ var $author$project$Update$calculateHelpersRevealed = F2(
 		var players = A2(
 			$author$project$Model$getPlayers,
 			function ($) {
-				return $.a_;
+				return $.ba;
 			},
 			playerSet);
 		var hasTeamBeenRevealed = A2(
@@ -5742,23 +6713,23 @@ var $author$project$Update$calculateHelpersRevealed = F2(
 				$elm$core$Tuple$second,
 				$elm$core$Basics$eq(0)),
 			players);
-		return hasTeamBeenRevealed ? $elm$core$List$length(selectionData.aC) : ($elm$core$List$length(biddingTeam) - 1);
+		return hasTeamBeenRevealed ? $elm$core$List$length(selectionData.aK) : ($elm$core$List$length(biddingTeam) - 1);
 	});
 var $author$project$Model$getPlayer = F2(
 	function (players, index) {
 		switch (index) {
 			case 0:
-				return players.aQ;
+				return players.aZ;
 			case 1:
-				return players.aR;
+				return players.a_;
 			case 2:
-				return players.aS;
+				return players.a$;
 			case 3:
-				return players.aT;
+				return players.a0;
 			case 4:
-				return players.aU;
+				return players.a1;
 			default:
-				return players.aV;
+				return players.a2;
 		}
 	});
 var $elm$core$Maybe$withDefault = F2(
@@ -5775,7 +6746,7 @@ var $author$project$Update$calculateTurnStatus = F4(
 		var baseCard = A2(
 			$elm$core$Maybe$withDefault,
 			A2($author$project$Model$Card$Card, 12, 3),
-			A2($author$project$Model$getPlayer, playerSet, firstPlayer).at);
+			A2($author$project$Model$getPlayer, playerSet, firstPlayer).aA);
 		return _Utils_eq(myIndex, firstPlayer) ? (_Utils_eq(myIndex, turn) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(turn)) : (_Utils_eq(myIndex, turn) ? $author$project$Model$NotFirstAndMyTurn(baseCard) : A2($author$project$Model$NotFirstAndNotMyTurn, turn, baseCard));
 	});
 var $elm$core$List$member = F2(
@@ -5794,11 +6765,11 @@ var $author$project$Model$amIHelper = F2(
 			function (h) {
 				return A2($elm$core$List$member, h, myCards);
 			},
-			selectionData.aC);
+			selectionData.aK);
 	});
 var $author$project$Model$amITheOnlyHelper = F2(
 	function (myCards, selectionData) {
-		var _v0 = selectionData.aC;
+		var _v0 = selectionData.aK;
 		_v0$2:
 		while (true) {
 			if (_v0.b) {
@@ -5822,7 +6793,7 @@ var $author$project$Model$amITheOnlyHelper = F2(
 		return false;
 	});
 var $author$project$Model$maxHelpers = function (selectionData) {
-	return $elm$core$List$length(selectionData.aC);
+	return $elm$core$List$length(selectionData.aK);
 };
 var $author$project$Model$updatePlayer = F3(
 	function (playerIndex, update, players) {
@@ -5831,37 +6802,37 @@ var $author$project$Model$updatePlayer = F3(
 				return _Utils_update(
 					players,
 					{
-						aQ: update(players.aQ)
+						aZ: update(players.aZ)
 					});
 			case 1:
 				return _Utils_update(
 					players,
 					{
-						aR: update(players.aR)
+						a_: update(players.a_)
 					});
 			case 2:
 				return _Utils_update(
 					players,
 					{
-						aS: update(players.aS)
+						a$: update(players.a$)
 					});
 			case 3:
 				return _Utils_update(
 					players,
 					{
-						aT: update(players.aT)
+						a0: update(players.a0)
 					});
 			case 4:
 				return _Utils_update(
 					players,
 					{
-						aU: update(players.aU)
+						a1: update(players.a1)
 					});
 			default:
 				return _Utils_update(
 					players,
 					{
-						aV: update(players.aV)
+						a2: update(players.a2)
 					});
 		}
 	});
@@ -5873,7 +6844,7 @@ var $author$project$Model$updatePlayerStatus = F2(
 			function (player) {
 				return _Utils_update(
 					player,
-					{a_: status});
+					{ba: status});
 			});
 	});
 var $author$project$Update$getPlayersStatus = F4(
@@ -5890,17 +6861,17 @@ var $author$project$Update$getPlayersStatus = F4(
 				$elm$core$List$filter,
 				$elm$core$Basics$neq(winnerIndex),
 				$author$project$Model$allPlayerIndices));
-		return (!$author$project$Model$maxHelpers(selectionData)) ? _Utils_Tuple2(allAntiStatus, 0) : (_Utils_eq(myData.aL, winnerIndex) ? _Utils_Tuple2(newPlayerSet, 0) : (A2($author$project$Model$amITheOnlyHelper, myData.aJ, selectionData) ? _Utils_Tuple2(
-			A3($author$project$Model$updatePlayerStatus, myData.aL, 0, allAntiStatus),
-			$author$project$Model$maxHelpers(selectionData)) : (A2($author$project$Model$amIHelper, myData.aJ, selectionData) ? _Utils_Tuple2(
-			A3($author$project$Model$updatePlayerStatus, myData.aL, 0, newPlayerSet),
+		return (!$author$project$Model$maxHelpers(selectionData)) ? _Utils_Tuple2(allAntiStatus, 0) : (_Utils_eq(myData.aU, winnerIndex) ? _Utils_Tuple2(newPlayerSet, 0) : (A2($author$project$Model$amITheOnlyHelper, myData.aS, selectionData) ? _Utils_Tuple2(
+			A3($author$project$Model$updatePlayerStatus, myData.aU, 0, allAntiStatus),
+			$author$project$Model$maxHelpers(selectionData)) : (A2($author$project$Model$amIHelper, myData.aS, selectionData) ? _Utils_Tuple2(
+			A3($author$project$Model$updatePlayerStatus, myData.aU, 0, newPlayerSet),
 			1) : _Utils_Tuple2(
-			A3($author$project$Model$updatePlayerStatus, myData.aL, 1, newPlayerSet),
+			A3($author$project$Model$updatePlayerStatus, myData.aU, 1, newPlayerSet),
 			0))));
 	});
 var $author$project$Model$isPlayerHelper = F2(
 	function (card, selectionData) {
-		return A2($elm$core$List$member, card, selectionData.aC);
+		return A2($elm$core$List$member, card, selectionData.aK);
 	});
 var $author$project$Model$nextRound = function (round) {
 	switch (round) {
@@ -5951,7 +6922,7 @@ var $author$project$Model$updateCardInSet = F2(
 				return _Utils_update(
 					player,
 					{
-						at: $elm$core$Maybe$Just(card)
+						aA: $elm$core$Maybe$Just(card)
 					});
 			});
 	});
@@ -5960,7 +6931,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 		switch (receivedMessage.$) {
 			case 0:
 				var newPlayer = receivedMessage.a;
-				if (model.$ === 2) {
+				if (model.$ === 3) {
 					var players = model.a;
 					var gameName = model.b;
 					return _Utils_Tuple2(
@@ -5977,7 +6948,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 				}
 			case 1:
 				var existingPlayers = receivedMessage.a;
-				if (model.$ === 1) {
+				if (model.$ === 2) {
 					var playerId = model.a;
 					var playerName = model.b;
 					var gameName = model.c;
@@ -5998,14 +6969,14 @@ var $author$project$Update$handleReceivedMessages = F2(
 				var firstBidder = receivedMessage.b;
 				var myIndex = receivedMessage.c;
 				var myCards = receivedMessage.d;
-				if (model.$ === 2) {
+				if (model.$ === 3) {
 					var players = model.a;
 					var gameName = model.b;
 					var commonData = {
-						ar: {ay: firstBidder, aF: 150, aG: firstBidder},
-						aA: gameName,
-						aK: {aJ: myCards, aL: myIndex},
-						aW: playerSet
+						ax: {aG: firstBidder, aN: 150, aO: firstBidder},
+						aI: gameName,
+						aT: {aS: myCards, aU: myIndex},
+						a3: playerSet
 					};
 					return _Utils_Tuple2(
 						A2($author$project$Model$BiddingRound, commonData, $author$project$Model$allPlayerIndices),
@@ -6016,13 +6987,13 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 3:
 				var bidder = receivedMessage.a;
 				var bid = receivedMessage.b;
-				if (model.$ === 3) {
+				if (model.$ === 4) {
 					var commonData = model.a;
 					var bidders = model.b;
 					var updateBiddingData = function (biddingData) {
 						return _Utils_update(
 							biddingData,
-							{aF: bid, aG: bidder});
+							{aN: bid, aO: bidder});
 					};
 					return _Utils_Tuple2(
 						A2(
@@ -6030,7 +7001,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 							_Utils_update(
 								commonData,
 								{
-									ar: updateBiddingData(commonData.ar)
+									ax: updateBiddingData(commonData.ax)
 								}),
 							bidders),
 						$elm$core$Platform$Cmd$none);
@@ -6039,18 +7010,18 @@ var $author$project$Update$handleReceivedMessages = F2(
 				}
 			case 4:
 				var quitter = receivedMessage.a;
-				if (model.$ === 3) {
+				if (model.$ === 4) {
 					var commonData = model.a;
 					var bidders = model.b;
 					var newBidders = A2(
 						$elm$core$List$filter,
 						$elm$core$Basics$neq(quitter),
 						bidders);
-					return (!$elm$core$List$length(newBidders)) ? (_Utils_eq(commonData.aK.aL, commonData.ar.aG) ? _Utils_Tuple2(
+					return (!$elm$core$List$length(newBidders)) ? (_Utils_eq(commonData.aT.aU, commonData.ax.aO) ? _Utils_Tuple2(
 						A2(
 							$author$project$Model$TrumpSelection,
 							commonData,
-							{aC: _List_Nil, a3: 3}),
+							{aK: _List_Nil, bi: 3}),
 						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 						$author$project$Model$WaitingForTrump(commonData),
 						$elm$core$Platform$Cmd$none)) : _Utils_Tuple2(
@@ -6062,10 +7033,10 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 5:
 				var selectionData = receivedMessage.a;
 				switch (model.$) {
-					case 4:
+					case 5:
 						var commonData = model.a;
-						var firstBidder = commonData.ar.ay;
-						var _v7 = A4($author$project$Update$getPlayersStatus, commonData.aK, commonData.aK.aL, selectionData, commonData.aW);
+						var firstBidder = commonData.ax.aG;
+						var _v7 = A4($author$project$Update$getPlayersStatus, commonData.aT, commonData.aT.aU, selectionData, commonData.a3);
 						var playerSet = _v7.a;
 						var helpersRevealed = _v7.b;
 						return _Utils_Tuple2(
@@ -6073,19 +7044,19 @@ var $author$project$Update$handleReceivedMessages = F2(
 								$author$project$Model$PlayRound,
 								_Utils_update(
 									commonData,
-									{aW: playerSet}),
+									{a3: playerSet}),
 								{
-									az: firstBidder,
-									aD: helpersRevealed,
-									aY: 0,
-									aZ: selectionData,
-									a4: _Utils_eq(firstBidder, commonData.aK.aL) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
+									aH: firstBidder,
+									aL: helpersRevealed,
+									a6: 0,
+									a8: selectionData,
+									bj: _Utils_eq(firstBidder, commonData.aT.aU) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
 								}),
 							$elm$core$Platform$Cmd$none);
-					case 5:
+					case 6:
 						var commonData = model.a;
-						var firstBidder = commonData.ar.ay;
-						var _v8 = A4($author$project$Update$getPlayersStatus, commonData.aK, commonData.ar.aG, selectionData, commonData.aW);
+						var firstBidder = commonData.ax.aG;
+						var _v8 = A4($author$project$Update$getPlayersStatus, commonData.aT, commonData.ax.aO, selectionData, commonData.a3);
 						var playerSet = _v8.a;
 						var helpersRevealed = _v8.b;
 						return _Utils_Tuple2(
@@ -6093,13 +7064,13 @@ var $author$project$Update$handleReceivedMessages = F2(
 								$author$project$Model$PlayRound,
 								_Utils_update(
 									commonData,
-									{aW: playerSet}),
+									{a3: playerSet}),
 								{
-									az: firstBidder,
-									aD: helpersRevealed,
-									aY: 0,
-									aZ: selectionData,
-									a4: _Utils_eq(firstBidder, commonData.aK.aL) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
+									aH: firstBidder,
+									aL: helpersRevealed,
+									a6: 0,
+									a8: selectionData,
+									bj: _Utils_eq(firstBidder, commonData.aT.aU) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
 								}),
 							$elm$core$Platform$Cmd$none);
 					default:
@@ -6107,25 +7078,25 @@ var $author$project$Update$handleReceivedMessages = F2(
 				}
 			case 6:
 				var card = receivedMessage.a;
-				if (model.$ === 6) {
+				if (model.$ === 7) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var updateMyData = function (myData) {
 						return _Utils_update(
 							myData,
 							{
-								aJ: A2(
+								aS: A2(
 									$elm$core$List$filter,
 									$elm$core$Basics$neq(card),
-									myData.aJ)
+									myData.aS)
 							});
 					};
-					var myIndex = commonData.aK.aL;
+					var myIndex = commonData.aT.aU;
 					var hadTeamBeenRevealed = _Utils_eq(
-						playRoundData.aD,
-						$author$project$Model$maxHelpers(playRoundData.aZ));
+						playRoundData.aL,
+						$author$project$Model$maxHelpers(playRoundData.a8));
 					var _v10 = function () {
-						var _v11 = playRoundData.a4;
+						var _v11 = playRoundData.bj;
 						switch (_v11.$) {
 							case 0:
 								var firstPlayer = _v11.a;
@@ -6143,7 +7114,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 								return _Utils_Tuple2(
 									_Utils_eq(
 										$author$project$Model$nextTurn(player),
-										playRoundData.az) ? $author$project$Model$RoundFinished : (_Utils_eq(
+										playRoundData.aH) ? $author$project$Model$RoundFinished : (_Utils_eq(
 										$author$project$Model$nextTurn(player),
 										myIndex) ? $author$project$Model$NotFirstAndMyTurn(baseCard) : A2(
 										$author$project$Model$NotFirstAndNotMyTurn,
@@ -6162,27 +7133,27 @@ var $author$project$Update$handleReceivedMessages = F2(
 								return _Utils_Tuple2(
 									_Utils_eq(
 										$author$project$Model$nextTurn(myIndex),
-										playRoundData.az) ? $author$project$Model$RoundFinished : A2(
+										playRoundData.aH) ? $author$project$Model$RoundFinished : A2(
 										$author$project$Model$NotFirstAndNotMyTurn,
 										$author$project$Model$nextTurn(myIndex),
 										baseCard),
 									myIndex);
 							default:
-								return _Utils_Tuple2(playRoundData.a4, 0);
+								return _Utils_Tuple2(playRoundData.bj, 0);
 						}
 					}();
 					var newTurnStatus = _v10.a;
 					var oldTurn = _v10.b;
 					var updatePlayerSet = function (oldSet) {
-						if (_Utils_eq(oldTurn, commonData.aK.aL) || hadTeamBeenRevealed) {
-							return _Utils_Tuple2(oldSet, playRoundData.aD);
+						if (_Utils_eq(oldTurn, commonData.aT.aU) || hadTeamBeenRevealed) {
+							return _Utils_Tuple2(oldSet, playRoundData.aL);
 						} else {
-							if (A2($author$project$Model$isPlayerHelper, card, playRoundData.aZ)) {
+							if (A2($author$project$Model$isPlayerHelper, card, playRoundData.a8)) {
 								var newSet = A3($author$project$Model$updatePlayerStatus, oldTurn, 0, oldSet);
-								var newHelpersRevealed = playRoundData.aD + 1;
+								var newHelpersRevealed = playRoundData.aL + 1;
 								var hasTeamBeenRevealed = _Utils_eq(
 									newHelpersRevealed,
-									$author$project$Model$maxHelpers(playRoundData.aZ));
+									$author$project$Model$maxHelpers(playRoundData.a8));
 								return hasTeamBeenRevealed ? function (s) {
 									return A2($elm$core$Tuple$pair, s, newHelpersRevealed);
 								}(
@@ -6205,15 +7176,15 @@ var $author$project$Update$handleReceivedMessages = F2(
 												A2(
 													$author$project$Model$getPlayers,
 													function ($) {
-														return $.a_;
+														return $.ba;
 													},
 													newSet))))) : _Utils_Tuple2(newSet, newHelpersRevealed);
 							} else {
-								return _Utils_Tuple2(oldSet, playRoundData.aD);
+								return _Utils_Tuple2(oldSet, playRoundData.aL);
 							}
 						}
 					};
-					var _v12 = updatePlayerSet(commonData.aW);
+					var _v12 = updatePlayerSet(commonData.a3);
 					var newerSet = _v12.a;
 					var newerHelpersRevealed = _v12.b;
 					return _Utils_Tuple2(
@@ -6222,12 +7193,12 @@ var $author$project$Update$handleReceivedMessages = F2(
 							_Utils_update(
 								commonData,
 								{
-									aK: updateMyData(commonData.aK),
-									aW: A3($author$project$Model$updateCardInSet, oldTurn, card, newerSet)
+									aT: updateMyData(commonData.aT),
+									a3: A3($author$project$Model$updateCardInSet, oldTurn, card, newerSet)
 								}),
 							_Utils_update(
 								playRoundData,
-								{aD: newerHelpersRevealed, a4: newTurnStatus})),
+								{aL: newerHelpersRevealed, bj: newTurnStatus})),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6235,10 +7206,10 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 7:
 				var winner = receivedMessage.a;
 				var score = receivedMessage.b;
-				if (model.$ === 6) {
+				if (model.$ === 7) {
 					var commonData = model.a;
 					var playRoundData = model.b;
-					var newRound = $author$project$Model$nextRound(playRoundData.aY);
+					var newRound = $author$project$Model$nextRound(playRoundData.a6);
 					var newPlayerSet = A3(
 						$elm$core$List$foldr,
 						F2(
@@ -6250,26 +7221,26 @@ var $author$project$Update$handleReceivedMessages = F2(
 										return _Utils_update(
 											player,
 											{
-												at: $elm$core$Maybe$Nothing,
-												aB: _Utils_eq(playerIndex, winner) ? (player.aB + score) : player.aB
+												aA: $elm$core$Maybe$Nothing,
+												aJ: _Utils_eq(playerIndex, winner) ? (player.aJ + score) : player.aJ
 											});
 									},
 									playerSet);
 							}),
-						commonData.aW,
+						commonData.a3,
 						$author$project$Model$allPlayerIndices);
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$PlayRound,
 							_Utils_update(
 								commonData,
-								{aW: newPlayerSet}),
+								{a3: newPlayerSet}),
 							_Utils_update(
 								playRoundData,
 								{
-									az: winner,
-									aY: newRound,
-									a4: (!newRound) ? $author$project$Model$GameFinished : (_Utils_eq(winner, commonData.aK.aL) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(winner))
+									aH: winner,
+									a6: newRound,
+									bj: (!newRound) ? $author$project$Model$GameFinished : (_Utils_eq(winner, commonData.aT.aU) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(winner))
 								})),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -6278,7 +7249,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 8:
 				var winningTeam = receivedMessage.a;
 				var totalScore = receivedMessage.b;
-				if (model.$ === 6) {
+				if (model.$ === 7) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var updatedPlayerScores = A3(
@@ -6292,21 +7263,21 @@ var $author$project$Update$handleReceivedMessages = F2(
 										return _Utils_update(
 											player,
 											{
-												aB: 0,
-												a_: 2,
-												a2: player.a2 + (A2($elm$core$List$member, playerIndex, winningTeam) ? totalScore : 0)
+												aJ: 0,
+												ba: 2,
+												bh: player.bh + (A2($elm$core$List$member, playerIndex, winningTeam) ? totalScore : 0)
 											});
 									},
 									playerSet);
 							}),
-						commonData.aW,
+						commonData.a3,
 						$author$project$Model$allPlayerIndices);
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$PlayRound,
 							_Utils_update(
 								commonData,
-								{aW: updatedPlayerScores}),
+								{a3: updatedPlayerScores}),
 							playRoundData),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -6314,18 +7285,18 @@ var $author$project$Update$handleReceivedMessages = F2(
 				}
 			case 9:
 				var cards = receivedMessage.a;
-				if (model.$ === 6) {
+				if (model.$ === 7) {
 					var commonData = model.a;
 					var playRoundData = model.b;
-					var nextFirstBidder = $author$project$Model$nextTurn(commonData.ar.ay);
+					var nextFirstBidder = $author$project$Model$nextTurn(commonData.ax.aG);
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$BiddingRound,
 							_Utils_update(
 								commonData,
 								{
-									ar: {ay: nextFirstBidder, aF: 150, aG: nextFirstBidder},
-									aK: {aJ: cards, aL: commonData.aK.aL}
+									ax: {aG: nextFirstBidder, aN: 150, aO: nextFirstBidder},
+									aT: {aS: cards, aU: commonData.aT.aU}
 								}),
 							$author$project$Model$allPlayerIndices),
 						$elm$core$Platform$Cmd$none);
@@ -6337,20 +7308,20 @@ var $author$project$Update$handleReceivedMessages = F2(
 				var biddingData = receivedMessage.b;
 				var myData = receivedMessage.c;
 				var bidders = receivedMessage.d;
-				if (model.$ === 1) {
+				if (model.$ === 2) {
 					var gameName = model.c;
-					return (!$elm$core$List$length(bidders)) ? (_Utils_eq(biddingData.aG, myData.aL) ? _Utils_Tuple2(
+					return (!$elm$core$List$length(bidders)) ? (_Utils_eq(biddingData.aO, myData.aU) ? _Utils_Tuple2(
 						A2(
 							$author$project$Model$TrumpSelection,
-							{ar: biddingData, aA: gameName, aK: myData, aW: playerSet},
-							{aC: _List_Nil, a3: 3}),
+							{ax: biddingData, aI: gameName, aT: myData, a3: playerSet},
+							{aK: _List_Nil, bi: 3}),
 						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 						$author$project$Model$WaitingForTrump(
-							{ar: biddingData, aA: gameName, aK: myData, aW: playerSet}),
+							{ax: biddingData, aI: gameName, aT: myData, a3: playerSet}),
 						$elm$core$Platform$Cmd$none)) : _Utils_Tuple2(
 						A2(
 							$author$project$Model$BiddingRound,
-							{ar: biddingData, aA: gameName, aK: myData, aW: playerSet},
+							{ax: biddingData, aI: gameName, aT: myData, a3: playerSet},
 							bidders),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -6364,18 +7335,18 @@ var $author$project$Update$handleReceivedMessages = F2(
 				var firstPlayer = receivedMessage.e;
 				var turn = receivedMessage.f;
 				var round = receivedMessage.g;
-				if (model.$ === 1) {
+				if (model.$ === 2) {
 					var gameName = model.c;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Model$PlayRound,
-							{ar: biddingData, aA: gameName, aK: myData, aW: playerSet},
+							{ax: biddingData, aI: gameName, aT: myData, a3: playerSet},
 							{
-								az: firstPlayer,
-								aD: A2($author$project$Update$calculateHelpersRevealed, playerSet, selectionData),
-								aY: round,
-								aZ: selectionData,
-								a4: A4($author$project$Update$calculateTurnStatus, turn, firstPlayer, myData.aL, playerSet)
+								aH: firstPlayer,
+								aL: A2($author$project$Update$calculateHelpersRevealed, playerSet, selectionData),
+								a6: round,
+								a8: selectionData,
+								bj: A4($author$project$Update$calculateTurnStatus, turn, firstPlayer, myData.aU, playerSet)
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -6384,7 +7355,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 12:
 				return _Utils_Tuple2($author$project$Model$ErrorState, $elm$core$Platform$Cmd$none);
 			case 13:
-				if (model.$ === 1) {
+				if (model.$ === 2) {
 					var playerId = model.a;
 					var playerName = model.b;
 					var gameName = model.c;
@@ -6400,7 +7371,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			default:
-				if (model.$ === 1) {
+				if (model.$ === 2) {
 					var playerId = model.a;
 					var playerName = model.b;
 					var gameName = model.c;
@@ -6564,11 +7535,11 @@ var $author$project$Encoders$cardEncoder = function (card) {
 				_Utils_Tuple2(
 				'value',
 				$elm$json$Json$Encode$string(
-					$author$project$Model$Card$showCardValue(card.a6))),
+					$author$project$Model$Card$showCardValue(card.bm))),
 				_Utils_Tuple2(
 				'suit',
 				$elm$json$Json$Encode$string(
-					A2($author$project$Model$Card$showSuit, false, card.a0)))
+					A2($author$project$Model$Card$showSuit, false, card.be)))
 			]));
 };
 var $author$project$Encoders$playedCardEncoder = F2(
@@ -6670,7 +7641,7 @@ var $author$project$Encoders$sentDataEncoder = function (sentData) {
 		case 3:
 			var gameName = sentData.a;
 			var selectionData = sentData.b;
-			return A3($author$project$Encoders$selectionDataEncoder, gameName, selectionData.a3, selectionData.aC);
+			return A3($author$project$Encoders$selectionDataEncoder, gameName, selectionData.bi, selectionData.aK);
 		default:
 			var gameName = sentData.a;
 			var card = sentData.b;
@@ -6686,22 +7657,33 @@ var $author$project$Encoders$sendMessage = function (sentData) {
 };
 var $author$project$Update$sendIncreasedBidMessage = F2(
 	function (model, delta) {
-		if (model.$ === 3) {
+		if (model.$ === 4) {
 			var commonData = model.a;
 			var bidders = model.b;
-			var newBid = commonData.ar.aF + delta;
+			var newBid = commonData.ax.aN + delta;
 			return _Utils_Tuple2(
 				(newBid >= 250) ? A2($author$project$Model$BiddingRound, commonData, _List_Nil) : model,
 				$author$project$Encoders$sendMessage(
 					A3(
 						$author$project$Model$IncreaseBid,
-						commonData.aA,
-						commonData.aK.aL,
+						commonData.aI,
+						commonData.aT.aU,
 						A2($elm$core$Basics$min, newBid, 250))));
 		} else {
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Model$Analytics$PlayerScoreData = F3(
+	function (score, name, bids) {
+		return {ay: bids, aV: name, a7: score};
+	});
+var $author$project$Decoders$playerScoreDataDecoder = A4(
+	$elm$json$Json$Decode$map3,
+	$author$project$Model$Analytics$PlayerScoreData,
+	A2($elm$json$Json$Decode$field, 'score', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'bids', $elm$json$Json$Decode$int));
+var $author$project$Decoders$totalDataDecoder = $elm$json$Json$Decode$list($author$project$Decoders$playerScoreDataDecoder);
 var $author$project$Update$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6742,6 +7724,31 @@ var $author$project$Update$update = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 3:
+				var errorHandler = function (result) {
+					if (!result.$) {
+						var val = result.a;
+						return $author$project$Model$HttpDataType(val);
+					} else {
+						var err = result.a;
+						return $author$project$Model$NoOp;
+					}
+				};
+				if (!model.$) {
+					var playerId = model.a;
+					var playerName = model.b;
+					var gameName = model.c;
+					var validation = model.d;
+					return _Utils_Tuple2(
+						A4($author$project$Model$BeginGamePage, playerId, playerName, gameName, validation),
+						$elm$http$Http$get(
+							{
+								aE: A2($elm$http$Http$expectJson, errorHandler, $author$project$Decoders$totalDataDecoder),
+								bl: 'http://localhost:8081/total'
+							}));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 4:
 				if (!model.$) {
 					var playerId = model.a;
 					var playerName = model.b;
@@ -6761,12 +7768,12 @@ var $author$project$Update$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 4:
-				return A2($author$project$Update$sendIncreasedBidMessage, model, 5);
 			case 5:
-				return A2($author$project$Update$sendIncreasedBidMessage, model, 10);
+				return A2($author$project$Update$sendIncreasedBidMessage, model, 5);
 			case 6:
-				if (model.$ === 3) {
+				return A2($author$project$Update$sendIncreasedBidMessage, model, 10);
+			case 7:
+				if (model.$ === 4) {
 					var commonData = model.a;
 					var bidders = model.b;
 					return _Utils_Tuple2(
@@ -6775,16 +7782,16 @@ var $author$project$Update$update = F2(
 							commonData,
 							A2(
 								$elm$core$List$filter,
-								$elm$core$Basics$neq(commonData.aK.aL),
+								$elm$core$Basics$neq(commonData.aT.aU),
 								bidders)),
 						$author$project$Encoders$sendMessage(
-							A2($author$project$Model$SendQuit, commonData.aA, commonData.aK.aL)));
+							A2($author$project$Model$SendQuit, commonData.aI, commonData.aT.aU)));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 7:
+			case 8:
 				var suit = msg.a;
-				if (model.$ === 4) {
+				if (model.$ === 5) {
 					var commonData = model.a;
 					var selectionData = model.b;
 					return _Utils_Tuple2(
@@ -6793,27 +7800,27 @@ var $author$project$Update$update = F2(
 							commonData,
 							_Utils_update(
 								selectionData,
-								{a3: suit})),
+								{bi: suit})),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 8:
+			case 9:
 				var card = msg.a;
-				if (model.$ === 4) {
+				if (model.$ === 5) {
 					var commonData = model.a;
 					var selectionData = model.b;
-					var newSelectionData = A2($elm$core$List$member, card, selectionData.aC) ? _Utils_update(
+					var newSelectionData = A2($elm$core$List$member, card, selectionData.aK) ? _Utils_update(
 						selectionData,
 						{
-							aC: A2(
+							aK: A2(
 								$elm$core$List$filter,
 								$elm$core$Basics$neq(card),
-								selectionData.aC)
-						}) : (($elm$core$List$length(selectionData.aC) < 2) ? _Utils_update(
+								selectionData.aK)
+						}) : (($elm$core$List$length(selectionData.aK) < 2) ? _Utils_update(
 						selectionData,
 						{
-							aC: A2($elm$core$List$cons, card, selectionData.aC)
+							aK: A2($elm$core$List$cons, card, selectionData.aK)
 						}) : selectionData);
 					return _Utils_Tuple2(
 						A2($author$project$Model$TrumpSelection, commonData, newSelectionData),
@@ -6821,18 +7828,18 @@ var $author$project$Update$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 9:
-				if (model.$ === 4) {
+			case 10:
+				if (model.$ === 5) {
 					var commonData = model.a;
 					var selectionData = model.b;
 					return _Utils_Tuple2(
 						model,
 						$author$project$Encoders$sendMessage(
-							A2($author$project$Model$SentSelectionData, commonData.aA, selectionData)));
+							A2($author$project$Model$SentSelectionData, commonData.aI, selectionData)));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 10:
+			case 11:
 				var card = msg.a;
 				var updateTurn = function (turnStatus) {
 					switch (turnStatus.$) {
@@ -6845,7 +7852,7 @@ var $author$project$Update$update = F2(
 							return turnStatus;
 					}
 				};
-				if (model.$ === 6) {
+				if (model.$ === 7) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					return _Utils_Tuple2(
@@ -6855,18 +7862,21 @@ var $author$project$Update$update = F2(
 							_Utils_update(
 								playRoundData,
 								{
-									a4: updateTurn(playRoundData.a4)
+									bj: updateTurn(playRoundData.bj)
 								})),
 						$author$project$Encoders$sendMessage(
-							A2($author$project$Model$PlayedCard, commonData.aA, card)));
+							A2($author$project$Model$PlayedCard, commonData.aI, card)));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 13:
+			case 14:
 				var receivedMessage = msg.a;
 				return A2($author$project$Update$handleReceivedMessages, receivedMessage, model);
-			case 12:
+			case 13:
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			case 15:
+				var httpData = msg.a;
+				return A2($author$project$Update$Analytics$handleHttpData, httpData, model);
 			default:
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
@@ -6879,7 +7889,169 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
-var $author$project$Model$SendGameName = {$: 3};
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
+var $elm$core$Basics$modBy = _Basics_modBy;
+var $elm$html$Html$td = _VirtualDom_node('td');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$html$Html$tr = _VirtualDom_node('tr');
+var $author$project$View$Analytics$playerScoreDataView = F2(
+	function (index, playerScoreData) {
+		return A2(
+			$elm$html$Html$tr,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$Attributes$attribute,
+					'class',
+					(!A2($elm$core$Basics$modBy, 2, index)) ? 'even' : 'odd')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$td,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$elm$core$String$fromInt(index + 1))
+						])),
+					A2(
+					$elm$html$Html$td,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(playerScoreData.aV)
+						])),
+					A2(
+					$elm$html$Html$td,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$elm$core$String$fromInt(playerScoreData.a7))
+						]))
+				]));
+	});
+var $elm$core$List$singleton = function (value) {
+	return _List_fromArray(
+		[value]);
+};
+var $elm$core$List$sortBy = _List_sortBy;
+var $elm$html$Html$table = _VirtualDom_node('table');
+var $elm$html$Html$th = _VirtualDom_node('th');
+var $author$project$View$Analytics$totalModeView = function (playerScoreDataList) {
+	var sortedList = $elm$core$List$reverse(
+		A2(
+			$elm$core$List$sortBy,
+			function ($) {
+				return $.a7;
+			},
+			playerScoreDataList));
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$attribute, 'class', 'totalModeView')
+			]),
+		$elm$core$List$singleton(
+			A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'totalScoreView')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h3,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'totalScoreHeader')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Highest Total Score')
+							])),
+						A2(
+						$elm$html$Html$table,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'totalScoreTable'),
+								A2($elm$html$Html$Attributes$attribute, 'cellpadding', '0px'),
+								A2($elm$html$Html$Attributes$attribute, 'cellspacing', '0px')
+							]),
+						A2(
+							$elm$core$List$cons,
+							A2(
+								$elm$html$Html$tr,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$th,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('S. No.')
+											])),
+										A2(
+										$elm$html$Html$th,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Player Name')
+											])),
+										A2(
+										$elm$html$Html$th,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Total Score')
+											]))
+									])),
+							A2($elm$core$List$indexedMap, $author$project$View$Analytics$playerScoreDataView, sortedList)))
+					]))));
+};
+var $author$project$View$Analytics$analyticsModeView = function (analyticsMode) {
+	var playerScoreDataList = analyticsMode;
+	return $author$project$View$Analytics$totalModeView(playerScoreDataList);
+};
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $author$project$View$Analytics$analyticsPageView = function (analyticsMode) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$attribute, 'class', 'analyticsContainer')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h1,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'analyticsHeader')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Scorecard')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'analyticsContent')
+					]),
+				_List_fromArray(
+					[
+						$author$project$View$Analytics$analyticsModeView(analyticsMode)
+					]))
+			]));
+};
+var $author$project$Model$AnalyticsClicked = {$: 3};
+var $author$project$Model$SendGameName = {$: 4};
 var $author$project$Model$UpdateGameName = function (a) {
 	return {$: 2, a: a};
 };
@@ -6890,7 +8062,7 @@ var $author$project$Model$UpdatePlayerName = function (a) {
 	return {$: 1, a: a};
 };
 var $elm$html$Html$a = _VirtualDom_node('a');
-var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -6954,8 +8126,6 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$View$beginGamePageView = F4(
 	function (playerId, playerName, gameName, validation) {
@@ -7129,6 +8299,17 @@ var $author$project$View$beginGamePageView = F4(
 							$elm$html$Html$text(errorText)
 						])),
 					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$attribute, 'class', 'analytics'),
+							$elm$html$Html$Events$onClick($author$project$Model$AnalyticsClicked)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Scorecard')
+						])),
+					A2(
 					$elm$html$Html$a,
 					_List_fromArray(
 						[
@@ -7141,13 +8322,13 @@ var $author$project$View$beginGamePageView = F4(
 						]))
 				]));
 	});
-var $author$project$Model$BidPlus10 = {$: 5};
-var $author$project$Model$BidPlus5 = {$: 4};
-var $author$project$Model$QuitBidding = {$: 6};
+var $author$project$Model$BidPlus10 = {$: 6};
+var $author$project$Model$BidPlus5 = {$: 5};
+var $author$project$Model$QuitBidding = {$: 7};
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$View$biddingZoneView = F2(
 	function (commonData, bidders) {
-		var highestBidderName = _Utils_eq(commonData.ar.aG, commonData.aK.aL) ? 'You' : A2($author$project$Model$getPlayer, commonData.aW, commonData.ar.aG).aM;
+		var highestBidderName = _Utils_eq(commonData.ax.aO, commonData.aT.aU) ? 'You' : A2($author$project$Model$getPlayer, commonData.a3, commonData.ax.aO).aV;
 		var buttons = A2(
 			$elm$core$List$cons,
 			A2(
@@ -7161,7 +8342,7 @@ var $author$project$View$biddingZoneView = F2(
 					[
 						$elm$html$Html$text('+5')
 					])),
-			(commonData.ar.aF > 240) ? _List_Nil : _List_fromArray(
+			(commonData.ax.aN > 240) ? _List_Nil : _List_fromArray(
 				[
 					A2(
 					$elm$html$Html$div,
@@ -7175,7 +8356,7 @@ var $author$project$View$biddingZoneView = F2(
 							$elm$html$Html$text('+10')
 						]))
 				]));
-		var biddingHtml = A2($elm$core$List$member, commonData.aK.aL, bidders) ? _List_fromArray(
+		var biddingHtml = A2($elm$core$List$member, commonData.aT.aU, bidders) ? _List_fromArray(
 			[
 				A2(
 				$elm$html$Html$div,
@@ -7221,9 +8402,9 @@ var $author$project$View$biddingZoneView = F2(
 			$elm$core$List$map,
 			A2(
 				$elm$core$Basics$composeR,
-				$author$project$Model$getPlayer(commonData.aW),
+				$author$project$Model$getPlayer(commonData.a3),
 				function ($) {
-					return $.aM;
+					return $.aV;
 				}),
 			bidders);
 		var bidderDivs = function () {
@@ -7266,7 +8447,7 @@ var $author$project$View$biddingZoneView = F2(
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								$elm$core$String$fromInt(commonData.ar.aF))
+								$elm$core$String$fromInt(commonData.ax.aN))
 							])),
 						A2(
 						$elm$html$Html$span,
@@ -7290,9 +8471,8 @@ var $author$project$View$gameNameView = function (name) {
 				$elm$html$Html$text(name)
 			]));
 };
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $author$project$Model$SendCard = function (a) {
-	return {$: 10, a: a};
+	return {$: 11, a: a};
 };
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$src = function (url) {
@@ -7303,7 +8483,7 @@ var $elm$html$Html$Attributes$src = function (url) {
 };
 var $author$project$View$cardView = F2(
 	function (attrList, card) {
-		var path = 'img/' + ($author$project$Model$Card$showCardValue(card.a6) + (' of ' + (A2($author$project$Model$Card$showSuit, true, card.a0) + '.png')));
+		var path = 'img/' + ($author$project$Model$Card$showCardValue(card.bm) + (' of ' + (A2($author$project$Model$Card$showSuit, true, card.be) + '.png')));
 		var attributeList = _Utils_ap(
 			_List_fromArray(
 				[
@@ -7328,10 +8508,10 @@ var $author$project$View$myCardsView = F3(
 						var hasValidCard = A2(
 							$elm$core$List$any,
 							function (c) {
-								return _Utils_eq(c.a0, baseCard.a0);
+								return _Utils_eq(c.be, baseCard.be);
 							},
 							myCards);
-						return (hasValidCard && (!_Utils_eq(card.a0, baseCard.a0))) ? _List_fromArray(
+						return (hasValidCard && (!_Utils_eq(card.be, baseCard.be))) ? _List_fromArray(
 							[
 								A2($elm$html$Html$Attributes$attribute, 'class', 'blurCard')
 							]) : _List_fromArray(
@@ -7392,7 +8572,7 @@ var $author$project$View$myCardsView = F3(
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
-									'This game\'s score: ' + $elm$core$String$fromInt(me.aB))
+									'This game\'s score: ' + $elm$core$String$fromInt(me.aJ))
 								])),
 							A2(
 							$elm$html$Html$div,
@@ -7400,7 +8580,7 @@ var $author$project$View$myCardsView = F3(
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
-									'Total Score: ' + $elm$core$String$fromInt(me.a2))
+									'Total Score: ' + $elm$core$String$fromInt(me.bh))
 								]))
 						]))
 				]));
@@ -7426,10 +8606,6 @@ var $author$project$Model$lookup = F2(
 			}
 		}
 	});
-var $elm$core$List$singleton = function (value) {
-	return _List_fromArray(
-		[value]);
-};
 var $author$project$View$playerView = F3(
 	function (bidders, i, _v0) {
 		var playerIndex = _v0.a;
@@ -7463,7 +8639,7 @@ var $author$project$View$playerView = F3(
 							A2($elm$html$Html$Attributes$attribute, 'class', 'playerName')
 						]),
 					$elm$core$List$singleton(
-						$elm$html$Html$text(player.aM))),
+						$elm$html$Html$text(player.aV))),
 					A2(
 					$elm$html$Html$span,
 					_List_fromArray(
@@ -7473,7 +8649,7 @@ var $author$project$View$playerView = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$elm$core$String$fromInt(player.a2))
+							$elm$core$String$fromInt(player.bh))
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -7494,7 +8670,7 @@ var $author$project$View$playerView = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$elm$core$String$fromInt(player.aB))
+							$elm$core$String$fromInt(player.aJ))
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -7679,10 +8855,10 @@ var $author$project$View$staticInfoView = F4(
 			}
 		}();
 		var pronounify = function (playerIndex) {
-			return _Utils_eq(playerIndex, commonData.aK.aL) ? 'Your' : function (n) {
+			return _Utils_eq(playerIndex, commonData.aT.aU) ? 'Your' : function (n) {
 				return n + '\'s';
 			}(
-				A2($author$project$Model$getPlayer, commonData.aW, playerIndex).aM);
+				A2($author$project$Model$getPlayer, commonData.a3, playerIndex).aV);
 		};
 		var turnView = function () {
 			switch (turnStatus.$) {
@@ -7697,13 +8873,13 @@ var $author$project$View$staticInfoView = F4(
 				case 7:
 					return 'Waiting for game to finish..';
 				default:
-					return pronounify(commonData.aK.aL) + ' Turn';
+					return pronounify(commonData.aT.aU) + ' Turn';
 			}
 		}();
 		var helperView = function (helper) {
 			return A2($author$project$View$cardView, _List_Nil, helper);
 		};
-		var helpers = A2($elm$core$List$map, helperView, selectionData.aC);
+		var helpers = A2($elm$core$List$map, helperView, selectionData.aK);
 		var biddingInfoView = A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -7721,7 +8897,7 @@ var $author$project$View$staticInfoView = F4(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							pronounify(commonData.ar.aG) + ' bid')
+							pronounify(commonData.ax.aO) + ' bid')
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -7732,7 +8908,7 @@ var $author$project$View$staticInfoView = F4(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$elm$core$String$fromInt(commonData.ar.aF))
+							$elm$core$String$fromInt(commonData.ax.aN))
 						]))
 				]));
 		return A2(
@@ -7762,7 +8938,7 @@ var $author$project$View$staticInfoView = F4(
 							A2(
 							$author$project$View$cardView,
 							_List_Nil,
-							A2($author$project$Model$Card$Card, 12, selectionData.a3))
+							A2($author$project$Model$Card$Card, 12, selectionData.bi))
 						])),
 					A2(
 					$elm$html$Html$div,
@@ -7816,12 +8992,12 @@ var $author$project$View$staticInfoView = F4(
 				]));
 	});
 var $author$project$Model$SelectHelper = function (a) {
-	return {$: 8, a: a};
+	return {$: 9, a: a};
 };
 var $author$project$Model$SelectTrump = function (a) {
-	return {$: 7, a: a};
+	return {$: 8, a: a};
 };
-var $author$project$Model$SendTrump = {$: 9};
+var $author$project$Model$SendTrump = {$: 10};
 var $author$project$Model$Card$allCardValues = _List_fromArray(
 	[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
 var $author$project$Model$Card$allSuits = _List_fromArray(
@@ -7854,7 +9030,7 @@ var $author$project$Model$Card$allCards = A2(
 var $author$project$View$trumpSelectionView = F2(
 	function (commonData, selectionData) {
 		var trumpView = function (suit) {
-			var isSelected = _Utils_eq(suit, selectionData.a3);
+			var isSelected = _Utils_eq(suit, selectionData.bi);
 			var labelAttr = isSelected ? ' selectedLabel' : '';
 			var attrList = _Utils_ap(
 				_List_fromArray(
@@ -7894,7 +9070,7 @@ var $author$project$View$trumpSelectionView = F2(
 						A2($author$project$Model$Card$Card, 12, suit))
 					]));
 		};
-		var me = A2($author$project$Model$getPlayer, commonData.aW, commonData.aK.aL);
+		var me = A2($author$project$Model$getPlayer, commonData.a3, commonData.aT.aU);
 		var helperCardAttrList = function (card) {
 			return _Utils_ap(
 				_List_fromArray(
@@ -7913,7 +9089,7 @@ var $author$project$View$trumpSelectionView = F2(
 		var filteredCards = A2(
 			$elm$core$List$filter,
 			function (card) {
-				return !A2($elm$core$List$member, card, commonData.aK.aJ);
+				return !A2($elm$core$List$member, card, commonData.aT.aS);
 			},
 			$author$project$Model$Card$allCards);
 		var helperCards = A2(
@@ -7995,7 +9171,7 @@ var $author$project$View$trumpSelectionView = F2(
 									$elm$html$Html$text('Proceed')
 								]))
 						])),
-					A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, commonData.aK.aJ, me)
+					A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, commonData.aT.aS, me)
 				]));
 	});
 var $author$project$View$waitingForPlayersView = F2(
@@ -8052,6 +9228,9 @@ var $author$project$View$view = function (model) {
 			var validation = model.d;
 			return A4($author$project$View$beginGamePageView, playerId, playerName, gameName, validation);
 		case 1:
+			var analyticsMode = model.a;
+			return $author$project$View$Analytics$analyticsPageView(analyticsMode);
+		case 2:
 			var playerId = model.a;
 			var playerName = model.b;
 			var gameName = model.c;
@@ -8071,14 +9250,14 @@ var $author$project$View$view = function (model) {
 								$elm$html$Html$text('Waiting for server to validate your username and player name')
 							]))
 					]));
-		case 2:
+		case 3:
 			var playerNames = model.a;
 			var gameName = model.b;
 			return A2($author$project$View$waitingForPlayersView, playerNames, gameName);
-		case 3:
+		case 4:
 			var commonData = model.a;
 			var bidders = model.b;
-			var me = A2($author$project$Model$getPlayer, commonData.aW, commonData.aK.aL);
+			var me = A2($author$project$Model$getPlayer, commonData.a3, commonData.aT.aU);
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -8095,7 +9274,7 @@ var $author$project$View$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$author$project$View$gameNameView(commonData.aA),
+								$author$project$View$gameNameView(commonData.aI),
 								A2($author$project$View$biddingZoneView, commonData, bidders)
 							])),
 						A2(
@@ -8108,8 +9287,8 @@ var $author$project$View$view = function (model) {
 							[
 								A4(
 								$author$project$View$otherPlayersView,
-								commonData.aK.aL,
-								commonData.aW,
+								commonData.aT.aU,
+								commonData.a3,
 								bidders,
 								A2(
 									$elm$core$List$map,
@@ -8124,14 +9303,14 @@ var $author$project$View$view = function (model) {
 										A2($elm$html$Html$Attributes$attribute, 'class', 'filler')
 									]),
 								_List_Nil),
-								A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, commonData.aK.aJ, me)
+								A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, commonData.aT.aS, me)
 							]))
 					]));
-		case 4:
+		case 5:
 			var commonData = model.a;
 			var selectionData = model.b;
 			return A2($author$project$View$trumpSelectionView, commonData, selectionData);
-		case 5:
+		case 6:
 			var commonData = model.a;
 			return A2(
 				$elm$html$Html$div,
@@ -8146,19 +9325,19 @@ var $author$project$View$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								'Waiting for ' + (A2($author$project$Model$getPlayer, commonData.aW, commonData.ar.aG).aM + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(commonData.ar.aF))))
+								'Waiting for ' + (A2($author$project$Model$getPlayer, commonData.a3, commonData.ax.aO).aV + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(commonData.ax.aN))))
 							]))));
-		case 6:
+		case 7:
 			var commonData = model.a;
 			var playRoundData = model.b;
 			var playerCards = A2(
 				$author$project$Model$getPlayers,
 				function ($) {
-					return $.at;
+					return $.aA;
 				},
-				commonData.aW);
-			var myIndex = commonData.aK.aL;
-			var me = A2($author$project$Model$getPlayer, commonData.aW, myIndex);
+				commonData.a3);
+			var myIndex = commonData.aT.aU;
+			var me = A2($author$project$Model$getPlayer, commonData.a3, myIndex);
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -8175,8 +9354,8 @@ var $author$project$View$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$author$project$View$gameNameView(commonData.aA),
-								A4($author$project$View$staticInfoView, commonData, playRoundData.aZ, playRoundData.a4, playRoundData.aY)
+								$author$project$View$gameNameView(commonData.aI),
+								A4($author$project$View$staticInfoView, commonData, playRoundData.a8, playRoundData.bj, playRoundData.a6)
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -8189,16 +9368,16 @@ var $author$project$View$view = function (model) {
 								A4(
 								$author$project$View$otherPlayersView,
 								myIndex,
-								commonData.aW,
+								commonData.a3,
 								_List_Nil,
 								A2(
 									$author$project$Model$getPlayers,
 									function ($) {
-										return $.a_;
+										return $.ba;
 									},
-									commonData.aW)),
+									commonData.a3)),
 								A2($author$project$View$playAreaView, playerCards, myIndex),
-								A3($author$project$View$myCardsView, playRoundData.a4, commonData.aK.aJ, me)
+								A3($author$project$View$myCardsView, playRoundData.bj, commonData.aT.aS, me)
 							]))
 					]));
 		default:
@@ -8243,6 +9422,6 @@ var $author$project$View$view = function (model) {
 	}
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
-	{aI: $author$project$Model$initModel, a$: $author$project$Subscriptions$subscriptions, a5: $author$project$Update$update, a7: $author$project$View$view});
+	{aQ: $author$project$Model$initModel, bd: $author$project$Subscriptions$subscriptions, bk: $author$project$Update$update, bn: $author$project$View$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
