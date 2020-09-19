@@ -155,6 +155,16 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                       $ GameData playerNames Player1 myIndex
                       $ currentCards playerData
 
+                  -- Send group data to DB
+                  void $ forkIO $ handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
+                    POST
+                    -- (http "localhost" /: "newGroup")
+                    (https "two-fifty-analytics.herokuapp.com" /: "newGroup")
+                    (ReqBodyBs $ B.toStrict $ encode $ map fst newPlayers)
+                    ignoreResponse
+                    -- (port 8081)
+                    mempty
+
                   -- Move the state to bidding state
                   pure
                     $ BiddingState
@@ -508,11 +518,13 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
       putStrLn gameString
 
-      handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
+      void $ forkIO $ handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
         POST
+        -- (http "localhost")
         (https "two-fifty-analytics.herokuapp.com")
         (ReqBodyBs $ encodeUtf8 $ T.pack gameString)
         ignoreResponse
+        -- (port 8081)
         mempty
 
       forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
