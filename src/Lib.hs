@@ -29,7 +29,6 @@ import Network.WebSockets (ConnectionException(..))
 import Prelude hiding (id)
 import Servant hiding (POST)
 import Servant.API.WebSocket
-import System.Environment (getEnv)
 
 
 import Card
@@ -38,13 +37,14 @@ import SharedData
 import State
 
 
+sqlServer :: T.Text
+sqlServer = "35.247.142.111"
+
+appPort :: Int
+appPort = 8080
+
 type API = "game" :> WebSocket
         :<|> Raw
-
-ioErrorHandler :: IOError -> IO String
-ioErrorHandler e = do
-  print e
-  pure "8080"
 
 failSilentlyHandler :: SomeException -> IO ()
 failSilentlyHandler e = do
@@ -53,8 +53,6 @@ failSilentlyHandler e = do
 
 startApp :: IO ()
 startApp = do
-  appPort <- read <$> handle ioErrorHandler (getEnv "PORT")
-
   stateMap <- newMVar M.empty
   run appPort $ app stateMap
 
@@ -159,11 +157,10 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                   void $ forkIO $ handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
                     POST
                     -- (http "localhost" /: "newGroup")
-                    (https "two-fifty-analytics.herokuapp.com" /: "newGroup")
+                    (http sqlServer /: "newGroup")
                     (ReqBodyBs $ B.toStrict $ encode $ map fst newPlayers)
                     ignoreResponse
-                    -- (port 8081)
-                    mempty
+                    (port 8080)
 
                   -- Move the state to bidding state
                   pure
@@ -521,11 +518,10 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
       void $ forkIO $ handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
         POST
         -- (http "localhost")
-        (https "two-fifty-analytics.herokuapp.com")
+        (http sqlServer)
         (ReqBodyBs $ encodeUtf8 $ T.pack gameString)
         ignoreResponse
-        -- (port 8081)
-        mempty
+        (port 8080)
 
       forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
         sendTextDataSafe (connection playerData) $ encode $ GameFinishedData winningTeam winningTeamScore
