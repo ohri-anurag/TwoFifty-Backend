@@ -8219,7 +8219,7 @@ var $author$project$View$beginGamePageView = F4(
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Welcome to the card game 250!!')
+									$elm$html$Html$text('Welcome to 250 - SEASON 1!!')
 								])),
 							A2(
 							$elm$html$Html$div,
@@ -8354,7 +8354,7 @@ var $author$project$View$beginGamePageView = F4(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Scorecard')
+							$elm$html$Html$text('Scorecard - Season 1')
 						])),
 					A2(
 					$elm$html$Html$a,
