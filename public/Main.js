@@ -5324,9 +5324,9 @@ var $author$project$Model$initModel = function (_v0) {
 		A4($author$project$Model$BeginGamePage, '', '', '', $elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Model$NoOp = {$: 12};
+var $author$project$Model$NoOp = {$: 14};
 var $author$project$Model$ReceivedMessageType = function (a) {
-	return {$: 14, a: a};
+	return {$: 16, a: a};
 };
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$json$Json$Decode$string = _Json_decodeString;
@@ -5766,7 +5766,7 @@ var $author$project$Model$EmptyId = 0;
 var $author$project$Model$EmptyName = 1;
 var $author$project$Model$FirstAndMyTurnOver = {$: 3};
 var $author$project$Model$HttpDataType = function (a) {
-	return {$: 15, a: a};
+	return {$: 17, a: a};
 };
 var $author$project$Model$IntroData = F3(
 	function (a, b, c) {
@@ -5777,7 +5777,7 @@ var $author$project$Model$NotFirstAndMyTurnOver = function (a) {
 };
 var $author$project$Model$PlayRound = F2(
 	function (a, b) {
-		return {$: 7, a: a, b: b};
+		return {$: 8, a: a, b: b};
 	});
 var $author$project$Model$PlayedCard = F2(
 	function (a, b) {
@@ -5792,6 +5792,10 @@ var $author$project$Model$SentSelectionData = F2(
 		return {$: 3, a: a, b: b};
 	});
 var $author$project$Model$Analytics$TotalDataReceived = $elm$core$Basics$identity;
+var $author$project$Model$TrumpConfirmation = F2(
+	function (a, b) {
+		return {$: 6, a: a, b: b};
+	});
 var $author$project$Model$TrumpSelection = F2(
 	function (a, b) {
 		return {$: 5, a: a, b: b};
@@ -6605,7 +6609,7 @@ var $author$project$Update$Analytics$handleHttpData = F2(
 	});
 var $author$project$Model$DuplicateId = 3;
 var $author$project$Model$DuplicateName = 4;
-var $author$project$Model$ErrorState = {$: 8};
+var $author$project$Model$ErrorState = {$: 9};
 var $author$project$Model$FirstAndMyTurn = {$: 2};
 var $author$project$Model$FirstAndNotMyTurn = function (a) {
 	return {$: 0, a: a};
@@ -6624,7 +6628,7 @@ var $author$project$Model$WaitingForPlayers = F2(
 		return {$: 3, a: a, b: b};
 	});
 var $author$project$Model$WaitingForTrump = function (a) {
-	return {$: 6, a: a};
+	return {$: 7, a: a};
 };
 var $author$project$Model$allPlayerIndices = _List_fromArray(
 	[0, 1, 2, 3, 4, 5]);
@@ -7053,7 +7057,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 									bl: _Utils_eq(firstBidder, commonData.aU.aV) ? $author$project$Model$FirstAndMyTurn : $author$project$Model$FirstAndNotMyTurn(firstBidder)
 								}),
 							$elm$core$Platform$Cmd$none);
-					case 6:
+					case 7:
 						var commonData = model.a;
 						var firstBidder = commonData.ax.aG;
 						var _v8 = A4($author$project$Update$getPlayersStatus, commonData.aU, commonData.ax.aP, selectionData, commonData.a4);
@@ -7078,7 +7082,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 				}
 			case 6:
 				var card = receivedMessage.a;
-				if (model.$ === 7) {
+				if (model.$ === 8) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var updateMyData = function (myData) {
@@ -7206,7 +7210,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 7:
 				var winner = receivedMessage.a;
 				var score = receivedMessage.b;
-				if (model.$ === 7) {
+				if (model.$ === 8) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var newRound = $author$project$Model$nextRound(playRoundData.a7);
@@ -7249,7 +7253,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 8:
 				var winningTeam = receivedMessage.a;
 				var totalScore = receivedMessage.b;
-				if (model.$ === 7) {
+				if (model.$ === 8) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var updatedPlayerScores = A3(
@@ -7285,7 +7289,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 				}
 			case 9:
 				var cards = receivedMessage.a;
-				if (model.$ === 7) {
+				if (model.$ === 8) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					var nextFirstBidder = $author$project$Model$nextTurn(commonData.ax.aG);
@@ -7835,13 +7839,33 @@ var $author$project$Update$update = F2(
 					var commonData = model.a;
 					var selectionData = model.b;
 					return _Utils_Tuple2(
+						A2($author$project$Model$TrumpConfirmation, commonData, selectionData),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 11:
+				if (model.$ === 6) {
+					var commonData = model.a;
+					var selectionData = model.b;
+					return _Utils_Tuple2(
 						model,
 						$author$project$Encoders$sendMessage(
 							A2($author$project$Model$SentSelectionData, commonData.aI, selectionData)));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 11:
+			case 12:
+				if (model.$ === 6) {
+					var commonData = model.a;
+					var selectionData = model.b;
+					return _Utils_Tuple2(
+						A2($author$project$Model$TrumpSelection, commonData, selectionData),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 13:
 				var card = msg.a;
 				var updateTurn = function (turnStatus) {
 					switch (turnStatus.$) {
@@ -7854,7 +7878,7 @@ var $author$project$Update$update = F2(
 							return turnStatus;
 					}
 				};
-				if (model.$ === 7) {
+				if (model.$ === 8) {
 					var commonData = model.a;
 					var playRoundData = model.b;
 					return _Utils_Tuple2(
@@ -7871,12 +7895,12 @@ var $author$project$Update$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 14:
+			case 16:
 				var receivedMessage = msg.a;
 				return A2($author$project$Update$handleReceivedMessages, receivedMessage, model);
-			case 13:
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 15:
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			case 17:
 				var httpData = msg.a;
 				return A2($author$project$Update$Analytics$handleHttpData, httpData, model);
 			default:
@@ -8324,7 +8348,7 @@ var $author$project$View$beginGamePageView = F4(
 										]))
 								])),
 							A2(
-							$elm$html$Html$div,
+							$elm$html$Html$button,
 							_List_fromArray(
 								[
 									A2($elm$html$Html$Attributes$attribute, 'class', 'beginGameButton'),
@@ -8376,6 +8400,7 @@ var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$View$biddingZoneView = F2(
 	function (commonData, bidders) {
 		var highestBidderName = _Utils_eq(commonData.ax.aP, commonData.aU.aV) ? 'You' : A2($author$project$Model$getPlayer, commonData.a4, commonData.ax.aP).aW;
+		var firstTurnName = _Utils_eq(commonData.ax.aG, commonData.aU.aV) ? 'You' : A2($author$project$Model$getPlayer, commonData.a4, commonData.ax.aG).aW;
 		var buttons = A2(
 			$elm$core$List$cons,
 			A2(
@@ -8479,6 +8504,26 @@ var $author$project$View$biddingZoneView = F2(
 						$elm$html$Html$span,
 						_List_fromArray(
 							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'firstTurnLabel')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('First Turn')
+							])),
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'firstTurn')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('(' + (firstTurnName + ')'))
+							])),
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
 								A2($elm$html$Html$Attributes$attribute, 'class', 'bidValueLabel')
 							]),
 						_List_fromArray(
@@ -8519,7 +8564,7 @@ var $author$project$View$gameNameView = function (name) {
 			]));
 };
 var $author$project$Model$SendCard = function (a) {
-	return {$: 11, a: a};
+	return {$: 13, a: a};
 };
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$src = function (url) {
@@ -9038,13 +9083,159 @@ var $author$project$View$staticInfoView = F4(
 						]))
 				]));
 	});
+var $author$project$Model$DeclineTrump = {$: 12};
+var $author$project$Model$SendTrump = {$: 11};
+var $author$project$View$trumpConfirmationView = F2(
+	function (commonData, selectionData) {
+		var trumpView = function (suit) {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'trumpWithLabel')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'trumpLabel')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($author$project$Model$Card$showSuit, true, suit))
+							])),
+						A2(
+						$author$project$View$cardView,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'class', 'trump')
+							]),
+						A2($author$project$Model$Card$Card, 12, suit))
+					]));
+		};
+		var me = A2($author$project$Model$getPlayer, commonData.a4, commonData.aU.aV);
+		var helperCards = A2(
+			$elm$core$List$map,
+			function (card) {
+				return A2(
+					$author$project$View$cardView,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$attribute, 'class', 'helper')
+						]),
+					card);
+			},
+			selectionData.aL);
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$attribute, 'class', 'trumpContainer')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$attribute, 'class', 'trumpBox')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'trumpBoxHeader')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Confirm Trump')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'trumps')
+								]),
+							_List_fromArray(
+								[
+									trumpView(selectionData.bk)
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'helperContainer')
+								]),
+							A2(
+								$elm$core$List$cons,
+								A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$attribute, 'class', 'helperHeader')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Confirm Helpers')
+										])),
+								helperCards)),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'confirmationText')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Do you want to proceed with the above selections?')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$attribute, 'class', 'confirmButtonContainer')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$attribute, 'class', 'confirmYes'),
+											$elm$html$Html$Events$onClick($author$project$Model$SendTrump)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Yes')
+										])),
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$attribute, 'class', 'confirmNo'),
+											$elm$html$Html$Events$onClick($author$project$Model$DeclineTrump)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('No')
+										]))
+								]))
+						])),
+					A3($author$project$View$myCardsView, $author$project$Model$RoundFinished, commonData.aU.aT, me)
+				]));
+	});
+var $author$project$Model$ConfirmTrump = {$: 10};
 var $author$project$Model$SelectHelper = function (a) {
 	return {$: 9, a: a};
 };
 var $author$project$Model$SelectTrump = function (a) {
 	return {$: 8, a: a};
 };
-var $author$project$Model$SendTrump = {$: 10};
 var $author$project$Model$Card$allCardValues = _List_fromArray(
 	[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
 var $author$project$Model$Card$allSuits = _List_fromArray(
@@ -9211,7 +9402,7 @@ var $author$project$View$trumpSelectionView = F2(
 							_List_fromArray(
 								[
 									A2($elm$html$Html$Attributes$attribute, 'class', 'proceedButton'),
-									$elm$html$Html$Events$onClick($author$project$Model$SendTrump)
+									$elm$html$Html$Events$onClick($author$project$Model$ConfirmTrump)
 								]),
 							_List_fromArray(
 								[
@@ -9359,6 +9550,10 @@ var $author$project$View$view = function (model) {
 			return A2($author$project$View$trumpSelectionView, commonData, selectionData);
 		case 6:
 			var commonData = model.a;
+			var selectionData = model.b;
+			return A2($author$project$View$trumpConfirmationView, commonData, selectionData);
+		case 7:
+			var commonData = model.a;
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -9374,7 +9569,7 @@ var $author$project$View$view = function (model) {
 								$elm$html$Html$text(
 								'Waiting for ' + (A2($author$project$Model$getPlayer, commonData.a4, commonData.ax.aP).aW + (' to select trump. Bid Amount: ' + $elm$core$String$fromInt(commonData.ax.aO))))
 							]))));
-		case 7:
+		case 8:
 			var commonData = model.a;
 			var playRoundData = model.b;
 			var playerCards = A2(
