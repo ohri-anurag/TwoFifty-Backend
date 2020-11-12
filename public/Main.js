@@ -7037,7 +7037,7 @@ var $author$project$Update$handleReceivedMessages = F2(
 			case 5:
 				var selectionData = receivedMessage.a;
 				switch (model.$) {
-					case 5:
+					case 6:
 						var commonData = model.a;
 						var firstBidder = commonData.ax.aG;
 						var _v7 = A4($author$project$Update$getPlayersStatus, commonData.aU, commonData.aU.aV, selectionData, commonData.a4);
