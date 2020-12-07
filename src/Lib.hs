@@ -37,8 +37,8 @@ import SharedData
 import State
 
 
-sqlServer :: T.Text
-sqlServer = "35.247.142.111"
+sqlServerUrl :: IO T.Text
+sqlServerUrl = T.pack <$> readFile "public/sql-server.txt"
 
 appPort :: Int
 appPort = 8080
@@ -152,6 +152,8 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                       $ encode
                       $ GameData playerNames Player1 myIndex
                       $ currentCards playerData
+
+                  sqlServer <- sqlServerUrl
 
                   -- Send group data to DB
                   void $ forkIO $ handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
@@ -514,6 +516,8 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
           ]
 
       putStrLn gameString
+
+      sqlServer <- sqlServerUrl
 
       void $ forkIO $ handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
         POST
