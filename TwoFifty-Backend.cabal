@@ -20,12 +20,13 @@ library
                      , Player
                      , SharedData
                      , State
+                     , Game
   build-depends:       base >= 4.7 && < 5
                      , aeson
                      , bytestring
                      , containers
+                     , directory
                      , random
-                     , req
                      , servant-server
                      , servant-websockets
                      , text

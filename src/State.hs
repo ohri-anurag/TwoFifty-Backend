@@ -9,6 +9,7 @@ import Network.WebSockets.Connection (Connection)
 
 import Card
 import Player
+import qualified Game as G
 
 -- Now that we can distinguish between the types of data coming in,
 -- we can also keep different state types
@@ -52,11 +53,20 @@ data Round
 
 type StateMap = M.Map Text State
 
-updateState :: MVar StateMap -> Text -> State -> IO ()
-updateState stateMapMVar gName state  = do
-  stateMap <- takeMVar stateMapMVar
-  putMVar stateMapMVar
-    $ M.insert gName state stateMap
+data MyState = MyState StateMap [G.Game]
+
+updateState :: MVar MyState -> Text -> State -> IO ()
+updateState myStateMVar gName state  = do
+  (MyState stateMap games) <- takeMVar myStateMVar
+  putMVar myStateMVar
+    $ MyState (M.insert gName state stateMap) games
+
+updateGames :: MVar MyState -> G.Game -> IO ()
+updateGames myStateMVar game = do
+  (MyState stateMap games) <- takeMVar myStateMVar
+  putMVar myStateMVar
+    $ MyState stateMap
+    $ game : games
 
 nextRound :: Round -> Round
 nextRound Round1 = Round2

@@ -48,6 +48,32 @@ data PlayerDataSet = DataSet
   , player6 :: PlayerData
   }
 
+data PlayerScoreData = PlayerScoreData
+   { playerDisplayName :: T.Text
+   , playerScore :: Int
+   , totalGames :: Int
+   , totalBids :: Int
+   , successfulBids :: Int
+   }
+
+updatePlayerScore :: Int -> PlayerScoreData -> PlayerScoreData
+updatePlayerScore score playerScoreData =
+  playerScoreData { playerScore = playerScore playerScoreData + score }
+
+updateTotalGames :: PlayerScoreData -> PlayerScoreData
+updateTotalGames playerScoreData =
+  playerScoreData { totalGames = totalGames playerScoreData + 1 }
+
+updateSuccessfulBids :: PlayerScoreData -> PlayerScoreData
+updateSuccessfulBids playerScoreData = playerScoreData
+  { successfulBids = successfulBids playerScoreData + 1
+  , totalBids = totalBids playerScoreData + 1
+  }
+
+updateTotalBids :: PlayerScoreData -> PlayerScoreData
+updateTotalBids playerScoreData =
+  playerScoreData { totalBids = totalBids playerScoreData + 1 }
+
 getPlayer :: PlayerIndex -> PlayerDataSet -> PlayerData
 getPlayer playerIndex playerDataSet = case playerIndex of
   Player1 -> player1 playerDataSet
@@ -151,4 +177,13 @@ instance ToJSON PlayerData where
     , "totalScore" .= totalScore playerData
     , "card" .= card playerData
     , "status" .= status playerData
+    ]
+
+instance ToJSON PlayerScoreData where
+  toJSON playerScoreData = object
+    [ "player_name" .= playerDisplayName playerScoreData
+    , "score" .= playerScore playerScoreData
+    , "total_games" .= totalGames playerScoreData
+    , "total_bids" .= totalBids playerScoreData
+    , "successful_bids" .= successfulBids playerScoreData
     ]

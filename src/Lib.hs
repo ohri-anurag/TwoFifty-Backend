@@ -9,19 +9,17 @@ module Lib
 
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Concurrent.MVar (MVar, newMVar, readMVar)
-import Control.Exception (SomeException, handle)
+import Control.Exception (handle)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad (void, when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
-import Data.List (intercalate, nub)
+import Data.List (foldl', nub)
 import Data.Foldable (for_ , maximumBy)
 import Data.Function (on)
 import qualified Data.Map as M
 import Data.Maybe (mapMaybe)
 import qualified Data.Text as T
-import Data.Text.Encoding (encodeUtf8)
-import Network.HTTP.Req
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Network.WebSockets.Connection
@@ -29,38 +27,14 @@ import Network.WebSockets (ConnectionException(..))
 import Prelude hiding (id)
 import Servant hiding (POST)
 import Servant.API.WebSocket
+import System.Directory
 
 
 import Card
 import Player
 import SharedData
 import State
-
-
-sqlServerUrl :: IO T.Text
-sqlServerUrl = T.pack <$> readFile "public/sql-server.txt"
-
-appPort :: Int
-appPort = 8080
-
-type API = "game" :> WebSocket
-        :<|> Raw
-
-failSilentlyHandler :: SomeException -> IO ()
-failSilentlyHandler e = do
-  putStrLn $ "Encountered error: " ++ show e
-  putStrLn "Failing silently"
-
-startApp :: IO ()
-startApp = do
-  stateMap <- newMVar M.empty
-  run appPort $ app stateMap
-
-app :: MVar StateMap -> Application
-app stateMap = serve api $ server stateMap
-
-api :: Proxy API
-api = Proxy
+import qualified Game as G
 
 connectionExceptionHandler :: ConnectionException -> IO ()
 connectionExceptionHandler (CloseRequest _ _) = putStrLn "Client closed the connection"
@@ -70,11 +44,74 @@ connectionExceptionHandler _ = putStrLn "Connection closed, reason unknown"
 sendTextDataSafe :: Connection -> B.ByteString -> IO ()
 sendTextDataSafe conn bytes = handle connectionExceptionHandler $ sendTextData conn bytes
 
-server :: MVar StateMap -> Server API
-server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
+appPort :: Int
+appPort = 8080
+
+gamesFile :: FilePath
+gamesFile = "public/games"
+
+type ScoreAPI = "total" :> Get '[JSON] [PlayerScoreData]
+
+type API = "game" :> WebSocket
+        :<|> ScoreAPI
+        :<|> Raw
+
+startApp :: IO ()
+startApp = do
+  games <- do
+    gamesFileExists <- doesFileExist gamesFile
+    if gamesFileExists
+      then maybe [] (\x -> x) . decode <$> B.readFile gamesFile
+      else pure []
+  myState <- newMVar $ MyState M.empty games
+  run appPort $ app myState
+
+app :: MVar MyState -> Application
+app myState = serve api $ server myState
+
+api :: Proxy API
+api = Proxy
+
+server :: MVar MyState -> Server API
+server myStateMVar = streamData :<|> scoreData :<|> serveDirectoryFileServer "public/"
   where
   streamData :: (MonadIO m) => Connection -> m ()
   streamData conn = liftIO $ withPingThread conn 10 (pure ()) $ readFromConnection conn
+
+  scoreData :: Server ScoreAPI
+  scoreData = do
+    (MyState _ games) <- liftIO $ readMVar myStateMVar
+    pure
+      $ M.elems
+      $ foldl' (\cache (G.Game _ bidVal score _ _ bidTeam@((bidderId, _):_) antiTeam) ->
+          let
+            (winningTeam, winScore)
+              | score >= bidVal = (bidTeam, bidVal)
+              | score > 150 = (antiTeam, 250 - score)
+              | otherwise = (antiTeam, bidVal)
+
+            processBidder pid playerScoreData
+              | pid == bidderId && score >= bidVal = updateSuccessfulBids playerScoreData
+              | pid == bidderId = updateTotalBids playerScoreData
+              | otherwise = playerScoreData
+
+            cache' = foldl' (\cache1 (pid, pname) ->
+                flip (M.insert pid) cache1
+                $ processBidder pid
+                $ maybe
+                  (PlayerScoreData pname 0 1 0 0)
+                  updateTotalGames
+                $ M.lookup pid cache1
+              ) cache $ bidTeam ++ antiTeam
+          in
+            foldl' (\cache1 (pid, pname) ->
+                flip (M.insert pid) cache1
+                $ maybe
+                  (PlayerScoreData pname winScore 0 0 0)
+                  (updatePlayerScore winScore)
+                $ M.lookup pid cache1
+              ) cache' winningTeam
+          ) M.empty games
 
   readFromConnection :: Connection -> IO ()
   readFromConnection conn =
@@ -107,7 +144,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
   handleIntroPhase :: T.Text -> T.Text -> T.Text -> Connection -> IO ()
   handleIntroPhase playerName playerId gameName conn = do
-    stateMap <- readMVar stateMapMVar
+    (MyState stateMap _) <- readMVar myStateMVar
     newState <-
       case M.lookup gameName stateMap of
         Just state ->
@@ -152,17 +189,6 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                       $ encode
                       $ GameData playerNames Player1 myIndex
                       $ currentCards playerData
-
-                  sqlServer <- sqlServerUrl
-
-                  -- Send group data to DB
-                  void $ forkIO $ handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
-                    POST
-                    -- (http "localhost" /: "newGroup")
-                    (http sqlServer /: "newGroup")
-                    (ReqBodyBs $ B.toStrict $ encode $ map fst newPlayers)
-                    ignoreResponse
-                    (port 8080)
 
                   -- Move the state to bidding state
                   pure
@@ -229,7 +255,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
           pure $ IntroState [((playerName, playerId), conn)]
 
-    updateState stateMapMVar gameName newState
+    updateState myStateMVar gameName newState
       where
         checkForExistingPlayers players state action
           -- Check if player with same id already exists. If so, reject joining request
@@ -276,7 +302,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
   handleBidding :: T.Text -> PlayerIndex -> Int -> IO ()
   handleBidding gameName bidderIndex bidAmount = do
-    stateMap <- readMVar stateMapMVar
+    (MyState stateMap _) <- readMVar myStateMVar
 
     case M.lookup gameName stateMap of
       Just state ->
@@ -292,7 +318,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                     , bidder = bidderIndex
                     }
 
-                updateState stateMapMVar gameName
+                updateState myStateMVar gameName
                   $ BiddingState newCommonStateData bidders
 
                 -- Inform the players of the new highest bid
@@ -315,7 +341,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
   handleQuitting :: T.Text -> PlayerIndex -> IO ()
   handleQuitting gameName quitter = do
-    stateMap <- readMVar stateMapMVar
+    (MyState stateMap _) <- readMVar myStateMVar
 
     case M.lookup gameName stateMap of
       Just state ->
@@ -325,7 +351,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
               ++ ", max bid: " ++ show (bid commonStateData)
               ++ ", bidder: " ++ show (bidder commonStateData)
 
-            updateState stateMapMVar gameName
+            updateState myStateMVar gameName
               $ BiddingState commonStateData
               $ filter ( /= quitter) bidders
 
@@ -341,7 +367,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
   handleSelectionData :: T.Text -> Suit -> [Card] -> IO ()
   handleSelectionData gameName trump helpers = do
-    stateMap <- readMVar stateMapMVar
+    (MyState stateMap _) <- readMVar myStateMVar
 
     case M.lookup gameName stateMap of
       Just state ->
@@ -351,7 +377,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
               ++ show trump
               ++ " and helpers: " ++ show helpers
 
-            updateState stateMapMVar gameName
+            updateState myStateMVar gameName
               $ RoundState commonStateData
               $ RoundStateData
                   Round1
@@ -373,7 +399,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
   handlePlayedCard :: T.Text -> Card -> IO ()
   handlePlayedCard gameName playedCard = do
-    stateMap <- readMVar stateMapMVar
+    (MyState stateMap _) <- readMVar myStateMVar
 
     case M.lookup gameName stateMap of
       Just state ->
@@ -398,7 +424,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
                 }
               
 
-            updateState stateMapMVar gameName
+            updateState myStateMVar gameName
               $ RoundState newCommonStateData newRoundStateData
 
             -- When all 6 players have played their turn
@@ -451,7 +477,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
               " with a score of " ++ show score
 
             -- Move on to the next Round, and update the next turn
-            updateState stateMapMVar gameName
+            updateState myStateMVar gameName
               $ RoundState newCommonStateData newRoundStateData
 
             -- Update the players with the round winner and the score
@@ -492,40 +518,24 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
 
       -- Send update to DB to persist the data
       let
-        playerString playerIndex =
+        playerIdName playerIndex =
           let
             player = getPlayer playerIndex $ playerDataSet commonStateData
           in
-            intercalate ":" $ map T.unpack [id player, name player]
+            (id player, name player)
 
-        gameString = intercalate ";"
-          [ T.unpack gameName
-          , intercalate "," $ map show [bidAmount, biddingTeamScore]
-          , intercalate "|"
-            [ show $ trumpSuit roundStateData
-            , intercalate ","
-              $ map (\(Card v s) ->
-                intercalate ":" [show v, show s]
-                )
-              $ helperCards roundStateData
-            ]
-          , intercalate "|"
-            [ intercalate "," $ map playerString $ reverse $ nub bidTeam
-            , intercalate "," $ map playerString antiTeam
-            ]
-          ]
+        game = G.Game
+          gameName
+          bidAmount
+          biddingTeamScore
+          (trumpSuit roundStateData)
+          (helperCards roundStateData)
+          (map playerIdName $ reverse $ nub bidTeam)
+          (map playerIdName antiTeam)
 
-      putStrLn gameString
-
-      sqlServer <- sqlServerUrl
-
-      void $ forkIO $ handle failSilentlyHandler $ void $ runReq defaultHttpConfig $ req
-        POST
-        -- (http "localhost")
-        (http sqlServer)
-        (ReqBodyBs $ encodeUtf8 $ T.pack gameString)
-        ignoreResponse
-        (port 8080)
+      (MyState _ games) <- readMVar myStateMVar
+      B.writeFile gamesFile $ encode $ game : games
+      updateGames myStateMVar game
 
       forIndex_ (playerDataSet commonStateData) $ \_ playerData ->
         sendTextDataSafe (connection playerData) $ encode $ GameFinishedData winningTeam winningTeamScore
@@ -552,7 +562,7 @@ server stateMapMVar = streamData :<|> serveDirectoryFileServer "public/"
             )
             $ zip playerIndices distributedCards
 
-        updateState stateMapMVar gameName
+        updateState myStateMVar gameName
           $ BiddingState newCommonStateData playerIndices
 
         -- Send new cards
